@@ -1,0 +1,53 @@
+<ribbon-simple-button>
+    <button class="ribbon-button">
+        <span class="icon">
+            <div class={icon_class}></div>
+        </span>
+        <span class="caption">{opts.label}</span>
+    </button>
+    <style>
+        * {
+            user-select: none;
+        }
+
+        .ribbon-button {
+            padding-left: 5px;
+            padding-right: 5px;
+            text-align: center;
+            height: 100% !important;
+        }
+
+        .ribbon-button .icon {
+            display: inline-block;
+        }
+
+        .ribbon-icon-button .icon+.caption,
+        .ribbon-icon-button .caption+.icon {
+            margin-bottom: 5px;
+        }
+    </style>
+    <script>
+        /* globals opts: false */
+
+        /**************************************************************************
+         * Helpers
+         **************************************************************************/
+
+        /**************************************************************************
+         * Main script
+         **************************************************************************/
+        const self = this;
+        const config = opts;
+        config.icon = config.icon !== undefined ? config.icon : "";
+        config.iconpreffix = config.iconpreffix !== undefined ? config.iconpreffix : "";
+        config.label = config.label !== undefined ? config.label : "";
+        config.onclick = config.onclick !== undefined ? config.onclick : null;
+
+        self.icon_class = config.icon.split(/\s+/g).map((_) => _[0] == "!" ? _.substr(1) : (config.iconpreffix + _)).join(" ")
+        
+        self.on("mount", () => {
+            console.log(config.onclick, "@")
+        });
+        //
+    </script>
+</ribbon-simple-button>

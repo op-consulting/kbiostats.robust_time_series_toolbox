@@ -1,0 +1,258 @@
+<!----
+File input with CSV parser
+==========================
+`<csv-file-input>`
+
+* Version: 1.0
+
+## External requeriments
+```html
+    <link rel="stylesheet" href="./lib/fomantic-ui@2.7.2/semantic.css">
+    <script src="./lib/jquery@3.3.1/jquery.js"></script>
+    <script src="./lib/fomantic-ui@2.7.2/semantic.js"></script>
+    <script src="./lib/papaparse@4.6.1/papaparse.js"></script>
+```
+
+## Inputs
+* **file_filter**: list of objects
+    - *default*: 
+    ```javascript
+    [
+    {name: 'Data source (.CSV)',extensions: ['csv']},
+    {name: 'All Files', extensions: ['*']}
+    ]
+    ```
+* **placeholder**: String
+    - *default*: "Choose a file"
+* **load_content**: boolean
+    - *default*: true
+* **input_format**: string
+    - *default*: "CSV"
+* **dialog_properties**: list of strings
+    - Defines the characteristics of the file input. See [Electron dialog API](https://electronjs.org/docs/api/dialog#dialogshowopendialogbrowserwindow-options-callback)
+    - *default*: ['openFile']
+    
+## Methods
+* `file_open(filename, callback, type_of_file="")`
+    - `type_of_file` can be "", or "csv"
+
+## Events
+* `obtained-file-names([list with filenames])`
+* `loaded-file({filename: file path, content: file content, metadata: info generated during parsing})`
+---->
+<csv-file-input>
+    <div class="ui action input">
+        <input type="text" class="fileinput" placeholder={opts.placeholder} readonly>
+        <virtual if={!this.electronIsInstalled}>
+            <input type="file" class="fileinput">
+        </virtual>
+        <div class="ui icon button fileinput">
+            <i class="attach icon"></i>
+        </div>
+    </div>
+
+    <style>
+        .ui.action.input {
+            width: 100%;
+        }
+
+        .ui.action.input input.fileinput[type="text"] {
+            width: 80%;
+        }
+
+        .ui.action.input input.fileinput[type="file"] {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+    </style>
+
+    <script>
+        /* globals opts: false */
+        /* globals Papa: false */
+        /* globals jQuery: false */
+        /* globals FileReader: false */
+    
+        /**************************************************************************
+         * Helpers
+         **************************************************************************/
+        function electronIsInstalled() {
+            try {
+                require("electron");
+                return true;
+            } catch (error) {}
+            return false;
+        }
+
+        function errorHandler(evt) {
+            switch (evt.target.error.code) {
+                case evt.target.error.NOT_FOUND_ERR:
+                    console.error('File Not Found!');
+                    break;
+                case evt.target.error.NOT_READABLE_ERR:
+                    console.error('File is not readable');
+                    break;
+                case evt.target.error.ABORT_ERR:
+                    break; // noop
+                default:
+                    console.error('An error occurred reading this file.');
+            }
+        }
+
+        function updateProgress(evt) {
+            // evt is an ProgressEvent.
+            if (evt.lengthComputable) {
+                const percentLoaded = Math.round((evt.loaded / evt.total) * 100);
+                // Increase the progress bar length.
+                if (percentLoaded < 100) {
+                    //
+                }
+            }
+        }
+
+        function handleFileSelect(evt, cbx) {
+            // Reset progress indicator on new file selection.
+            reader.onerror = errorHandler;
+            reader.onprogress = updateProgress;
+            reader.onabort = function () {
+                console.error('File read cancelled');
+            };
+            reader.onloadstart = function () {
+                // Ensure that the progress bar displays 0% at the end.
+            };
+            reader.onload = function () {
+                // Ensure that the progress bar displays 100% at the end.
+            };
+            reader.onloadend = function (evt) {
+                if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                    cbx(evt.target.result);
+                }
+            };
+            // Read in the image file as a binary string.
+            reader.readAsBinaryString(evt.target.files[0]);
+        }
+
+        function default_file_filter() {
+            return [{
+                    name: 'Data source (.CSV)',
+                    extensions: ['csv']
+                },
+                {
+                    name: 'All Files',
+                    extensions: ['*']
+                }
+            ];
+        }
+
+        function trigger_data(self, filename, data) {
+            if (config.input_format == "CSV") {
+                Papa.parse(data, {
+                    keepEmptyRows: false,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+                        self.trigger("loaded-file", {
+                            filename: filename,
+                            content: results.data,
+                            metadata: {
+                                errors: results.errors,
+                                file: results.meta
+                            },
+                        });
+                    }
+                });
+            } else {
+                self.trigger("loaded-file", {
+                    filename: filename,
+                    content: data,
+                    metadata: {},
+                });
+            }
+        }
+        /**************************************************************************
+         * Main script
+         **************************************************************************/
+        const self = this;
+        const config = opts;
+        const self$ = jQuery(self.root);
+        const reader = new FileReader();
+        self.electronIsInstalled = electronIsInstalled();
+        config.file_filter = config.file_filter !== undefined ? config.file_filter : default_file_filter();
+        config.placeholder = config.placeholder !== undefined ? config.placeholder : "Choose a file";
+        config.load_content = config.load_content !== undefined ? config.load_content : true;
+        config.input_format = config.input_format !== undefined ? config.input_format : "CSV";
+        config.dialog_properties = config.dialog_properties !== undefined ? config.dialog_properties : ['openFile'];
+
+        self.file_open = (filename, cb, ext_type = "") => {
+            if (self.electronIsInstalled) {
+                const fs = require('fs');
+                fs.readFile(filename, 'utf8', (err, data) => {
+                    if (err) {
+                        return console.error(err);
+                    }
+                    if (ext_type == "csv") {
+                        Papa.parse(data, {
+                            keepEmptyRows: false,
+                            skipEmptyLines: true,
+                            complete: function (results) {
+                                cb(results.data);
+                            }
+                        });
+                    } else {
+                        cb(data);
+                    }
+                });
+            }
+        };
+        self.on("mount", () => {
+            self$.find("input.fileinput:text, .button.fileinput").on("click", function () {
+                if (self.electronIsInstalled) {
+                    //
+                    const {
+                        dialog
+                    } = require("electron").remote;
+                    const fs = require('fs');
+                    const paths = dialog.showOpenDialog({
+                        filters: config.file_filter,
+                        //properties: ['openFile', 'openDirectory', 'multiSelections'],
+                        properties: config.dialog_properties,
+                    });
+                    if (!paths) {
+                        return;
+                    }
+                    self.trigger("obtained-file-names", paths);
+                    if (config.load_content) {
+                        fs.readFile(paths[0], 'utf8', (err, data) => {
+                            if (err) {
+                                return console.error(err);
+                            }
+                            trigger_data(self, paths[0], data);
+                        });
+                    }
+                    const name = paths[0].match(/([^\/\\])+$/g)[0];
+                    self$.find("input.fileinput:text").attr("value", name);
+                    //
+                } else {
+                    jQuery(this).parent().find("input.fileinput:file").click();
+                }
+            });
+            self$.find('input.fileinput:file', '.ui.action.input').on('change', (e) => {
+                if (self.electronIsInstalled) {
+                    //
+                } else {
+                    const name = e.target.files[0].name;
+                    //handleFileSelect(e, default_callback);
+                    self.trigger("obtained-file-names", Array.from(e.target.files).map((x) => x.name));
+                    if (config.load_content) {
+                        handleFileSelect(e, (data) => {
+                            trigger_data(self, name, data);
+                        });
+                    }
+                    self$.find("input.fileinput:text").attr("value", name);
+                }
+            });
+        });
+    </script>
+</csv-file-input>

@@ -1,0 +1,76 @@
+body {
+    min-height: 100%;
+    background:
+        radial-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.6)),
+        url("../img/neurons.jpg");
+    background-size: cover;
+}
+
+body {
+    font-family: Monospace;
+    /*background-color: #f3f3f3;*/
+    margin: 0px;
+    overflow: hidden;
+}
+
+#info {
+    color: #fff;
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    text-align: center;
+    z-index: 100;
+    display:block;
+}
+
+#info > span {
+    color: wheat;
+    width: fit-content;
+}
+
+a { color: skyblue }
+.button { background:#999; color:#eee; padding:0.2em 0.5em; cursor:pointer }
+.highlight { background:orange; color:#fff; }
+
+span {
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+}
+
+#time-series-chart svg .nv-axis path,
+#time-series-chart svg .tick.major{
+    stroke: white!important;
+}
+#time-series-chart svg {
+    fill: rgba(240,240,240,0.5)!important;
+}
+#time-series-chart svg text {
+    fill: white!important;
+}
+#time-series-chart svg .nvd3 > g > .nv-focus,
+#time-series-chart svg .nvd3 > g > .nv-legendWrap
+{
+    display: none!important;
+}
+#time-series-chart svg{
+    width: 100%;
+    height: 100%;
+}
+#time-series-chart{
+    position: absolute;
+    top: 80%;
+    left: 0;
+    z-index: 100;
+    right: 0;
+    bottom: 0;
+}
+#time-series-plot{
+    display: none;
+    background-color: rgba(240, 240, 240, 0.);
+    width: 90%;
+    height: 10%;
+    position: absolute;
+    top: 90%;
+    left:5%;
+}

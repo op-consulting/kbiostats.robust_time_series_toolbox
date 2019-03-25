@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="24"
+   height="24"
+   id="svg2"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="pencil.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1150"
+     id="namedview4573"
+     showgrid="true"
+     inkscape:zoom="24.525135"
+     inkscape:cx="12.110608"
+     inkscape:cy="10.393898"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g3150-5">
+    <inkscape:grid
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       type="xygrid"
+       id="grid2992" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-1028.3622)"
+     id="layer1">
+    <g
+       transform="matrix(1.0606602,1.0606602,-1.0606602,1.0606602,1146.8365,34.926249)"
+       id="g3150-5">
+      <path
+         d="M -63,1003.3622 -63,1014.6747 -63,1015.3622 -63,1016.3622 -61,1018.3622 -59,1016.3622 -59,1015.3622 -59,1014.6747 -59,1003.3622 -63,1003.3622 z"
+         inkscape:connector-curvature="0"
+         id="rect3246-8"
+         style="fill:#ecf0f1;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <path
+         d="M -61,1003.3622 -61,1018.3622 -59,1016.3622 -59,1015.3622 -59,1014.6747 -59,1003.3622 -61,1003.3622 z"
+         inkscape:connector-curvature="0"
+         id="rect3246-3-5"
+         style="fill:#bdc3c7;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <rect
+         width="4"
+         height="10.999983"
+         x="-63"
+         y="1004.3622"
+         id="rect3286-4"
+         style="fill:#e67e22;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <path
+         d="M -61,1000.3622 C -62.10457,1000.3622 -63,1001.2576 -63,1002.3622 L -63,1003.3622 -59,1003.3622 -59,1002.3622 C -59,1001.2576 -59.895431,1000.3622 -61,1000.3622 z"
+         inkscape:connector-curvature="0"
+         id="path3350-0"
+         style="fill:#7f8c8d;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <g
+         transform="translate(-7,1)"
+         id="g3062-0">
+        <path
+           d="M -55.40625,1015.956 -54,1017.3622 -52.59375,1015.956 -54,1015.956 -55.40625,1015.956 z"
+           inkscape:connector-curvature="0"
+           id="rect3281-6-4"
+           style="fill:#34495e;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+        <path
+           d="M -54,1015.9559 -54,1017.3622 -52.59375,1015.9559 -54,1015.9559 z"
+           inkscape:connector-curvature="0"
+           id="rect3281-7-0"
+           style="fill:#2c3e50;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      </g>
+      <path
+         d="M -61,1000.3622 C -62.10457,1000.3622 -63,1001.2576 -63,1002.3622 L -63,1003.3622 -61,1003.3622 -61,1000.3622 z"
+         inkscape:connector-curvature="0"
+         id="path3350-4-6"
+         style="fill:#95a5a6;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      <rect
+         width="2"
+         height="10.999983"
+         x="-61"
+         y="1004.3622"
+         id="rect3286-6-3"
+         style="fill:#d35400;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    </g>
+  </g>
+</svg>

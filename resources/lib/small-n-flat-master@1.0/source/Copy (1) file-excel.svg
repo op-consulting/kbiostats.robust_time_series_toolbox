@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="24"
+   height="24"
+   id="svg2"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="file-excel.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     id="namedview3602"
+     showgrid="false"
+     inkscape:zoom="16"
+     inkscape:cx="-8.7236239"
+     inkscape:cy="19.866808"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4173"
+       empspacing="4"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-1028.3622)"
+     id="layer1">
+    <path
+       style="fill:#358057;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
+       d="m -66.101692,975.27746 c 0,40.47464 0,40.27124 0,40.27124 l 40.474575,6.305 v -53.89828 z"
+       id="path848"
+       inkscape:connector-curvature="0" />
+    <path
+       d="M 5,1030.3622 C 3.895431,1030.3622 3,1031.2576 3,1032.3622 L 3,1040.3622 3,1044.3622 3,1050.3622 C 3,1051.4668 3.89543,1052.3622 5,1052.3622 L 19,1052.3622 C 20.104569,1052.3622 21,1051.4668 21,1050.3622 L 21,1044.3622 21,1040.3622 21,1036.3622 15,1030.3622 5,1030.3622 z"
+       inkscape:connector-curvature="0"
+       id="path2987-2"
+       style="fill:#95a5a6;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+    <path
+       d="M 5,1029.3622 C 3.895431,1029.3622 3,1030.2576 3,1031.3622 L 3,1039.3622 3,1043.3622 3,1049.3622 C 3,1050.4668 3.89543,1051.3622 5,1051.3622 L 19,1051.3622 C 20.104569,1051.3622 21,1050.4668 21,1049.3622 L 21,1043.3622 21,1039.3622 21,1035.3622 15,1029.3622 5,1029.3622 z"
+       inkscape:connector-curvature="0"
+       id="path2987"
+       style="fill:#358057;fill-opacity:1;fill-rule:nonzero;stroke:#3c6c52;stroke-opacity:1" />
+    <path
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 16.855548,1033.75 -10.4999993,1.9359 v 10.6471 l 10.4999993,1.6669 z m -7.8525785,4.5126 h 1.5605855 l 0.814746,1.7407 c 0.06356,0.1376 0.120438,0.3011 0.170753,0.49 h 0.01571 c 0.03177,-0.1133 0.09147,-0.282 0.17886,-0.506 l 0.905443,-1.7247 h 1.42986 l -1.70803,2.8783 1.755659,2.9268 h -1.521064 l -0.980939,-1.8905 c -0.03707,-0.071 -0.0758,-0.1999 -0.115523,-0.3888 h -0.01571 c -0.01854,0.089 -0.06238,0.2241 -0.131231,0.4048 l -0.984992,1.8745 H 8.847925 l 1.81494,-2.9026 z"
+       id="path850"
+       inkscape:connector-curvature="0" />
+    <path
+       d="M 21,1035.3622 15,1029.3622 15,1033.3622 C 15,1034.4668 15.89543,1035.3622 17,1035.3622 L 21,1035.3622 z"
+       inkscape:connector-curvature="0"
+       id="path2987-80"
+       style="fill:#2a5a40;fill-opacity:1;fill-rule:nonzero;stroke:#3c6c52;stroke-opacity:1;stroke-linejoin:round;stroke-linecap:round" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.35784531px;line-height:1.25;font-family:arial;-inkscape-font-specification:arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.99999994"
+       x="-56.587372"
+       y="1006.98"
+       id="text846"><tspan
+         sodipodi:role="line"
+         id="tspan844"
+         x="-56.587372"
+         y="1006.98"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';stroke-width:0.99999994">X</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path4584"
+       d="m -161.69491,1017.9893 c 0,40.4747 0,40.2713 0,40.2713 l 40.47458,6.305 v -53.8983 z"
+       style="fill:#36609f;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <text
+       id="text4588"
+       y="1049.6919"
+       x="-158.18059"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:31.35784531px;line-height:1.25;font-family:arial;-inkscape-font-specification:arial;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.99999994"
+       xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';stroke-width:0.99999994"
+         y="1049.6919"
+         x="-158.18059"
+         id="tspan4586"
+         sodipodi:role="line">W</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       style="fill:#496fa8;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m -31.95341,1033.832 -10.5,1.9275 v 10.6011 l 10.5,1.6596 z m -9.516529,4.4931 h 1.401993 l 0.802587,3.8493 c 0.03443,0.164 0.05961,0.384 0.0755,0.6607 h 0.02381 c 0.01058,-0.2069 0.04882,-0.4326 0.115017,-0.6771 l 1.032621,-3.8329 h 1.374633 l 0.933312,3.8812 c 0.03442,0.1424 0.06472,0.3497 0.0912,0.6211 h 0.01622 c 0.01058,-0.2123 0.03808,-0.4276 0.0831,-0.6453 l 0.786373,-3.857 h 1.295083 l -1.505358,5.78 h -1.42226 l -0.944965,-3.7085 c -0.05031,-0.1935 -0.08112,-0.4098 -0.09171,-0.6489 h -0.01572 c -0.02384,0.2633 -0.05835,0.4796 -0.103364,0.6489 l -0.969286,3.7085 h -1.48154 z"
+       id="path4584-1" />
+  </g>
+</svg>

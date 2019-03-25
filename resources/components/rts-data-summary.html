@@ -1,0 +1,143 @@
+<rts-data-summary>
+    <div class="executive-summary" style="">
+        <h4 class="text-light">Data summary</h4>
+        <ul class="v-menu" style="width:100%;">
+            <li class="menu-title">
+                <div class="row">
+                    <div class="cell-3">
+                        <div></div>
+                    </div>
+                    <div class="cell-3">
+                        <div>Impact on slope</div>
+                    </div>
+                    <div class="cell-3">
+                        <div>Impact on level</div>
+                    </div>
+                    <div class="cell-3">
+                        <div>Changes on noise</div>
+                    </div>
+                </div>
+            </li>
+            <template v-for="(model, index) in models">
+                <li class="">
+                    <div class="row">
+                        <!--Name-->
+                        <div class="cell-3">
+                            <div class="centered-cell">
+                                <span class="mif-dashboard mif-2x icon  parameter-indication"></span>
+                                <span>{{model.unit_name}}</span>
+                            </div>
+                        </div>
+                        <!--Slope-->
+                        <template v-for="parameter in ['slope', 'intercept', 'white_noise']">
+                            <div class="cell">
+                                <div class="centered-cell">
+                                    <span class="mif-move-up mif-2x parameter-indication"
+                                        v-if="model.logLikelihoodInfo.linear_reg_differences[parameter].estimate>=0"></span>
+                                    <span class="mif-move-down mif-2x parameter-indication" v-else></span>
+                                    <span class="parameter-estimation">
+                                        {{Math.round(model.logLikelihoodInfo.linear_reg_differences[parameter].estimate * 100)/100}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="cell-2">
+                                <div>
+                                    <div class="parameter-changes">
+                                        <span class="label">Changes:</span>
+                                        <span class="values">
+                                            <span
+                                                class="value-before">{{Math.round(model.logLikelihoodInfo.linear_reg_before_max[parameter].estimate*10)/10}}</span>
+                                            <span class="mif-forward" style="position: relative;top: 2px;"></span>
+                                            <span
+                                                class="value-after">{{Math.round(model.logLikelihoodInfo.linear_reg_after_max[parameter].estimate*10)/10}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="parameter-confidence-interval">
+                                        <span class="label">95% C.I.:</span>
+                                        <span class="values">
+                                            ({{Math.round(model.logLikelihoodInfo.linear_reg_differences[parameter].confidence_interval.lower_bound*10)/10}},
+                                            {{Math.round(model.logLikelihoodInfo.linear_reg_differences[parameter].confidence_interval.upper_bound*10)/10}})
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </li>
+            </template>
+        </ul>
+        <br>
+        <h4 class="text-light">Relevant results</h4>
+        <table class="table striped  model-information-table">
+            <tbody>
+                <tr style="height:0px!important; display: none;">
+                    <td colspan="2"></td>
+                </tr>
+                <template v-for="(model, index) in models">
+                    <tr class="">
+                        <td class="model-title" style="" colspan="2">
+                            <span class="mif-dashboard icon"></span>
+                            <span>{{model.unit_name}}</span>
+                        </td>
+                    </tr>
+                    <tr class="">
+                        <!--Plot-->
+                        <td style="width: 50%;">
+                            <div style="width: 100%; height: 300px;" :id="'executive-plot-' + index">
+                                <!--<apexchart :options="getOptions('snapshoot', model.unit_name)"></apexchart>-->
+                            </div>
+                        </td>
+                        <td style="width: 50%;">
+                            <ul class="v-menu model-information" style="width:100%;">
+                                <li class="menu-title">Change point</li>
+                                <li class="change-point">{{changePoint(model)}}</li>
+                                <li class="menu-title">Slope estimation</li>
+                                <li class="info-before-TET">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_before_max['slope'].estimate*10000)/10000}}
+                                </li>
+                                <li class="info-after-TET">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_after_max['slope'].estimate*10000)/10000}}
+                                </li>
+                                <li class="info-diff">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_differences['slope'].estimate * 10000)/10000}}
+                                </li>
+                                <li class="info-95CI">
+                                    ({{Math.round(model.logLikelihoodInfo.linear_reg_differences['slope'].confidence_interval.lower_bound*10000)/10000}},
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_differences['slope'].confidence_interval.upper_bound*10000)/10000}})
+                                </li>
+                                <li class="menu-title">Slope estimation</li>
+                                <li class="info-before-TET">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_before_max['intercept'].estimate*10000)/10000}}
+                                </li>
+                                <li class="info-after-TET">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_after_max['intercept'].estimate*10000)/10000}}
+                                </li>
+                                <li class="info-diff">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_differences['intercept'].estimate * 10000)/10000}}
+                                </li>
+                                <li class="info-95CI">
+                                    ({{Math.round(model.logLikelihoodInfo.linear_reg_differences['intercept'].confidence_interval.lower_bound*10000)/10000}},
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_differences['intercept'].confidence_interval.upper_bound*10000)/10000}})
+                                </li>
+                                <li class="menu-title">White noise estimation</li>
+                                <li class="info-before-TET">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_before_max['white_noise'].estimate*10000)/10000}}
+                                </li>
+                                <li class="info-after-TET">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_after_max['white_noise'].estimate*10000)/10000}}
+                                </li>
+                                <li class="info-diff">
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_differences['white_noise'].estimate * 10000)/10000}}
+                                </li>
+                                <li class="info-95CI">
+                                    ({{Math.round(model.logLikelihoodInfo.linear_reg_differences['white_noise'].confidence_interval.lower_bound*10000)/10000}},
+                                    {{Math.round(model.logLikelihoodInfo.linear_reg_differences['white_noise'].confidence_interval.upper_bound*10000)/10000}})
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+</rts-data-summary>

@@ -1,0 +1,52 @@
+<rts-outline-units-panel>
+    <div class="panel-title">
+        Units
+    </div>
+    <ul class="sidenav-counter sidenav-counter-expand-fs h-100 w-100 list-mini-plots">
+        <li each={name, index in opts.unit_names}>
+            <a href="#" onclick={_trigger_event(index + 1)}>
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span class="title">UNIT {(index + 1)}</span>
+                <span class="counter">{name}</span>
+            </a>
+        </li>
+    </ul>
+
+    <style>
+        .unit-miniplot {
+            zoom: 0.35;
+            margin-top: -4px;
+        }
+        * {
+            -webkit-user-drag: none !important;
+            user-select: none;
+            cursor: default;
+        }
+    </style>
+
+    <script>
+        /* globals opts: false */
+        /* globals jQuery: false */
+        /* globals FileReader: false */
+
+        /**************************************************************************
+         * Helpers
+         **************************************************************************/
+
+
+        /**************************************************************************
+         * Main script
+         **************************************************************************/
+        const self = this;
+        const config = opts;
+        config.unit_names = !!config.unit_names ? config.unit_names : [""];
+
+        self._trigger_event = (index) => {
+            return () => self.trigger('app:request:current:unit:allplots', {unitindex: index});
+        };
+
+        self.on("mount", () => {
+
+        });
+    </script>
+</rts-outline-units-panel>
