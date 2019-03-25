@@ -1,7 +1,7 @@
 <rts-main-window>
     <window-decorator ref="window">
         <yield to="title">
-            <span class="btn-custom" role="button"><img src="./images/app/icon/transparent_icon.png"
+            <span class="btn-custom" role="button"><img src="./images/app/app.png"
                     style="width: 23px;height: 23px;position: relative;top: 7px;display: block;" /></span>
             <span class="label">Robust Time Series Toolbox - KAUST Biostatistics Group</span>
         </yield>
@@ -280,6 +280,8 @@
         };
         //
         const view_data_source = (app_state, global_state, data_source) => {
+            self.refs.window.refs.panels.hide_welcome_splash();
+            //
             Object.keys(app_state()).forEach((k) => delete app_state()[k])
             let model_parameters = load_model(global_state, data_source);
             if (!check_model(model_parameters)) {
@@ -307,6 +309,7 @@
             create_thumbnails(data_source);
             create_interactive_thumbnails(plot_thumbnails, models, (i) => `#executive-plot-${i}`);
             self.refs.window.refs.menubar.enable_model_related_buttons();
+            self.trigger('app:view:summary');
             //
             app_state().model_parameters = model_parameters;
             app_state().data_source = data_source;

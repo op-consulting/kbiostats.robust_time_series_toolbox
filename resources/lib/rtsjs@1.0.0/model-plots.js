@@ -102,7 +102,7 @@ class PlotTimeSeries extends AbstractPlotter {
 class PlotLikelihood extends AbstractPlotter {
     constructor(model, element) {
         super(model, element);
-        this.title = "Log-likelihood at differente time points (" + model.unit_name + ")";
+        this.title = "Log-likelihood plot (" + model.unit_name + ")";
     }
 
     get options() {
@@ -201,7 +201,7 @@ class PlotLikelihood extends AbstractPlotter {
 class PlotTimeSeriesEstimation extends AbstractPlotter {
     constructor(model, element) {
         super(model, element);
-        this.title = "Adjusted curves before and after TET (" + model.unit_name + ")";
+        this.title = "Adjusted curves before and after change-point (" + model.unit_name + ")";
     }
 
     get options() {
@@ -573,14 +573,14 @@ class PlotResidualsHistogram extends AbstractPlotter {
 class PlotPreResidualsHistogram extends PlotResidualsHistogram {
     constructor(model, element) {
         super("before", model, element);
-        this.title = "Histogram of residuals before TET (" + model.unit_name + ")"
+        this.title = "Histogram of residuals before change-point (" + model.unit_name + ")"
     }
 }
 
 class PlotPostResidualsHistogram extends PlotResidualsHistogram {
     constructor(model, element) {
         super("after", model, element);
-        this.title = "Histogram of residuals after TET (" + model.unit_name + ")"
+        this.title = "Histogram of residuals after change-point (" + model.unit_name + ")"
     }
 }
 
@@ -736,14 +736,14 @@ class PlotResidualsACF extends AbstractPlotter {
 class PlotPreResidualsACF extends PlotResidualsACF {
     constructor(model, element) {
         super("before", model, element);
-        this.title = "Autocorrelation function of residuals before TET (" + model.unit_name + ")"
+        this.title = "Autocorrelation function of residuals before change-point (" + model.unit_name + ")"
     }
 }
 
 class PlotPostResidualsACF extends PlotResidualsACF {
     constructor(model, element) {
         super("after", model, element);
-        this.title = "Autocorrelation function of residuals after TET (" + model.unit_name + ")"
+        this.title = "Autocorrelation function of residuals after change-point (" + model.unit_name + ")"
     }
 }
 

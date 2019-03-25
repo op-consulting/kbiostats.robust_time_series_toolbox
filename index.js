@@ -28,6 +28,7 @@ const getIconPath = () => {
   } else {
     mainWindowIcon = mainWindowIcon + ".png";
   }
+  mainWindowIcon = path.join(__dirname.toString(), '/resources/images/app/app.png');
   return mainWindowIcon;
 }
 

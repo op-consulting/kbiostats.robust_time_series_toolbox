@@ -4,7 +4,19 @@
             <rts-outline-panel class="h-100 w-100" ref="outlinepanel"></rts-outline-panel>
         </div>
         <div class="plotpanel-container panel-container h-100">
-            <div class="content-container">
+            <div class="welcome-splash w-100">
+                <img class="icon" src="../resources/images/app/app.png"/>
+                <div class="title">
+                    Robust Time Series Toolbox
+                </div>
+                <div class="research-group">
+                    KAUST Biostatistics group
+                </div>
+                <div>
+                    To start choose a dataset (in CSV format) and select the model parameters.
+                </div>
+            </div>
+            <div class="content-container hidden">
                 <rts-data-summary ref="data_summary"></rts-data-summary>
                 <div class="plot_container" ref="plot_container"></div>
             </div>
@@ -15,6 +27,29 @@
     </div>
 
     <style>
+        .welcome-splash.hidden{
+            display: none;
+        }
+        .welcome-splash{
+            text-align: center;
+            margin-top: 50px;
+            font-size: 12pt;
+            font-weight: 200;
+        }
+        .welcome-splash .icon{
+            max-width: 250px;
+            opacity: 0.5;
+        }
+        .welcome-splash .title{
+            font-size: 18pt;
+            font-weight: 200;
+        }
+        .welcome-splash .research-group{
+            font-size: 12pt;
+            font-weight: normal;
+            margin-bottom: 30px;
+        }
+
         .plot_container [class^='apexcharts']{
             cursor: default!important;
         }
@@ -59,6 +94,9 @@
             overflow: auto;
             height: 100%!important;
             
+        }
+        .content-container.hidden{
+            display: none;
         }
         .content-container{
             width: 80%;
@@ -219,6 +257,10 @@
         self.change_title_plot_choose = (title = "Plots") => {
             self.refs.outlinepanel.opts.plot_title = title;
             self.refs.outlinepanel.update();
+        };
+        self.hide_welcome_splash = () => {
+            self.root.querySelector(".welcome-splash").classList.add("hidden");
+            self.root.querySelector(".content-container").classList.remove("hidden");
         };
 
         self.on("mount", () => {
