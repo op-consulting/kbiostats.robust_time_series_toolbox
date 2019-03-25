@@ -1,6 +1,6 @@
 <rts-outline-units-panel>
     <div class="panel-title">
-        Units
+        {opts.title}
     </div>
     <ul class="sidenav-counter sidenav-counter-expand-fs h-100 w-100 list-mini-plots">
         <li each={name, index in opts.unit_names}>
@@ -39,6 +39,7 @@
          **************************************************************************/
         const self = this;
         const config = opts;
+        config.title = !!config.title ? config.title : "";
         config.unit_names = !!config.unit_names ? config.unit_names : [""];
 
         self._trigger_event = (index) => {

@@ -56,7 +56,7 @@
 
         self._trigger_event = (name, _value) => {
             return () => self.trigger('app:request:change:model:date:' + name.toLowerCase(), {
-                plottype: _value()
+                date: _value()
             });
         };
 

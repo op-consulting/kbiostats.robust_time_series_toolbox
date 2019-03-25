@@ -1,7 +1,9 @@
 <rts-ribbon-menu-bar>
     <nav data-role="ribbonmenu">
         <ul class="tabs-holder" ref="tabs_holder">
-            <ribbon-tab-button type="static" label="File" onclick={_trigger_event('menubar:file');} />
+            <!--
+                <ribbon-tab-button type="static" label="File" onclick={_trigger_event('menubar:file');} />
+            -->
             <ribbon-tab-button type="active" label="Data" href="#section_data" onclick={_trigger_event('menubar:data');} />
             <ribbon-tab-button label="View" href="#section_plots" onclick={_trigger_event('menubar:plots');} />
             <ribbon-tab-button label="Export" href="#section_reports" onclick={_trigger_event('menubar:export');} />
@@ -13,12 +15,12 @@
             <div class="section" id="section_data">
                 <div class="group">
                     <ribbon-simple-button label="Load CSV" icon="icon96 file-csv" iconpreffix="sf-icon--" onclick={_trigger_event('Load:CSV');} />
-                    <ribbon-simple-button label="Load Excel" icon="icon96 file-excel" iconpreffix="sf-icon--" onclick={_trigger_event('Load:XLS');} />
+                    <ribbon-simple-button label="Load Excel" icon="icon96 file-excel" iconpreffix="sf-icon--" onclick={_trigger_event('Load:XLS');} disabled=true />
                     <span class="title">Dataset</span>
                 </div>
                 <div class="group">
-                    <ribbon-simple-button label="Date settings" icon="icon96 calendar" iconpreffix="sf-icon--" onclick={_trigger_event('Settings:ModelDates');} />
-                    <ribbon-simple-button label="Change point settings" icon="icon96 calendar-changepoint" iconpreffix="sf-icon--" onclick={_trigger_event('Settings:ChangePoint');} />
+                    <ribbon-simple-button class="data-related" label="Date settings" icon="icon96 calendar" iconpreffix="sf-icon--" onclick={_trigger_event('Settings:ModelDates');}  disabled=true/>
+                    <ribbon-simple-button class="data-related" label="Change point settings" icon="icon96 calendar-changepoint" iconpreffix="sf-icon--" onclick={_trigger_event('Settings:ChangePoint');}  disabled=true/>
                     <span class="title">Settings</span>
                 </div>
                 <div class="group"></div>
@@ -27,17 +29,17 @@
             <div class="section" id="section_plots">
                 <!-- -->
                 <div class="group">
-                    <ribbon-simple-button label="Summary" icon="icon96 changepoint-summary" iconpreffix="sf-icon--" onclick={_trigger_event('View:Summary');} />
+                    <ribbon-simple-button class="data-related" label="Summary" icon="icon96 changepoint-summary" iconpreffix="sf-icon--" onclick={_trigger_event('View:Summary');}  disabled=true/>
                     <span class="title">Summary</span>
                 </div>
                 <div class="group">
-                    <ribbon-simple-button label="Original series" icon="icon96 changepoint-raw-chart" iconpreffix="sf-icon--" onclick={_trigger_event('View:RawTimeSeries');} />
-                    <ribbon-simple-button label="Estimated model" icon="icon96 changepoint-chart" iconpreffix="sf-icon--" onclick={_trigger_event('View:EstimatedTimeSeries');} />
+                    <ribbon-simple-button class="data-related" label="Original series" icon="icon96 changepoint-raw-chart" iconpreffix="sf-icon--" onclick={_trigger_event('View:RawTimeSeries');}  disabled=true/>
+                    <ribbon-simple-button class="data-related" label="Estimated model" icon="icon96 changepoint-chart" iconpreffix="sf-icon--" onclick={_trigger_event('View:EstimatedTimeSeries');}  disabled=true/>
                     <span class="title">Time series plot</span>
                 </div>
                 <div class="group">
-                    <ribbon-simple-button label="Before change" icon="icon96 changepoint-pre-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelBeforeChangePoint');} />
-                    <ribbon-simple-button label="After change" icon="icon96 changepoint-post-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelAfterChangePoint');} />
+                    <ribbon-simple-button class="data-related" label="Before change" icon="icon96 changepoint-pre-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelBeforeChangePoint');}  disabled=true/>
+                    <ribbon-simple-button class="data-related" label="After change" icon="icon96 changepoint-post-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelAfterChangePoint');}  disabled=true/>
                     <span class="title">Model dependency</span>
                 </div>
                 <!--
@@ -51,14 +53,14 @@
 
             <div class="section" id="section_reports">
                 <div class="group">
-                    <ribbon-simple-button label="DOCX report" icon="icon96 file-word" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Report:DOCX');} />
-                    <ribbon-simple-button label="PDF report" icon="icon96 file-pdf" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Report:PDF');} />
+                    <ribbon-simple-button label="DOCX report" icon="icon96 file-word" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Report:DOCX');}  disabled=true/>
+                    <ribbon-simple-button label="PDF report" icon="icon96 file-pdf" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Report:PDF');}  disabled=true/>
                     <span class="title">Export report</span>
                 </div>
                 <div class="group">
-                    <ribbon-simple-button label="Regression line" icon="icon96 table-plot" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Regression');} />
-                    <ribbon-simple-button label="Analysis results" icon="icon96 table-green" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Analysis');} />
-                    <ribbon-simple-button label="Inference results" icon="icon96 table-blue" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Inference');} />
+                    <ribbon-simple-button label="Regression line" icon="icon96 table-plot" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Regression');}  disabled=true/>
+                    <ribbon-simple-button label="Analysis results" icon="icon96 table-green" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Analysis');}  disabled=true/>
+                    <ribbon-simple-button label="Inference results" icon="icon96 table-blue" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Inference');}  disabled=true/>
                     <span class="title">Export tables</span>
                 </div>
                 <div class="group"></div>
@@ -66,8 +68,8 @@
 
             <div class="section" id="section_help">
                 <div class="group">
-                    <ribbon-simple-button label="Model description" icon="icon96 book-paper" iconpreffix="sf-icon--" onclick={_trigger_event('Help:Model');} />
-                    <ribbon-simple-button label="Help" icon="icon96 life-buoy" iconpreffix="sf-icon--" onclick={_trigger_event('Help:Program');} />
+                    <ribbon-simple-button label="Model description" icon="icon96 book-paper" iconpreffix="sf-icon--" onclick={_trigger_event('Help:Model');}  disabled=true/>
+                    <ribbon-simple-button label="Help" icon="icon96 life-buoy" iconpreffix="sf-icon--" onclick={_trigger_event('Help:Program');}  disabled=true/>
                     <span class="title">Help</span>
                 </div>
                 <div class="group"></div>
@@ -262,9 +264,16 @@
             (e !== undefined && e != null)? e.preventDefault(): null;
         };
 
+        self.enable_model_related_buttons = () => {
+            Array.from(self.root.querySelectorAll(".data-related")).forEach((el) => {
+                el._tag.enable();
+            });
+        }
+
         self.on("mount", () => {
             self.refs.toogle_menu_bar.root.addEventListener("click", self.toogle_menu_bar)
             allow_buttons_show_hide("ribbon-tab-button:not([type~=no-link])");
+            
         });
         
         //

@@ -23,7 +23,7 @@ _global.np = np;
 var st = require("./lib/jstat@1.7.1/jstat.js");
 _global.st = st;
 var moment = require("./lib/moments.js@2.24.0/moment.js");
-
+_global.moment = moment;
 var SVG = require("./lib/svg.js@2.5.0/svg.js");
 _global.SVG = SVG;
 

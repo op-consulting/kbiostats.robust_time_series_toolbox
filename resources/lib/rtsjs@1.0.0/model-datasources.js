@@ -45,9 +45,59 @@ class ModelDataSourceJson extends ModelDataSource {
     get units() {
         return Object.keys(this.__data);
     }
+    closeIndexTo(date){
+        const _units = this.units;
+        let i = 0;
+        for(; i < this.__data[_units[0]].length; i++){
+            if(date <= this.__data[_units[0]][i][0]) break;
+        }
+        return i;
+    }
+    filter(start_date, end_date){
+        let _d = {};
+        Object.keys(this.__data).forEach((k) => {_d[k] = this.__data[k].filter((_v) => _v[0] <= end_date && _v[0] >= start_date)});
+        this.__data = null;
+        this.__data = _d;
+    }
+    clone(){
+        let stormtropper = new ModelDataSourceJson();
+        Object.keys(this.__data).forEach((k) => {
+            stormtropper.__data[k] = this.__data[k].map((e) => [e[0], e[1]]);
+        });
+        return stormtropper;
+    }
+    from(array){
+        console.log("ÄSDFG")
+        console.log(array)
+        if(!array.length)
+            throw new Error("Data is not a valid table");
+        let _d = {}
+        for(let i = 0; i < array.length; i++){
+            if(!array[i].length || array[i].length != 3){
+                throw new Error("Data must have only three columns");
+            }
+            const name = array[i][0].trim().capitalize();
+            const date_string = array[i][1].trim();
+            const value_string = array[i][2].trim();
+            let date, value;
+            try {
+                date = moment(date_string).toDate();
+            } catch (e) {
+                throw new Error(`${date_string} (in line ${i + 1}) is not a valid date. Please check it.`);
+            }
+            try {
+                value = Number.parseFloat(value_string);
+            } catch (e) {
+                throw new Error(`${value_string} (in line ${i + 1}) is not a valid number. Please check it.`);
+            }
+            if(!(name in _d)){
+                _d[name] = [];
+            }
+            _d[name].push([date, value]);
+        }
+        this.__data = _d;
+    }
 }
-
-
 
 class ModelDataSourceTest extends ModelDataSourceJson {
     constructor() {

@@ -42,11 +42,24 @@
         config.iconpreffix = config.iconpreffix !== undefined ? config.iconpreffix : "";
         config.label = config.label !== undefined ? config.label : "";
         config.onclick = config.onclick !== undefined ? config.onclick : null;
-
+        config.disabled = config.disabled !== undefined ? config.disabled : null;
+        
+        self.toggle = () => {
+            self.root.querySelector("button").classList.toggle("disabled");
+        };
+        self.enable = () => {
+            self.root.querySelector("button").classList.remove("disabled");
+        };
+        self.disable = () => {
+            self.root.querySelector("button").classList.add("disabled");
+        };
+            
         self.icon_class = config.icon.split(/\s+/g).map((_) => _[0] == "!" ? _.substr(1) : (config.iconpreffix + _)).join(" ")
         
         self.on("mount", () => {
-            console.log(config.onclick, "@")
+            if(config.disabled){
+                self.disable();
+            }
         });
         //
     </script>

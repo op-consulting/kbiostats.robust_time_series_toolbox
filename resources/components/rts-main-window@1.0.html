@@ -6,9 +6,12 @@
             <span class="label">Robust Time Series Toolbox - KAUST Biostatistics Group</span>
         </yield>
         <yield to="left-title">
-            <span class="btn-custom mif-folder-open"></span>
-            <span class="btn-custom mif-file-word"></span>
-            <span class="btn-custom mif-file-pdf"></span>
+            <span class="btn-custom mif-eyedropper load-test-data"></span>
+            <!--
+                <span class="btn-custom mif-folder-open"></span>
+                <span class="btn-custom mif-file-word"></span>
+                <span class="btn-custom mif-file-pdf"></span>
+            -->
         </yield>
         <yield to="right-title">
             <span class="btn-custom mif-cog fg-cyan"></span>
@@ -33,6 +36,14 @@
             height: 100% !important;
             overflow: hidden;
         }
+
+        .plot .apexcharts-title-text{
+            color: #000001 !important;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Helvetica Neue", sans-serif !important;
+            font-family: 'Segoe UI Web (West European)' !important;
+            font-weight: 200 !important;
+            font-size: 16pt !important;
+        }
     </style>
 
 
@@ -44,15 +55,26 @@
         /**************************************************************************
          * UI Helpers
          **************************************************************************/
-         
+        
+        const _global = window;
+        const app_state = () => _global.__RTSdata;
+        const global_state = () => _global.__gRTSdata;
+
         const update_unit_names_in_outline = (unit_names) => {
             self.refs.window.refs.panels.change_unit_names(unit_names);
+        };
+        const update_models_in_summary = (models) => {
+            self.refs.window.refs.panels.change_summary_models(models);
         };
 
         /**************************************************************************
          * Helpers
          **************************************************************************/
-
+        const raise_resize_event = () => {
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 30);
+        };
         const connect_event_with_component_action = (event_name, component_receiver, action_name, condition = null) => {
             condition = !!condition ? condition : ((d) => true);
             self.on(event_name, (data) => {
@@ -124,6 +146,8 @@
             event_registry('app:help:model', self.refs.window.refs.menubar);
             event_registry('app:help:program', self.refs.window.refs.menubar);
 
+            self.root.querySelector(".load-test-data").onclick = () => process_data(app_state, global_state, read_test_data_source);
+
         };
 
         const register_events_in_outline_panel = () => {
@@ -134,11 +158,7 @@
         };
 
         const register_events_in_date_settings_panel = () => {
-            event_registry('app:request:change:model:changepoint:reference', self.refs.window.refs.panels.refs
-                .configpanel.refs.changepoint);
-            event_registry('app:request:change:model:changepoint:before', self.refs.window.refs.panels.refs
-                .configpanel.refs.changepoint);
-            event_registry('app:request:change:model:changepoint:after', self.refs.window.refs.panels.refs
+            event_registry('app:request:change:model:changepoint', self.refs.window.refs.panels.refs
                 .configpanel.refs.changepoint);
             event_registry('app:request:change:model:date:start', self.refs.window.refs.panels.refs.configpanel.refs
                 .date);
@@ -168,6 +188,12 @@
          * Specific events
          **************************************************************************/
         //
+        const create_interactive_thumbnails = (plot_thumbnails, models, selector_cb) => {
+            for (let index = 0; index < models.length; index++) {
+                let element = self.root.querySelector(selector_cb(index));
+                plot_thumbnails.getChart(element, "snapshoot", models[index])
+            }
+        };
         const create_thumbnails = (data_source) => {
             data_source.units.forEach((unit_name, k) => {
                 const data_values = data_source.valuesOfUnit(unit_name);
@@ -208,34 +234,61 @@
             return true;
         };
         //
-        const load_model = () => {
+        const load_model = (global_state, data_source) => {
+            let {change_point_date, change_point_start_date, change_point_end_date} = global_state();
             let model_parameters = new RTSModel.ModelParameters();
-            model_parameters.theoretical_executive_time_point = 120;
-            model_parameters.candidate_before_tet = 20;
-            model_parameters.candidate_after_tet = 20;
+            if(!!!change_point_date){
+                model_parameters.theoretical_executive_time_point = Number.parseInt(data_source.__data[Object.keys(data_source.__data)[0]].length/2);
+                model_parameters.candidate_before_tet = 10;
+                model_parameters.candidate_after_tet = 10;
+            }else{
+                model_parameters.theoretical_executive_time_point = data_source.closeIndexTo(change_point_date);
+                model_parameters.candidate_before_tet = model_parameters.theoretical_executive_time_point - data_source.closeIndexTo(change_point_start_date) + 1;
+                model_parameters.candidate_after_tet = data_source.closeIndexTo(change_point_end_date) - model_parameters.theoretical_executive_time_point + 1;
+            }
             return model_parameters;
         };
         //
-        const load_data_source = () => {
+        const read_file_data_source = (data) => {
+            return () => {
+                let data_source = new RTSModel.ModelDataSourceJson();
+                data_source.from(data);
+                return data_source;
+            }
+        };
+        
+        const read_test_data_source = () => {
+            // TODO: CHECK FOR MEMORY LEAKS
             let data_source = new RTSModel.ModelDataSourceLargeTest();
             return data_source;
         };
-        //
-        const view_data_source = () => {
-            // TODO: CHECK FOR MEMORY LEAKS
-            Object.keys(window.__RTSdata).forEach((k) => delete window.__RTSdata[k])
-            let model_parameters = load_model();
-            if (!check_model(model_parameters)) {
-                throw new Error("Inconsistencies in the model. Please check the parameters.");
-            }
-            let data_source = load_data_source();
+
+        const _process_data = (app_state, global_state, data_reader) => {
+            Object.keys(global_state()).forEach((k) => delete global_state()[k])
+            let data_source = data_reader();
             if (!check_data_source(data_source)) {
                 throw new Error("Inconsistencies in the data source. Please check the input file.");
+            }
+            global_state().data_source = data_source;
+            view_data_source(app_state, global_state, data_source);
+        };
+
+        const process_data = (app_state, global_state, data_reader) => {
+            show_loading_infobox("Processing dataset",
+                "Please wait until the graphs are prepared.",
+                () => _process_data(app_state, global_state, data_reader), 1, 1);
+        };
+        //
+        const view_data_source = (app_state, global_state, data_source) => {
+            Object.keys(app_state()).forEach((k) => delete app_state()[k])
+            let model_parameters = load_model(global_state, data_source);
+            if (!check_model(model_parameters)) {
+                throw new Error("Inconsistencies in the model. Please check the parameters.");
             }
             let models = data_source.units.map(unit_name => {
                 let m = new RTSModel.RTSModel(model_parameters, data_source,
                     unit_name);
-                //m.logLikelihoodInfo;
+                m.logLikelihoodInfo;
                 return m;
             });
             // Load everything
@@ -250,78 +303,198 @@
             /////target.style.display = "none";
             // create_thumbnails
             update_unit_names_in_outline(data_source.units);
+            update_models_in_summary(models);
             create_thumbnails(data_source);
+            create_interactive_thumbnails(plot_thumbnails, models, (i) => `#executive-plot-${i}`);
+            self.refs.window.refs.menubar.enable_model_related_buttons();
             //
-            window.__RTSdata.model_parameters= model_parameters;
-            window.__RTSdata.data_source = data_source;
-            window.__RTSdata.models = models;
-            window.__RTSdata.plot_collection = plot_collection;
-        };
+            app_state().model_parameters = model_parameters;
+            app_state().data_source = data_source;
+            app_state().models = models;
+            app_state().plot_collection = plot_collection;
+        }
         //
-        const visualizing_dataset_events = (RTSdata) => {
+        const visualizing_dataset_events = (RTSdata, selector_other_panels="") => {
+            const change_title_unit_options = (title) => {
+                self.refs.window.refs.panels.change_title_unit_choose(title)
+            };
             let current_plot_type = null;
             const base_categories  = ["time-series", "likelihood", "time-series-estimation", "pre-event-residuals-histogram", "pre-event-residuals-acf", "post-event-residuals-histogram", "post-event-residuals-acf"];
             self.on('app:view:rawtimeseries', () => {
                 current_plot_type = ["time-series"];
-                console.log(current_plot_type);
+                change_title_unit_options("Original series: Choose a unit")
+                //console.log(current_plot_type);
             });
             self.on('app:view:estimatedtimeseries', () => {
                 current_plot_type = ["time-series-estimation", "likelihood"];
-                console.log(current_plot_type);
+                change_title_unit_options("Estimated series: Choose a unit")
+                //console.log(current_plot_type);
             });
             self.on('app:view:modelbeforechangepoint', () => {
                 current_plot_type = ["pre-event-residuals-histogram", "pre-event-residuals-acf"];
-                console.log(current_plot_type);
+                change_title_unit_options("Model before change-point: Choose a unit")
+                //console.log(current_plot_type);
             });
             self.on('app:view:modelafterchangepoint', () => {
                 current_plot_type = ["post-event-residuals-histogram", "post-event-residuals-acf"];
-                console.log(current_plot_type);
+                change_title_unit_options("Model after change-point: Choose a unit")
+                //console.log(current_plot_type);
             });
             self.on('app:request:current:unit:allplots', (params) => {
                 const {data_source, models, plot_collection} = RTSdata;
                 const {unitindex} = params;
                 let unit_names = data_source.units;
+                const executive_summary_targets = Array.from(self.root.querySelectorAll(selector_other_panels));
                 plot_collection.filter(current_plot_type, [unit_names[unitindex-1]]);
-                window.dispatchEvent(new Event('resize'));
+                raise_resize_event();
+                executive_summary_targets.forEach((es) => {
+                    es.classList.add("hidden")
+                });
             });
-            /*
-            'app:view:rawtimeseries', self.refs.window.refs.panels.refs
-                .outlinepanel, 'view_list_unit_names');
-            connect_event_with_component_action('app:view:estimatedtimeseries', self.refs.window.refs.panels.refs
-                .outlinepanel, 'view_list_unit_names');
-            connect_event_with_component_action('app:view:modelbeforechangepoint', self.refs.window.refs.panels.refs
-                .outlinepanel, 'view_list_unit_names');
-            connect_event_with_component_action('app:view:modelafterchangepoint'
-
-         let categories  = ["time-series", "likelihood", "time-series-estimation", "pre-event-residuals-histogram", "pre-event-residuals-acf", "post-event-residuals-histogram", "post-event-residuals-acf"];
-         let unit_names = data_source.units;
-         if(selected_plots != null && selected_plots[0] == "@"){
-            if(selected_plots == "@time-series"){
-                categories = ["time-series", "likelihood", "time-series-estimation"];
-            }else if(selected_plots == "@stats-info"){
-                categories = ["pre-event-residuals-histogram", "pre-event-residuals-acf", "post-event-residuals-histogram", "post-event-residuals-acf"];
-            }else{
-                throw new ReferenceError("Unknown category " + selected_plots)
-            }
-         }else if(selected_plots != null && selected_plots.length > 0){
-            categories = selected_plots;
-         }
-         if(typeof selected_unit_names != "undefined" && selected_unit_names != null && selected_unit_names.length > 0){
-             unit_names = selected_unit_names;
-         }
-         plot_collection.filter(categories, unit_names);
-            */
-            //
         };
         //
-        const process_dataset = () => {
-            show_loading_infobox("Processing dataset",
-                "Please wait until the graphs are prepared.",
-                view_data_source);
+        const visualizing_executive_summary = (selector, other_selectors) => {
+            self.on('app:view:summary', () => {
+                const executive_summary_target = self.root.querySelector(selector);
+                const other_targets = Array.from(self.root.querySelectorAll(other_selectors));
+                self.refs.window.refs.panels.refs.outlinepanel.view_blank();
+                executive_summary_target.classList.remove("hidden");
+                other_targets.forEach((el) => {
+                    el.style.display = "none";
+                });
+                raise_resize_event();
+            });
+        };  
+        //
+        //
+        const open_file = () => {
+            const file_filter = [{
+                    name: 'Data source (.CSV)',
+                    extensions: ['csv']
+                },
+                {
+                    name: 'All Files',
+                    extensions: ['*']
+                }
+            ];
+            const {
+                dialog
+            } = require("electron").remote;
+            const fs = require('fs');
+            const paths = dialog.showOpenDialog({
+                filters: file_filter,
+                properties: ['openFile'],
+            });
+            if (!paths) {
+                return;
+            }
+            fs.readFile(paths[0], 'utf8', (err, data) => {
+                if (err) {
+                    return console.error(err);
+                }
+                papaparse.parse(data, {
+                    keepEmptyRows: false,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+                        if(results.errors.length > 0)
+                            throw new Error("CSV file cannot be processed. Please contact the administrator.");
+                        process_data(app_state, global_state, read_file_data_source(results.data));
+                        /*console.log("loaded-file", {
+                            filename: "filename",
+                            content: results.data,
+                            metadata: {
+                                errors: results.errors,
+                                file: results.meta
+                            },
+                        });*/
+                    }
+                });
+            });
+            
         };
 
-        const open_file = () => {
-            process_dataset();
+        //
+        const modify_model_events = (app_state, global_state) => {
+            /*
+            CHECK: cases when mofifying the range of the time series, the candidates to CP became invalid
+            */
+            let filter_end_date = new Date("01 Jan 2100");
+            let filter_start_date = new Date("01 Jan 1900");
+
+            let change_point_date = new Date("01 Jan 2000");
+            let change_point_start_date = new Date("01 Jan 1900");
+            let change_point_end_date = new Date("01 Jan 2100");
+            
+            const date_errors = (message) => {
+                Metro.infobox.create(`<h3>Date error</h3>
+                    <p>${message}</p>`, "warning");
+            };
+
+            const update_model = () => {
+                global_state().change_point_date = change_point_date
+                global_state().change_point_start_date = change_point_start_date
+                global_state().change_point_end_date = change_point_end_date
+                view_data_source(app_state, global_state, app_state().data_source.clone());
+            };
+
+            const apply_changes = () => {
+                let data_source = global_state().data_source.clone();
+                data_source.filter(filter_start_date, filter_end_date);
+                try{
+                    view_data_source(app_state, global_state, data_source);
+                }catch(e){
+                    Metro.infobox.create(`<h3>Error processing the data</h3>
+                    <p>Please check the parameters of the model. </p>`, "warning");
+                }
+            };
+
+            const check_value_in_dataset = (date) => {
+                let ds = global_state().data_source;
+                let units = ds.units[0];
+                let min_date = ds.__data[units][0][0];
+                let max_date = ds.__data[units][ds.__data[units].length - 1][0];
+                return date >= min_date && date <= max_date;
+            };
+
+            self.on("app:request:change:model:date:start", (event_data) => {
+                console.log("#1", 123456, filter_start_date, filter_end_date);
+                const {date} = event_data;
+                if(date - filter_end_date >= 0){
+                    date_errors("Start date must be before than the finishing date.");
+                }else{
+                    filter_start_date = date;
+                    apply_changes();
+                }
+            });
+            self.on("app:request:change:model:date:end", (event_data) => {
+                console.log("#2", 123456, filter_start_date, filter_end_date);
+                const {date} = event_data;
+                if(filter_start_date - date >= 0){
+                    date_errors("Finish date must be after than the starting date.");
+                }else{
+                    filter_end_date = date;
+                    apply_changes();
+                }
+            });
+            self.on("app:request:change:model:changepoint", (event_data) => {
+                const {reference, start, end} = event_data;
+                const conditions = (
+                    (reference >= filter_start_date && reference <= filter_end_date) &&
+                    (start >= filter_start_date && start <= filter_end_date) &&
+                    (end >= filter_start_date && end <= filter_end_date) &&
+                    check_value_in_dataset(reference) &&
+                    check_value_in_dataset(start) &&
+                    check_value_in_dataset(end)
+                )
+                if(!conditions){
+                    date_errors("Change-point candidates must be in the dataset range.");
+                }else{
+                    change_point_date = reference;
+                    change_point_start_date = start;
+                    change_point_end_date = end;
+                    update_model();
+                }
+            });
         };
 
 
@@ -345,15 +518,21 @@
             //
             link_visual_interface_behaviour();
             //
+            modify_model_events(app_state, global_state);
             //
-            window.__RTSdata = null;
-            window.__RTSdata = {
+            _global.__gRTSdata = null;
+            _global.__gRTSdata = {
+                data_source: null,
+            };
+            _global.__RTSdata = null;
+            _global.__RTSdata = {
                 model_parameters: null,
                 data_source: null,
                 models: null,
                 plot_collection: null,
             }
-            visualizing_dataset_events(window.__RTSdata);
+            visualizing_dataset_events(_global.__RTSdata, ".executive-summary");
+            visualizing_executive_summary(".executive-summary", ".plot_container > *");
             //
             self.on('app:load:csv', open_file);
         });

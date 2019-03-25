@@ -4,7 +4,10 @@
             <rts-outline-panel class="h-100 w-100" ref="outlinepanel"></rts-outline-panel>
         </div>
         <div class="plotpanel-container panel-container h-100">
-            <div class="plot_container" ref="plot_container"></div>
+            <div class="content-container">
+                <rts-data-summary ref="data_summary"></rts-data-summary>
+                <div class="plot_container" ref="plot_container"></div>
+            </div>
         </div>
         <div class="configpanel-container panel-container h-100">
             <rts-configuration-panel class="h-100 w-100" ref="configpanel"></rts-configuration-panel>
@@ -55,6 +58,16 @@
         .plotpanel-container {
             overflow: auto;
             height: 100%!important;
+            
+        }
+        .content-container{
+            width: 80%;
+            min-width: 700px!important;
+            margin: 15px auto;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #bbbec2;
+            box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19) !important;
         }
 
         .main-viewport {
@@ -192,14 +205,24 @@
             update_panel_widths(0);
         };
         self.change_unit_names = (unit_names) => {
-            console.log(self.refs.outlinepanel)
             self.refs.outlinepanel.opts.unit_names = unit_names;
-            self.refs.outlinepanel.unit_names = unit_names;
+            self.refs.outlinepanel.update();
+        };
+        self.change_summary_models = (models) => {
+            self.refs.data_summary.opts.models = models;
+            self.refs.data_summary.update();
+        };
+        self.change_title_unit_choose = (title = "Units") => {
+            self.refs.outlinepanel.opts.unit_title = title;
+            self.refs.outlinepanel.update();
+        };
+        self.change_title_plot_choose = (title = "Plots") => {
+            self.refs.outlinepanel.opts.plot_title = title;
             self.refs.outlinepanel.update();
         };
 
         self.on("mount", () => {
-            create_splitter([25, 50, 25]);
+            create_splitter([15, 70, 15]);
         });
     </script>
 </rts-three-column-panel>

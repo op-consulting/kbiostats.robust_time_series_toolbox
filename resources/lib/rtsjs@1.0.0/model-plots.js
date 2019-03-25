@@ -818,7 +818,7 @@ class PlotCollector {
         let component = document.createElement("div");
         component.classList.add("plot");
         component.classList.add(type_plot);
-        component.classList.add(unit_model.unit_name);
+        component.classList.add(unit_model.unit_name.replace(/\W/g, "-"));
         component.style.display = "block";
         this.__element.appendChild(component);
         let plotter = (new (PlotCollector.selectPlotter(type_plot))(unit_model, component));

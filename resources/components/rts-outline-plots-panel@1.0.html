@@ -1,6 +1,6 @@
 <rts-outline-plots-panel>
     <div class="panel-title">
-        Type of plots
+        {opts.title}
     </div>
     <ul class="sidenav-counter sidenav-counter-expand-fs h-100 w-100">
         <li><a href="#" onclick={_trigger_event('RawTimeSeries');}>
@@ -68,6 +68,7 @@
          **************************************************************************/
         const self = this;
         const config = opts;
+        config.title = !!config.title ? config.title : "";
 
         self._trigger_event = (name) => {
             //console.log('creating  app:request:viewcurrent:' + name.toLowerCase());
