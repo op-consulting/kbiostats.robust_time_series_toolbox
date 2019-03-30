@@ -40,214 +40,246 @@ Plain format file input
 
 ---->
 <window-decorator>
-    <div class="window main-window">
-        <div class="window-caption">
-            <virtual if={platform=='OSX' }>
-                <div class="buttons win-buttons mac-side">
-                    <span class="btn-min win-min"></span>
-                    <span class="btn-max win-max"></span>
-                    <span class="btn-close win-close"></span>
-                </div>
-            </virtual>
-            <div class="buttons left-side">
-                <yield from="left-title"></yield>
-            </div>
-            <span class="title">
-                <yield from="title"></yield>
-            </span>
-            <div class="buttons right-side">
-                <yield from="right-title"></yield>
-            </div>
-            <virtual if={platform!='OSX' }>
-                <div class="buttons win-buttons win-side">
-                    <span class="btn-min win-min"></span>
-                    <span class="btn-max win-max"></span>
-                    <span class="btn-close win-close"></span>
-                </div>
-            </virtual>
+  <div class="window main-window">
+    <div class="window-caption">
+      <virtual if={platform=='OSX' }>
+        <div class="buttons win-buttons mac-side">
         </div>
-        <yield from="menu-bar"></yield>
-        <div class="window-content">
-            <yield from="content"></yield>
+      </virtual>
+      <div class="buttons left-side">
+        <yield from="left-title"></yield>
+      </div>
+      <span class="title">
+        <yield from="title"></yield>
+      </span>
+      <div class="buttons right-side">
+        <yield from="right-title"></yield>
+      </div>
+      <virtual if={platform!='OSX' }>
+        <div class="buttons win-buttons win-side">
+          <span class="btn-min win-min"></span>
+          <span class="btn-max win-max"></span>
+          <span class="btn-close win-close"></span>
         </div>
+      </virtual>
     </div>
+    <yield from="menu-bar"></yield>
+    <div class="window-content">
+      <yield from="content"></yield>
+    </div>
+  </div>
 
-    <style>
-        /****/
+  <style>
+    /****/
 
-        .main-window {
-            border: none !important;
-            background: transparent;
-            height: 100%;
-            /*font-size: 9pt;*/
+    .main-window {
+      border: none !important;
+      background: transparent;
+      height: 100%;
+      /*font-size: 9pt;*/
+    }
+
+    .main-window span,
+    .main-window div,
+    .main-window {
+      font-family: 'Segoe UI', 'Segoe UI Web (West European)', "Noto Sans";
+    }
+
+    [class^="ms-Icon"] {
+      font-family: 'FabricMDL2Icons' !important;
+    }
+
+    .main-window .window-content {
+      background-color: rgb(224, 224, 224);
+      border: none !important;
+      border-left: rgba(255, 255, 255, 0.5) solid 1px !important;
+      border-right: rgba(255, 255, 255, 0.5) solid 1px !important;
+      border-bottom: rgba(255, 255, 255, 0.5) solid 1px !important;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: -webkit-fill-available;
+    }
+
+    .main-window .window-caption .mac-side {
+      opacity: 0;
+    }
+
+    .main-window.unmaximized .window-caption .mac-side {
+      width: 105px !important;
+    }
+
+    .main-window.maximized .window-caption .mac-side {
+      width: 5px !important;
+    }
+
+    .main-window .window-caption .title {
+      text-align: center;
+      /*font-size: 120%;*/
+
+    }
+
+    .main-window .window-caption .title div,
+    .main-window .window-caption .title span {
+      display: inline-block;
+      display: inline-flex;
+    }
+
+    .main-window .window-caption .side {
+      display: inline-block;
+      display: inline-flex;
+    }
+
+    .main-window .window-caption .side>div,
+    .main-window .window-caption .side>input,
+    .main-window .window-caption .side>span {
+      display: inline-block;
+      display: inline-flex;
+    }
+
+    .main-window .window-caption {
+      -webkit-user-select: none;
+      -webkit-app-region: drag;
+      background: transparent;
+      min-height: 36px;
+    }
+
+    .main-window .window-caption * {
+      cursor: default !important;
+    }
+
+    .main-window,
+    .main-window .window-caption .buttons *[class|=btn],
+    .main-window .window-caption * {
+      font-size: 12px;
+    }
+
+    .main-window .window-caption .buttons * {
+      -webkit-app-region: no-drag;
+      background-color: transparent;
+      transition: 600ms linear background-color;
+    }
+
+    .main-window .window-caption .buttons *[class|=btn]:hover {
+      background-color: rgba(180, 180, 180, 0.5);
+      transition: 600ms linear background-color;
+      color: #ffffff;
+    }
+
+    .main-window .window-caption .buttons .btn-custom::before {
+      top: -0.15rem;
+      position: relative;
+    }
+
+    .main-window .window-caption .buttons .btn-custom:hover {
+      color: #ffffff !important;
+    }
+
+    .main-window .window-caption .buttons .btn-close:hover {
+      background-color: rgba(199, 80, 80, 1);
+      color: #ffffff;
+      transition: 600ms linear background-color;
+    }
+
+    *::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      background-color: rgba(245, 245, 245, 0.7);
+    }
+
+    *::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+      background-color: rgba(245, 245, 245, 0.7);
+    }
+
+    *::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+      background-color: rgba(85, 85, 85, 0.5);
+    }
+  </style>
+
+  <script>
+    /* globals opts: false */
+
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+    function electronIsInstalled() {
+      try {
+        require("electron");
+        return true;
+      } catch (error) {}
+      return false;
+    }
+
+    function platform() {
+      if (self.electronIsInstalled) {
+        const remote = require('electron').remote;
+        const platform = remote.process.platform;
+        if (platform.indexOf("darwin") >= 0 || platform.indexOf("mac") >= 0) {
+          return "OSX";
+        } else if (platform.indexOf("win") >= 0) {
+          return "WIN";
+        } else {
+          return "";
         }
+      }
+      return "";
+    }
 
-        .main-window span,
-        .main-window div,
-        .main-window {
-            font-family: 'Segoe UI', 'Segoe UI Web (West European)', "Noto Sans";
-        }
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
+    const self = this;
+    const config = opts;
+    const self$ = jQuery(self.root);
+    const reader = new FileReader();
+    self.electronIsInstalled = electronIsInstalled();
+    self.platform = platform();
 
-        [class^="ms-Icon"] {
-            font-family: 'FabricMDL2Icons' !important;
-        }
+    self.on("mount", () => {
+      if (self.electronIsInstalled) {
+        const remote = require('electron').remote;
+        const this_window = remote.getCurrentWindow();
+        const current_fwin = self.root.querySelector(".main-window");
+        const closeWindow = () => this_window.close()
+        const toggleWindow = () => !this_window.isMaximized() ? this_window.maximize() : this_window.unmaximize();
+        const minimizeWindow = () => this_window.minimize();
 
-        .main-window .window-content {
-            background-color: rgb(224, 224, 224);
-            border: none !important;
-            border-left: rgba(255, 255, 255, 0.5) solid 1px !important;
-            border-right: rgba(255, 255, 255, 0.5) solid 1px !important;
-            border-bottom: rgba(255, 255, 255, 0.5) solid 1px !important;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: -webkit-fill-available;
-        }
-
-        .main-window .window-caption .mac-side {
-            opacity: 0;
-        }
-
-        .main-window .window-caption .title {
-            text-align: center;
-            /*font-size: 120%;*/
-
-        }
-
-        .main-window .window-caption .title div,
-        .main-window .window-caption .title span {
-            display: inline-block;
-            display: inline-flex;
-        }
-
-        .main-window .window-caption .side {
-            display: inline-block;
-            display: inline-flex;
-        }
-
-        .main-window .window-caption .side>div,
-        .main-window .window-caption .side>input,
-        .main-window .window-caption .side>span {
-            display: inline-block;
-            display: inline-flex;
-        }
-
-        .main-window .window-caption {
-            -webkit-user-select: none;
-            -webkit-app-region: drag;
-            background: transparent;
-            min-height: 36px;
-        }
-
-        .main-window .window-caption * {
-            cursor: default !important;
-        }
-
-        .main-window,
-        .main-window .window-caption .buttons *[class|=btn],
-        .main-window .window-caption * {
-            font-size: 12px;
-        }
-
-        .main-window .window-caption .buttons * {
-            -webkit-app-region: no-drag;
-            background-color: transparent;
-            transition: 600ms linear background-color;
-        }
-
-        .main-window .window-caption .buttons *[class|=btn]:hover {
-            background-color: rgba(180, 180, 180, 0.5);
-            transition: 600ms linear background-color;
-            color: #ffffff;
-        }
-
-        .main-window .window-caption .buttons .btn-custom::before {
-            top: -0.15rem;
-            position: relative;
-        }
-
-        .main-window .window-caption .buttons .btn-custom:hover {
-            color: #ffffff !important;
-        }
-
-        .main-window .window-caption .buttons .btn-close:hover {
-            background-color: rgba(199, 80, 80, 1);
-            color: #ffffff;
-            transition: 600ms linear background-color;
-        }
-        
-        *::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            background-color: rgba(245, 245, 245, 0.7);
-        }
-
-        *::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-            background-color: rgba(245, 245, 245, 0.7);
-        }
-
-        *::-webkit-scrollbar-thumb {
-            border-radius: 10px;
-            -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-            background-color: rgba(85, 85, 85, 0.5);
-        }
-
-    </style>
-
-    <script>
-        /* globals opts: false */
-
-        /**************************************************************************
-         * Helpers
-         **************************************************************************/
-        function electronIsInstalled() {
-            try {
-                require("electron");
-                return true;
-            } catch (error) {}
-            return false;
-        }
-
-        function platform() {
-            if (self.electronIsInstalled) {
-                const remote = require('electron').remote;
-                const platform = remote.process.platform;
-                if (platform.indexOf("darwin") >= 0 || platform.indexOf("mac") >= 0) {
-                    return "OSX";
-                } else if (platform.indexOf("win") >= 0) {
-                    return "WIN";
-                } else {
-                    return "";
-                }
-            }
-            return "";
-        }
-
-        /**************************************************************************
-         * Main script
-         **************************************************************************/
-        const self = this;
-        const config = opts;
-        const self$ = jQuery(self.root);
-        const reader = new FileReader();
-        self.electronIsInstalled = electronIsInstalled();
-        self.platform = platform();
-
-        self.on("mount", () => {
-            if (self.electronIsInstalled) {
-                const remote = require('electron').remote;
-                const this_window = remote.getCurrentWindow();
-                var closeWindow = () => this_window.close()
-                var maximizeWindow = () => !this_window.isMaximized() ? window.maximize() : window.unmaximize()
-                var minimizeWindow = () => this_window.minimize()
-                self.root.querySelector(".main-window .win-close").addEventListener("click", () => this_window.close());
-                self.root.querySelector(".main-window .win-max").addEventListener("click", () => !this_window.isMaximized() ?
-                    this_window.maximize() : this_window.unmaximize());
-                self.root.querySelector(".main-window .win-min").addEventListener("click", () => this_window.minimize());
-            }
-            document.body.classList.remove("hidden");
+        this_window.on('maximize', function () {
+          current_fwin.classList.remove("unmaximized");
+          current_fwin.classList.remove("maximized");
+          current_fwin.classList.add("maximized");
         });
-    </script>
+        this_window.on('unmaximize', function () {
+          current_fwin.classList.remove("unmaximized");
+          current_fwin.classList.remove("maximized");
+          current_fwin.classList.add("unmaximized");
+        });
+        this_window.on('enter-full-screen', function () {
+          current_fwin.classList.remove("unmaximized");
+          current_fwin.classList.remove("maximized");
+          current_fwin.classList.add("maximized");
+        });
+        this_window.on('leave-full-screen', function () {
+          current_fwin.classList.remove("unmaximized");
+          current_fwin.classList.remove("maximized");
+          current_fwin.classList.add("unmaximized");
+        });
+        self.root.querySelector(".main-window").classList.add(((!this_window.isMaximized()) ? "un" : "") +
+          "maximized");
+
+        if (self.platform != "OSX") {
+          self.root.querySelector(".main-window .win-close").addEventListener("click", () => this_window
+            .close());
+          self.root.querySelector(".main-window .win-max").addEventListener("click", () => toggleWindow);
+          self.root.querySelector(".main-window .win-min").addEventListener("click", () => this_window
+            .minimize());
+        }
+      }
+      document.body.classList.remove("hidden");
+    });
+  </script>
 </window-decorator>

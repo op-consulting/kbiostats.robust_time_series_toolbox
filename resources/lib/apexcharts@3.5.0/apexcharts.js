@@ -31882,7 +31882,11 @@ function updateLink (link, options, obj) {
 
 	if (sourceMap) {
 		// http://stackoverflow.com/a/26603875
-		css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+    css += "\n/"
+    css += "*" + "# sourceMappingURL=";
+    css += "data:application/",
+    css += "json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+		css += " */";
 	}
 
 	var blob = new Blob([css], { type: "text/css" });

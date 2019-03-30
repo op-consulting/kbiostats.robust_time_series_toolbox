@@ -45,8 +45,11 @@ let mainWindowSettings = {
   backgroundColor: 'rgb(15,52,86)',
   icon: getIconPath(),
   acceptFirstMouse: true,
-  //titleBarStyle: 'hidden',
+  //titleBarStyle: 'customButtonsOnHover',
   titleBarStyle: 'hiddenInset',
+  //titleBarStyle: 'hidden',
+  //autoHideMenuBar: !true,
+  fullscreenWindowTitle: true,
   frame: false,
 }
 
