@@ -51,6 +51,7 @@
         /* globals opts: false */
         /* globals jQuery: false */
         /* globals FileReader: false */
+        const require_ = require;
 
         /**************************************************************************
          * UI Helpers
@@ -280,7 +281,7 @@
         };
         //
         const view_data_source = (app_state, global_state, data_source) => {
-            self.refs.window.refs.panels.hide_welcome_splash();
+            self.refs.window.refs.panels.show_main_container();
             //
             Object.keys(app_state()).forEach((k) => delete app_state()[k])
             let model_parameters = load_model(global_state, data_source);
@@ -323,6 +324,8 @@
             };
             let current_plot_type = null;
             const base_categories  = ["time-series", "likelihood", "time-series-estimation", "pre-event-residuals-histogram", "pre-event-residuals-acf", "post-event-residuals-histogram", "post-event-residuals-acf"];
+            
+            
             self.on('app:view:rawtimeseries', () => {
                 current_plot_type = ["time-series"];
                 change_title_unit_options("Original series: Choose a unit")
@@ -348,6 +351,7 @@
                 const {unitindex} = params;
                 let unit_names = data_source.units;
                 const executive_summary_targets = Array.from(self.root.querySelectorAll(selector_other_panels));
+                self.refs.window.refs.panels.show_main_container();
                 plot_collection.filter(current_plot_type, [unit_names[unitindex-1]]);
                 raise_resize_event();
                 executive_summary_targets.forEach((es) => {
@@ -355,6 +359,13 @@
                 });
             });
         };
+        //
+        const visualizing_help = () => {
+            self.on('app:help:model', () => {
+                self.refs.window.refs.panels.show_paper_model_1();
+                console.log(123456789)
+            });
+        };  
         //
         const visualizing_executive_summary = (selector, other_selectors) => {
             self.on('app:view:summary', () => {
@@ -382,8 +393,8 @@
             ];
             const {
                 dialog
-            } = require("electron").remote;
-            const fs = require('fs');
+            } = require_("electron").remote;
+            const fs = require_('fs');
             const paths = dialog.showOpenDialog({
                 filters: file_filter,
                 properties: ['openFile'],
@@ -512,7 +523,7 @@
             //
             jQuery(document).bind('keydown', 'ctrl+shift+r', () => {window.location.reload(true);});
             jQuery(document).bind('keydown', 'ctrl+shift+e', () => {
-                require("electron").remote.getCurrentWindow().toggleDevTools();
+                require_("electron").remote.getCurrentWindow().toggleDevTools();
             });
             //
             register_events_in_toolbar();
@@ -534,8 +545,9 @@
                 models: null,
                 plot_collection: null,
             }
-            visualizing_dataset_events(_global.__RTSdata, ".executive-summary");
+            visualizing_dataset_events(_global.__RTSdata, ".executive-summary, .paper-pdf");
             visualizing_executive_summary(".executive-summary", ".plot_container > *");
+            visualizing_help();
             //
             self.on('app:load:csv', open_file);
         });

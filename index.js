@@ -78,7 +78,7 @@ app.on('ready', function () {
     mainWindow = null;
   });
   //mainWindow.maximize();
-  mainWindow.toggleDevTools();
+  //mainWindow.toggleDevTools();
 });
 
 app.on('error', function () {

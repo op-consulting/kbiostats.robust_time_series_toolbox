@@ -2,6 +2,7 @@
     <div class="panel-title">
         {opts.title}
     </div>
+    <div class="container-sidenav">
     <ul class="sidenav-counter sidenav-counter-expand-fs h-100 w-100 list-mini-plots">
         <li each={name, index in opts.unit_names}>
             <a href="#" onclick={_trigger_event(index + 1)}>
@@ -10,7 +11,45 @@
                 <span class="counter">{name}</span>
             </a>
         </li>
+        <li each={name, index in opts.unit_names}>
+            <a href="#" onclick={_trigger_event(index + 1)}>
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span class="title">UNIT {(index + 1)}</span>
+                <span class="counter">{name}</span>
+            </a>
+        </li>
+        <!--
+        <li each={name, index in opts.unit_names}>
+            <a href="#" onclick={_trigger_event(index + 1)}>
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span class="title">UNIT {(index + 1)}</span>
+                <span class="counter">{name}</span>
+            </a>
+        </li>
+        <li each={name, index in opts.unit_names}>
+            <a href="#" onclick={_trigger_event(index + 1)}>
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span class="title">UNIT {(index + 1)}</span>
+                <span class="counter">{name}</span>
+            </a>
+        </li>
+        <li each={name, index in opts.unit_names}>
+            <a href="#" onclick={_trigger_event(index + 1)}>
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span class="title">UNIT {(index + 1)}</span>
+                <span class="counter">{name}</span>
+            </a>
+        </li>
+        <li each={name, index in opts.unit_names}>
+            <a href="#" onclick={_trigger_event(index + 1)}>
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span class="title">UNIT {(index + 1)}</span>
+                <span class="counter">{name}</span>
+            </a>
+        </li>
+        -->
     </ul>
+    </div>
 
     <style>
         .unit-miniplot {
@@ -21,6 +60,26 @@
             -webkit-user-drag: none !important;
             user-select: none;
             cursor: default;
+        }
+        .container-sidenav{
+            height: 100%;
+            overflow: auto;
+            display: grid;
+        }
+        .container-sidenav > ul{
+            padding-bottom: 30px;
+            background: inherit;
+        }
+        .container-sidenav{
+            background: white;
+            border-right: 1px solid #dadbdc;
+            border-left: 1px solid #dadbdc;
+        }
+        .panel-title{
+            background: #f5f6f7;
+            color: #000000;
+            border: 1px solid #dadbdc;
+            border-top: none;
         }
     </style>
 

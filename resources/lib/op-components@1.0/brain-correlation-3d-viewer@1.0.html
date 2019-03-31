@@ -1,0 +1,289 @@
+<!--<doc>
+Brain Correlation 3D Viewer v1.0
+===========================
+`<brain-correlation-3d-viewer>`
+
+* Version: 1.0
+
+## External requeriments
+```html
+    <link rel="stylesheet" href="./lib/fomantic-ui@2.7.2/semantic.css">
+    <script src="./lib/jquery@3.3.1/jquery.js"></script>
+    <script src="./lib/fomantic-ui@2.7.2/semantic.js"></script>
+```
+```html
+    <sphere-brain-viewer>
+    <time-series-range>
+```
+
+## Inputs
+
+## Methods
+
+## Events
+
+-->
+
+<brain-correlation-3d-viewer>
+  <div class="explorer ui grid">
+    <div class="five wide column menu-container">
+
+      <div class="ui accordion">
+        <div class="title active">
+          <i class="ui dropdown icon"></i>
+          Data sources
+        </div>
+        <div class="content active">
+          <form class="ui fluid form">
+            <!-- -->
+            <div class="field">
+              <div class="ui pointing below label">
+                1. Define the electrode layout
+              </div>
+              <csv-file-input ref="electrode_layout" placeholder="layout.csv"></csv-file-input>
+            </div>
+            <!-- -->
+            <div class="field">
+              <div class="ui pointing below label">
+                2. Choose the reference electrode
+              </div>
+              <div ref="reference_electrode_list" class="reference-electrode-list ui dropdown labeled search floatable icon button"
+                style="display: block;">
+                <i class="world icon"></i>
+                <span class="text">Select electrode</span>
+                <div class="menu">
+                  <div class="item" each={eeg_name, index in eeg_locations}>{eeg_name}</div>
+                </div>
+              </div>
+            </div>
+            <!-- -->
+            <div class="field">
+              <div class="ui pointing below label">
+                3. Select the file with the EEG time series
+              </div>
+              <csv-file-input ref="time_series_data" placeholder="ch15.inp"></csv-file-input>
+            </div>
+            <!-- -->
+            <div class="field">
+              <virtual if={this.electronIsInstalled}>
+                <div class="ui pointing below label">
+                  4. Choose the files with the correlation matrices
+                </div>
+                <sortable-file-list-input ref="list_mapping_data"
+                    label="Choose data matrices"
+                    modal_title="Choose data matrices"
+                    modal_description="Choose the files with the correlation matrices"
+                    autosaved_description="Changes are automatically saved">
+                  </sortable-file-list-input>
+              </virtual>
+              <virtual if={!this.electronIsInstalled}>
+                <div class="ui pointing below label">
+                  4. Choose the file with the correlation matrix
+                </div>
+                <csv-file-input ref="first_mapping_data" placeholder="Clust_Mat_8Clust_HCC01.txt"></csv-file-input>
+              </virtual>
+            </div>
+            <!-- -->
+          </form>
+        </div>
+        <div class="title">
+          <i class="dropdown icon"></i>
+          Animation
+        </div>
+        <div class="content">
+          <form class="ui fluid form">
+            <!-- -->
+            <div class="field">
+              <div class="ui pointing below label">
+                5. Select animation duration
+              </div>
+              <div class="ui input labeled">
+                <input type="number" placeholder={'Default time:'+opts.animation_time} onchange={change_animation_time}>
+              </div>
+            </div>
+            <!-- -->
+            <div class="field">
+              <div class="ui pointing below label">
+                6. Start the animation!
+              </div>
+              <div class="ui right labeled icon button" onclick={start_animation}>
+                <i class="right arrow icon"></i>
+                Start animation
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="animation-container eleven wide column">
+      <sphere-brain-viewer ref="brain_viewer"></sphere-brain-viewer>
+      <time-series-range id="time_series_range" ref="time_series_plot"></time-series-range>
+    </div>
+  </div>
+
+  <!--
+    -->
+  <style>
+    #time_series_range{
+      z-index: 10000000;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      left: 0;
+    }
+
+    .menu-container {
+      border-right: #d7d7d7 1px solid;
+      padding: 25px !important;
+    }
+
+    .explorer {
+      width: 100%;
+      height: 100%;
+      background-color: #f3f3f3;
+    }
+
+    .reference-electrode-list {
+      padding: 0 !important;
+    }
+
+    .reference-electrode-list .world.icon {
+      padding: 0.78571429em !important;
+    }
+
+    .reference-electrode-list .search {
+      padding: 0.78571429em !important;
+      padding-left: calc(1.57142858em + 24px) !important;
+    }
+
+    .reference-electrode-list .text {
+      margin-left: calc(-20px);
+      width: calc(100% + 40px) !important;
+      height: 100%;
+      padding: 0.78571429em !important;
+    }
+  </style>
+
+  <script>
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+    function electronIsInstalled() {
+      try {
+        const require_ = require;
+        require_("electron");
+        return true;
+      } catch (error) {}
+      return false;
+    }
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
+    const self = this;
+    const config = opts;
+    config.animation_time = config.animation_time !== undefined ? config.animation_time : 20;
+    self.electronIsInstalled = electronIsInstalled();
+    self.eeg_locations = []
+    self.eeg_layout = {}
+    self.electrode_info = {
+      all_electrode_names: null,
+      name: null,
+      index: null,
+      length_time_series: null,
+      //color_selection: (v) => (!v ? [1, 0, 0] : [0, 0, 1])
+      color_selection: (v) => (v ? [1, 0, 0] : [0, 0, 1])
+    }
+
+    self.change_animation_time = (evt) => {
+      config.animation_time = evt.target.valueAsNumber;
+      console.log(config.animation_time);
+    }
+
+    self.start_animation = () => {
+      const matrices_length = self.refs.list_mapping_data.filelist.length;
+      const time_series_length = self.electrode_info.length_time_series;
+      const interval_changing_frame = config.animation_time / matrices_length;
+      const time_interval_per_frame = time_series_length / matrices_length;
+      let i = 0;
+      const iteration = () => {
+        if (i >= matrices_length) {
+          return;
+        }
+        const path = self.refs.list_mapping_data.filelist[i];
+        self.refs.electrode_layout.file_open(path, (cluster) => {
+          self.refs.brain_viewer.show_electrode_map(
+            self.electrode_info.all_electrode_names,
+            cluster[self.electrode_info.index],
+            self.electrode_info.index,
+            self.electrode_info.color_selection
+          );
+        }, "csv");
+        self.refs.time_series_plot.move_selection_range(i * time_interval_per_frame, (i + 1) *
+          time_interval_per_frame);
+        i += 1;
+        setTimeout(iteration, 1000 * interval_changing_frame);
+      };
+      iteration();
+    };
+
+    self.on("mount", () => {
+      const self$ = jQuery(self.root);
+      console.log(111)
+      self$.find(".ui.accordion").accordion({
+        exclusive: false,
+        closeNested: false,
+      });
+
+      jQuery(self.refs.reference_electrode_list).dropdown({
+        ignoreCase: true,
+        sortSelect: true,
+        message: {
+          noResults: "No electrode layout selected",
+        },
+        onChange: (v, i) => {
+          v = v.toLowerCase().trim();
+          const index = self.eeg_layout.content.findIndex((x) => x[0].toLowerCase().trim() == v)
+          if (index < 0) return;
+          self.electrode_info.index = index;
+          self.electrode_info.name = v;
+          self.refs.brain_viewer.change_electrode_color(v, 1, 1, 1);
+        }
+      });
+
+      self.refs.electrode_layout.on("loaded-file", (data) => {
+        self.eeg_layout = data;
+        self.eeg_locations = self.eeg_layout.content.filter((x) => x[4] == 1).map((x) => x[0]);
+        self.electrode_info.all_electrode_names = self.eeg_layout.content.map((x) => x[0]);
+        self.refs.brain_viewer.create_show_electrode_layout(self.eeg_layout.content);
+        self.update();
+      });
+
+      self.refs.time_series_data.on("loaded-file", (data) => {
+        const max_points = 300;
+        const subsampling = Number.parseInt(data.content.length / max_points) + 1;
+        self.electrode_info.length_time_series = Number.parseInt(data.content.length / subsampling);
+        self.refs.time_series_plot.update_series(data.content, subsampling);
+      });
+
+      if (self.refs.first_mapping_data) {
+        self.refs.first_mapping_data.on("loaded-file", (data) => {
+          if (self.electrode_info.name != null) {
+            self.refs.brain_viewer.show_electrode_map(
+              self.electrode_info.all_electrode_names,
+              data.content[self.electrode_info.index],
+              self.electrode_info.index,
+              self.electrode_info.color_selection
+            )
+          }
+        });
+      }
+    });
+
+    self.load_file = () => {
+      console.log(0);
+    };
+  </script>
+
+</brain-correlation-3d-viewer>
