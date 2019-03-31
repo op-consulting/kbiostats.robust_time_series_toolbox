@@ -51,11 +51,11 @@ _global.ApexCharts = require("./lib/apexcharts@3.5.0/apexcharts.js");
 _global.Split = require("./lib/split.js@1.5.10/split.js");
 
 // Components
-require("./lib/op-components@1.0/components.js");
-require("./lib/rtsjs@1.0.0/components/components.js");
+require("./src/op-components@1.0/components.js");
+require("./src/rtsjs@1.0/components/components.js");
 
 // Main Model
-_global.RTSModel = require("./lib/rtsjs@1.0.0/rtsjs.js");
+_global.RTSModel = require("./src/rtsjs@1.0/rtsjs.js");
 
 riot.mount('rts-main-window');
 

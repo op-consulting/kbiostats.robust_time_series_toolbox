@@ -1,0 +1,3 @@
+#!/bin/bash
+nim js -d:nodejs -d:release -r --stackTrace:off --lineTrace:off --threads:off --checks:off --objChecks:off --fieldChecks:off --rangeChecks:off --boundChecks:off --overflowChecks:off --assertions:off --floatChecks:off --nanChecks:off --infChecks:off --nilChecks:off --opt:size --out:rts-model.js model_optimized.nim
+#  --stackTrace:off --lineTrace:off --threads:off --checks:off --objChecks:off --fieldChecks:off --rangeChecks:off --boundChecks:off --overflowChecks:off --assertions:off --floatChecks:off --nanChecks:off --infChecks:off --nilChecks:off --opt:speed
