@@ -1,0 +1,85 @@
+<ribbon-simple-button>
+  <button class="ribbon-button">
+    <span class="icon">
+      <div class={icon_class}></div>
+    </span>
+    <span class="caption">{opts.label}</span>
+  </button>
+  <style>
+    * {
+      user-select: none;
+    }
+
+    .ribbon-button.disabled .icon{
+      -webkit-filter: grayscale(1);
+      filter: grayscale(1);
+    }
+
+    .ribbon-button {
+      padding-left: 5px;
+      padding-right: 5px;
+      text-align: center;
+      height: 100% !important;
+    }
+
+    .ribbon-button .icon {
+      display: inline-block;
+    }
+
+    .ribbon-icon-button .icon+.caption,
+    .ribbon-icon-button .caption+.icon {
+      margin-bottom: 5px;
+    }
+  </style>
+  <script>
+    /* globals opts: false */
+
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
+    const self = this;
+    const config = opts;
+    config.icon = config.icon !== undefined ? config.icon : "";
+    config.iconpreffix = config.iconpreffix !== undefined ? config.iconpreffix : "";
+    config.label = config.label !== undefined ? config.label : "";
+    config.onclick = config.onclick !== undefined ? config.onclick : null;
+    config.disabled = config.disabled !== undefined ? config.disabled : null;
+
+    self.disabled = () =>
+      self.root.querySelector("button").classList.contains("disabled");
+    
+    self.toggle = () => {
+      self.root.querySelector("button").classList.toggle("disabled");
+    };
+    self.enable = () => {
+      self.root.querySelector("button").classList.remove("disabled");
+      self.root.querySelector("button").removeAttribute("disabled", "disabled");
+    };
+    self.disable = () => {
+      self.root.querySelector("button").classList.add("disabled");
+      self.root.querySelector("button").setAttribute("disabled", "disabled");
+    };
+
+    self.icon_class = config.icon.split(/\s+/g).map((_) => _[0] == "!" ? _.substr(1) : (config.iconpreffix + _)).join(
+      " ")
+
+    self.root.addEventListener("click", (e) => {
+      if (self.disabled()) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+      }
+    });
+
+    self.on("mount", () => {
+      if (config.disabled) {
+        self.disable();
+      }
+    });
+    //
+  </script>
+</ribbon-simple-button>

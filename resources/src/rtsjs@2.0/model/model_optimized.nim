@@ -1,5 +1,6 @@
 import math
 import stats
+import sequtils
 import strformat
 
 
@@ -11,22 +12,52 @@ type Vector = object
   length: int
   data*: ref array[M, float32]
 
-proc vector(v: openArray[int]): Vector =
-  new result.data
-  result.length = v.len
+type ArrayCheckType = (ref array[M, float32]) | seq[float]
+
+proc check_value(data: var ArrayCheckType, length: int, idx: int, w: openArray[float], w_idx: int) {.inline.} =
+  let v = w[w_idx]
+  #echo v.classify, "  ", v, "  ", (v * 10 / 10 != v)
+  if v.classify == fcNaN or v.classify == fcInf or v.classify == fcNegInf or (v * 10 / 10 != v): #This works in JS
+    if idx == 0:
+      data[idx] = w[w_idx + 1]
+    elif idx == length - 1:
+      data[idx] = w[w_idx - 1]
+    else:
+      data[idx] = 0.5 * (w[w_idx - 1] + w[w_idx + 1])
+  else:
+    data[idx] = v
+
+proc fix_vector(v: seq[float]): seq[float] {.exportc.} =
+  let length = v.len
+  echo length
+  newSeq(result, length)
   var i: int = 0
   for k in v.low..v.high:
-    result.data[i] = v[k].float;
+    check_value(result, length, i, v, k)
     inc(i)
-  result.length = i
-  result
 
 proc vector(v: openArray[float]): Vector =
   new result.data
   result.length = v.len
   var i: int = 0
   for k in v.low..v.high:
-    result.data[i] = v[k];
+    check_value(result.data, result.length, i, v, k)
+    #result.data[i] = v[k];
+    inc(i)
+  result.length = i
+  result
+
+proc vector(v: openArray[int]): Vector = vector(v.mapIt(it.float))
+
+proc vector_reduced(v: openArray[float], sampling: int): Vector =
+  new result.data
+  result.length = v.len
+  var i: int = 0
+  for k in v.low..v.high:
+    if k mod sampling != 0:
+      continue
+    check_value(result.data, result.length, i, v, k)
+    #result.data[i] = v[k];
     inc(i)
   result.length = i
   result
@@ -272,7 +303,8 @@ type LikelihoodModel = object
   loglikelihood: seq[float]
   best_loglikelihood: float
   best_likelihood: float
-  best_time: int
+  best_time: float
+  best_index: int
 
 type RobustInterruptedModel = object
   before_change: AR1Ma1ModelParameters
@@ -286,6 +318,7 @@ proc `$`(params: LinearRegressionParameters): string =
     R2: {params.R2:.3f}
     SSE: {params.residual_sum_squares:.3f}"""
 
+const EPSILON = 1e-10
 # y = ax + b
 proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters {.exportc.} =
   let
@@ -296,15 +329,16 @@ proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters 
     Sxy = (X .* Y).sum
     Syy = (Y .* Y).sum
   result.n = n.int
-  result.slope = (n * Sxy - Sx * Sy) / (n * Sxx - Sx ^ 2)
+  result.slope = (n * Sxy - Sx * Sy) / (n * Sxx - Sx ^ 2 + EPSILON)
   result.intercept = (Sy / n - result.slope * Sx / n)
   #
-  result.R2 = (n * Sxy - Sx * Sy) ^ 2 / (n * Sxx - Sx ^ 2) / (n * Syy - Sy ^ 2)
+  result.R2 = (n * Sxy - Sx * Sy) ^ 2 / (n * Sxx - Sx ^ 2) / (n * Syy - Sy ^ 2 + EPSILON)
   #
   result.residual_sum_squares = ((Y - (result.intercept + result.slope * X)) .^ 2.0).sum
-  result.residual_variance = (n * Syy - Sy ^ 2 - result.slope ^ 2 * (n * Sxx - Sx ^ 2))/(n * n - 2 * n)
+  result.residual_variance = (n * Syy - Sy ^ 2 - result.slope ^ 2 * (n * Sxx - Sx ^ 2))/(n * n - 2 * n + EPSILON)
+  #result.residual_variance = result.residual_sum_squares / (n - 2 + EPSILON)
   #
-  result.slope_variance = n * result.residual_variance / (n * Sxx - Sx ^ 2)
+  result.slope_variance = n * result.residual_variance / (n * Sxx - Sx ^ 2 + EPSILON)
   result.intercept_variance = result.slope_variance * Sxx / n
   #
   result.slope_width_confidence_interval = 2.0 * sqrt(result.slope_variance) * student_t_ppf_95p(n - 2)
@@ -325,15 +359,15 @@ proc simple_linear_regression_wo_intercept(X: Vector, Y: Vector): LinearRegressi
     Sxxyy = ((X .* Y) .* (X .* Y)).sum
     Syy = (Y .* Y).sum
   result.n = n.int
-  result.slope = (n * Sxy - Sx * Sy + Sx * Sy) / (n * Sxx - Sx ^ 2 + Sx * Sx)
+  result.slope = (n * Sxy - Sx * Sy + Sx * Sy) / (n * Sxx - Sx ^ 2 + Sx * Sx + EPSILON)
   result.intercept = 0
   #
-  result.R2 = Sxy ^ 2 / (Sxx * Syy) # Sample R2, by the model it is assumed that E[Y] = 0
+  result.R2 = (Sxy ^ 2 + EPSILON) / (Sxx * Syy + EPSILON) # Sample R2, by the model it is assumed that E[Y] = 0
   #
   result.residual_sum_squares = ((Y - (result.slope .* X)) .^ 2.0).sum
-  result.residual_variance = result.residual_sum_squares / (n - 1)
+  result.residual_variance = result.residual_sum_squares / (n - 1 + EPSILON)
   #
-  result.slope_variance = result.residual_variance / (Sxx)
+  result.slope_variance = result.residual_variance / (Sxx + EPSILON)
   result.intercept_variance = 0
   #
   result.slope_width_confidence_interval = 2.0 * sqrt(result.slope_variance) * student_t_ppf_95p(n - 1)
@@ -355,9 +389,9 @@ proc arma(X: Vector, Y: Vector): AR1Ma1ModelParameters {.exportc.} =
 proc normal_loglikelihood(X: Vector, Y: Vector, slope: float, intercept: float, sigma2: float): float =
   let
     n = X.len.float
-  result = -0.5 * n * ln(2 * PI * sigma2)
-  result -= ((Y - (intercept + slope * X)) .^ 2).sum / (2 * sigma2)
-
+  result = -0.5 * n * ln(2 * PI * sigma2 + EPSILON)
+  result -= ((Y - (intercept + slope * X)) .^ 2).sum / (2 * sigma2 + EPSILON)
+  
 proc analysis_at_point_t(X: Vector, Y: Vector, change_point: int): LikelihoodResult =
   let
     N = X.len
@@ -365,35 +399,65 @@ proc analysis_at_point_t(X: Vector, Y: Vector, change_point: int): LikelihoodRes
     X_before = X[0..(change_point-1)]
     Y_before = Y[0..(change_point-1)]
     #
-    X_after = X[0..(change_point-1)]
-    Y_after = Y[0..(change_point-1)]
+    X_after = X[change_point..X.high]
+    Y_after = Y[change_point..Y.high]
   result.before_change = arma(X_before, Y_before)
   result.loglikelihood += normal_loglikelihood(X_before, Y_before, result.before_change.mean_structure.slope, result.before_change.mean_structure.intercept, result.before_change.autoregressive_structure.residual_variance)
   result.after_change = arma(X_after, Y_after)
   result.loglikelihood += normal_loglikelihood(X_after, Y_after, result.after_change.mean_structure.slope, result.after_change.mean_structure.intercept, result.after_change.autoregressive_structure.residual_variance)
 
 
-proc robust_interrupted_time_series(X: Vector, Y: Vector, change_point: int, candidates_before: int, candidates_after: int): RobustInterruptedModel =
+proc robust_interrupted_time_series_model(X: Vector, Y: Vector, change_point: int, candidates_before: int, candidates_after: int): RobustInterruptedModel =
   var
     ll_result: LikelihoodResult
-  result.likelihood.best_loglikelihood = -1e-100
+  result.likelihood.best_loglikelihood = -1e100
   for t in (change_point - candidates_before) .. (change_point + candidates_after):
+    if t < 3 or t > X.high:
+      continue
     ll_result = analysis_at_point_t(X, Y, t)
     result.likelihood.change_points.add t
     result.likelihood.loglikelihood.add ll_result.loglikelihood
     if ll_result.loglikelihood > result.likelihood.best_loglikelihood:
       result.likelihood.best_loglikelihood = ll_result.loglikelihood
       result.likelihood.best_likelihood = exp(ll_result.loglikelihood)
-      result.likelihood.best_time = t
+      result.likelihood.best_index = t
+      result.likelihood.best_time = X[t]
       result.before_change = ll_result.before_change
       result.after_change = ll_result.after_change
 
-
-proc robust_interrupted_time_series(X: openArray[float], Y: openArray[float], change_point: int, candidates_before: int, candidates_after: int): RobustInterruptedModel  {.exportc.} =
-  robust_interrupted_time_series(vector(X), vector(Y), change_point, candidates_before, candidates_after)
+proc robust_interrupted_time_series(X: openArray[float], Y: openArray[float], change_point: int, candidates_before: int, candidates_after: int): RobustInterruptedModel  {.exportc: "robust_interrupted_time_series".} =
+  robust_interrupted_time_series_model(vector(X), vector(Y), change_point, candidates_before, candidates_after)
+  
+proc robust_interrupted_time_series_approximated(sampling: int, X: openArray[float], Y: openArray[float], change_point: int, candidates_before: int, candidates_after: int): RobustInterruptedModel  {.exportc: "robust_interrupted_time_series_approximated".} =
+  robust_interrupted_time_series_model(vector_reduced(X, sampling), vector_reduced(Y, sampling), (change_point.float / sampling.float).int, (candidates_before.float / sampling.float).int, (candidates_after.float / sampling.float).int)
   
 
-when isMainModule:
+
+import random
+import times
+import sequtils
+
+proc test_model_change_point(change_point: int=7, candidates: int=5, verbose: bool=true) =
+  echo "Robust Interrupted Time Series Model v3.0\n"
+  echo "Boot sample test"
+  var
+    x = @[1.0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].mapIt(it.float)
+    y = @[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200].mapIt(it.float)
+  for t in 0..x.high:
+    y[t] = y[t].float + 0 * rand(1000).float / 1000.0
+  if verbose:
+    echo fmt"X: {x}"
+    echo fmt"Y: {y}"
+  var
+    candidates_after = candidates
+    candidates_before = candidates
+    model = robust_interrupted_time_series(x, y, change_point, candidates_before, candidates_after)
+  if verbose:
+    echo model
+
+test_model_change_point()
+
+when isMainModule and not defined(in_production):
   import random
   import times
 
@@ -447,15 +511,42 @@ when isMainModule:
     var
       candidates_after = candidates
       candidates_before = candidates
-      model = robust_interrupted_time_series(x0, y0, change_point, candidates_before, candidates_after)
+      model = robust_interrupted_time_series_model(x0, y0, change_point, candidates_before, candidates_after)
     if verbose:
       echo model
 
+  proc test_model_sampled[T: static[int]](change_point: int, candidates: int, sampling:int=1, verbose: bool=true) =
+    var
+      x: array[T, float]
+      y: array[T, float]
+      x0: Vector
+      y0: Vector
+    for t in 0..(T-1):
+      x[t] = t.float
+      y[t] = t.float * 10.0 + rand(1000).float / 1000.0    
+    x0 = vector(x)
+    y0 = vector(y)
+    if verbose:
+      echo fmt"X: {x0[0..10]}"
+      echo fmt"Y: {y0[0..10]}"
+    var
+      candidates_after = candidates
+      candidates_before = candidates
+      model = robust_interrupted_time_series_approximated(sampling, x, y, change_point, candidates_before, candidates_after)
+    if verbose:
+      echo model
+
+  proc test_model_50_50(verbose: bool=false) =
+    test_model[50](25, 12, verbose)
+  
   proc test_model_100(verbose: bool=false) =
     test_model[100](50, 5, verbose)
 
   proc test_model_500(verbose: bool=false) =
     test_model[500](250, 5, verbose)
+  
+  proc test_model_approx_500_500(verbose: bool=false) =
+    test_model_sampled[500](250, 249, 10, verbose)
 
   proc test_model_200(verbose: bool=false) =
     test_model[200](100, 99, verbose)
@@ -479,9 +570,15 @@ when isMainModule:
   test_linear_regression()
   test_linear_regression_wo_intercept()
   test_model_100(verbose=true)
+  
+  echo "# 50 points (50 cands.) (x10)"
+  var time = getTime()
+  for k in 1..10:
+    test_model_50_50()
+  echo "## Time taken: ", getTime() - time
 
   echo "# 100 points (x10)"
-  var time = getTime()
+  time = getTime()
   for k in 1..10:
     test_model_100()
   echo "## Time taken: ", getTime() - time
@@ -496,6 +593,12 @@ when isMainModule:
   time = getTime()
   for k in 1..10:
     test_model_500()
+  echo "## Time taken: ", getTime() - time
+  
+  echo "# 500 points (500 cands.) - approx (x10)"
+  time = getTime()
+  for k in 1..10:
+    test_model_approx_500_500()
   echo "## Time taken: ", getTime() - time
   
   echo "# 500 points (100 cands.) (x10)"

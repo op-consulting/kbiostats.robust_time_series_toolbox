@@ -45,17 +45,21 @@ _global.moment = require("./lib/moments.js@2.24.0/moment.js");
 _global.SVG = require("./lib/svg.js@2.5.0/svg.js");
 
 // Charting library (modified)
+_global.Dygraph = require("./lib/dygraph@2.1.0/dygraph.js");
+//_global.Plotly = require("./lib/plotly.js@1.45.3/plotly.js");
+
+// Charting library (modified)
 _global.ApexCharts = require("./lib/apexcharts@3.5.0/apexcharts.js");
 
 // Panel spliting
 _global.Split = require("./lib/split.js@1.5.10/split.js");
 
 // Components
-require("./src/op-components@1.0/components.js");
-require("./src/rtsjs@1.0/components/components.js");
+require("./src/op-components@2.0/components.js");
+require("./src/rtsjs@2.0/components/components.js");
 
 // Main Model
-_global.RTSModel = require("./src/rtsjs@1.0/rtsjs.js");
+_global.RTSModel = require("./src/rtsjs@2.0/rtsjs.js");
 
 riot.mount('rts-main-window');
 
