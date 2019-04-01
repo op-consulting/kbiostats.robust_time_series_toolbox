@@ -1,4 +1,4 @@
-<rts-plot>
+<rts-model-plot>
   <div class="simple-plot w-100 h-100">
     <div data-role="appbar" class="pos-relative z-dropdown">
       <!--
@@ -117,6 +117,7 @@
     const config = opts;
     config.width = !!config.width ? config.width : "100%";
     config.height = !!config.height ? config.height : "400px";
+    config.type = !!config.type ? config.type : "plain";
 
     self.series_1 = {
       enabled: true,
@@ -144,7 +145,8 @@
     self._zoom = (factor = 0.8) => {
       var r = self.graph.xAxisRange();
       var delta = 0.5 * factor * (r[1] - r[0])
-      var x0 = r[0] + delta, x1 = r[1] - delta;
+      var x0 = r[0] + delta,
+        x1 = r[1] - delta;
       self.graph.updateOptions({
         dateWindow: [x0, x1]
       });
@@ -165,14 +167,14 @@
     for (var i = 0; i < 100; i++) {
       //gdata += i + "," + i + "," + (i * (100 - i) * 100 / (50 * 50)) + "\n";
       //gdata += i + "," + Math.random() + "," + 0.5 * Math.random() + "\n";
-      if(i<50) {
+      if (i < 50) {
         gdata += i + "," + Math.random() + "," + "\n";
-      }else{
+      } else {
         gdata += i + "," + "," + 0.5 * Math.random() + "\n";
       }
     }
 
-    const legendFormatter = (data) => {
+    const defaultLegendFormatter = (data) => {
       if (data.x == null) {
         data.x = "";
         data.xHTML = "";
@@ -202,26 +204,51 @@
 
     self.graph = null;
 
+    const dygraphize = (x, y) => x.map((_x, i) => [_x, y[i]])
+
+    const default_options = () => ({
+      fillGraph: true,
+      fillAlpha: 0.5,
+      colors: ["#0074ce", "#6fce00"],
+      legend: 'follow',
+      legendFormatter: defaultLegendFormatter,
+    });
+
+    const graphic_category = {};
+    graphic_category["plain"] = () => {
+      let options = default_options();
+      let data = dygraphize(config.model.dates, config.model.y);
+      options.labels = ["Time", "Value"];
+      return [data, options]
+    };
+    graphic_category["loglikelihood"] = () => {
+      let options = default_options();
+      let data = dygraphize(config.model.estimations.likelihood.change_points.map((i) => model.dates[i]), config.model.estimations.likelihood.loglikelihood);
+      options.labels = ["Time", "Loglikelihood"];
+      return [data, options]
+    };
+
     self.on("mount", () => {
       self.root.style.cssText += `width: ${config.width}; height: ${config.height}; display: block;`
+
+      model = {}
+      model.dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+      model.dates = [...Array(model.dates.length).keys()].map((i) => new Date(new Date().setDate(i)))
+      model.x = [...Array(model.dates.length).keys()]
+      model.change_point = {}
+      model.change_point.theoretical = 5
+      model.change_point.before = 5
+      model.change_point.after = 6
+      model.y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+      model.estimations = RTSModel.robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
+        model.change_point.before, model.change_point.after)
+
+      config.model = model;
+
       self.graph = new Dygraph(
         self.root.querySelector(".plot-container"),
-        gdata, {
-          fillGraph: true,
-          fillAlpha: 0.5,
-          colors: ["#0074ce", "#6fce00"],
-          series: {
-            Y2: {
-              fillAlpha: 0.4
-            }
-          },
-          //legend: 'always',
-          //
-          legend: 'follow',
-          //
-          legendFormatter: legendFormatter,
-        }
+        ...graphic_category[config.type]()
       );
     });
   </script>
-</rts-plot>
+</rts-model-plot>
