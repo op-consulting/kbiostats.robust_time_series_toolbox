@@ -10,14 +10,20 @@
               <div class="label-2 label brand no-hover" hide={series_2.enabled}></div>
             </div>
           -->
+      <button id="" class="button" title="Zoom reset" onclick={zoomreset}>
+        <span class="mif-home"></span>
+      </button>
       <button id="" class="button" title="Zoom in" onclick={zoomin}>
         <span class="mif-zoom-in"></span>
+      </button>
+      <button id="" class="button" title="Zoom in" onclick={zoomin}>
+        <span class="ms-Icon ms-Icon--ZoomIn"></span>
       </button>
       <button id="" class="button" title="Zoom out" onclick={zoomout}>
         <span class="mif-zoom-out"></span>
       </button>
-      <button id="" class="button" title="Zoom reset" onclick={zoomreset}>
-        <span class="mif-home"></span>
+      <button id="" class="button" title="Download image" onclick={save_image}>
+        <span class="ms-Icon ms-Icon--Save"></span>
       </button>
     </div>
     <div class="plot-container"></div>
@@ -118,7 +124,9 @@
     config.width = !!config.width ? config.width : "100%";
     config.height = !!config.height ? config.height : "400px";
     config.type = !!config.type ? config.type : "plain";
+    config.title = !!config.title ? config.title : "Plot";
 
+    const model = () => config.model;
     self.series_1 = {
       enabled: true,
       x: 0,
@@ -163,6 +171,50 @@
 
     self.zoomin = () => self._zoom(zoom_factor)
 
+    /////////////////////////////////////////////////////////////////////
+    self.save_image = () => {
+      const require_ = require;
+      const fs = require_('fs');
+      const {
+        dialog
+      } = require_("electron").remote;
+      const node = self.root.querySelector(".plot-container");
+      /*domtoimage.toPng(node).then((dataUrl) => {
+        var img = new Image();
+        img.src = dataUrl;
+        document.body.appendChild(img);
+      }).catch(function (error) {
+        console.error('oops, something went wrong!', error);
+      });
+      */
+      const sanitize = (n) => !n || n.toLowerCase().replace(/[\s\W]+/g, "-").replace(/\-+/g, "-").trim();
+      /*
+      domtoimage.toBlob(node).then((blob) => {
+        window.saveAs(blob, sanitize(self.title) + '.png');
+      });
+      */
+      var reader = new FileReader()
+
+      dialog.showSaveDialog({
+        title: "Save plot",
+        defaultPath: sanitize(config.title) + '.png',
+        filters: [{
+          name: 'Image',
+          extensions: ['png']
+        }]
+      }, function (file_path) {
+        if (file_path) {
+          domtoimage.toBlob(node).then((blob) => {
+            reader.onload = () => {
+              fs.writeFile(file_path, new Buffer(reader.result), {}, () => {});
+            }
+            reader.readAsArrayBuffer(blob);
+          });
+        }
+      });
+    };
+    /////////////////////////////////////////////////////////////////////
+
     // This function draws bars for a single series. See
     // multiColumnBarPlotter below for a plotter which can draw multi-series
     // bar charts.
@@ -189,7 +241,7 @@
       ctx.stroke();
       ctx.setLineDash([]);
 
-      barChartPlotter(e);  
+      barChartPlotter(e);
 
     }
     const barChartPlotter = (e) => {
@@ -220,8 +272,8 @@
           bar_width, y_bottom - p.canvasy);
       }
     };
-    
-    const lightenColor = (colorStr, alpha=1) => {
+
+    const lightenColor = (colorStr, alpha = 1) => {
       var color = Dygraph.toRGB_(colorStr);
       color.r = Math.floor((255 + color.r) / 2);
       color.g = Math.floor((255 + color.g) / 2);
@@ -299,7 +351,7 @@
     graphic_category["loglikelihood"] = () => {
       let options = default_options();
       let data = dygraphize(
-        config.model.estimations.likelihood.change_points.map((i) => model.dates[i]),
+        config.model.estimations.likelihood.change_points.map((i) => config.model.dates[i]),
         config.model.estimations.likelihood.loglikelihood
       );
       options.labels = ["Time", "Loglikelihood"];
@@ -339,28 +391,16 @@
     graphic_category["after-change-point-residuals"] = () => graphic_category["--change-point-residuals"](
       "after_change")
 
-    self.on("mount", () => {
-      self.root.style.cssText += `width: ${config.width}; height: ${config.height}; display: block;`
-
-      model = {}
-      model.dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-      model.dates = [...Array(model.dates.length).keys()].map((i) => new Date(new Date().setDate(i)))
-      model.x = [...Array(model.dates.length).keys()]
-      model.change_point = {}
-      model.change_point.theoretical = 5
-      model.change_point.before = 5
-      model.change_point.after = 6
-      model.y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
-      model.y = model.y.map((x) => x + 0.5 * Math.random())
-      model.estimations = RTSModel.robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
-        model.change_point.before, model.change_point.after)
-
-      config.model = model;
-
+    self.on("update", () => {
       self.graph = new Dygraph(
         self.root.querySelector(".plot-container"),
         ...graphic_category[config.type]()
       );
+    });
+
+    self.on("mount", () => {
+      self.root.style.cssText += `width: ${config.width}; height: ${config.height}; display: block;`;
+      self.update();
     });
   </script>
 </rts-model-plot>

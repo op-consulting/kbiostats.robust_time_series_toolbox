@@ -1,4 +1,4 @@
-riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-role="appbar" class="pos-relative z-dropdown"> <button id="" class="button" title="Zoom in" onclick="{zoomin}"> <span class="mif-zoom-in"></span> </button> <button id="" class="button" title="Zoom out" onclick="{zoomout}"> <span class="mif-zoom-out"></span> </button> <button id="" class="button" title="Zoom reset" onclick="{zoomreset}"> <span class="mif-home"></span> </button> </div> <div class="plot-container"></div> </div>', 'rts-model-plot .app-bar button,[data-is="rts-model-plot"] .app-bar button{ height: 34px !important; width: 34px !important; padding: 0; cursor: default; } rts-model-plot .app-bar,[data-is="rts-model-plot"] .app-bar{ text-align: left; display: block; min-height: 25px; height: 42px; padding: 3px; background: #f5f6f7; } rts-model-plot .simple-plot,[data-is="rts-model-plot"] .simple-plot{ border: 1px solid #bbbec2; box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important; } rts-model-plot .plot-container,[data-is="rts-model-plot"] .plot-container{ padding-top: 10px; height: calc(100% - 70px); width: calc(100% - 30px); left: 0; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend,rts-model-plot .dygraph-legend .legend-time,[data-is="rts-model-plot"] .dygraph-legend .legend-time{ background: rgb(237, 237, 237); } rts-model-plot .dygraph-legend .legend-values,[data-is="rts-model-plot"] .dygraph-legend .legend-values{ background: #f5f6f7; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend{ position: absolute; min-width: 100px; border: 1px solid rgb(205, 205, 205); zoom: 0.8; } rts-model-plot .legend-container,[data-is="rts-model-plot"] .legend-container{ padding: 5px; } rts-model-plot .label,[data-is="rts-model-plot"] .label{ height: 20px; padding: 5px; user-select: text; cursor: text; } rts-model-plot .legend-label,[data-is="rts-model-plot"] .legend-label{ padding-right: 5px; filter: brightness(100%); font-weight: bold; } rts-model-plot .legend-line,[data-is="rts-model-plot"] .legend-line{ min-width: 10px; display: inline-block; height: 5px; position: relative; top: -4px; } rts-model-plot *,[data-is="rts-model-plot"] *{ -webkit-user-drag: none !important; user-select: none; cursor: default; }', '', function(opts) {
+riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-role="appbar" class="pos-relative z-dropdown"> <button id="" class="button" title="Zoom reset" onclick="{zoomreset}"> <span class="mif-home"></span> </button> <button id="" class="button" title="Zoom in" onclick="{zoomin}"> <span class="mif-zoom-in"></span> </button> <button id="" class="button" title="Zoom in" onclick="{zoomin}"> <span class="ms-Icon ms-Icon--ZoomIn"></span> </button> <button id="" class="button" title="Zoom out" onclick="{zoomout}"> <span class="mif-zoom-out"></span> </button> <button id="" class="button" title="Download image" onclick="{save_image}"> <span class="ms-Icon ms-Icon--Save"></span> </button> </div> <div class="plot-container"></div> </div>', 'rts-model-plot .app-bar button,[data-is="rts-model-plot"] .app-bar button{ height: 34px !important; width: 34px !important; padding: 0; cursor: default; } rts-model-plot .app-bar,[data-is="rts-model-plot"] .app-bar{ text-align: left; display: block; min-height: 25px; height: 42px; padding: 3px; background: #f5f6f7; } rts-model-plot .simple-plot,[data-is="rts-model-plot"] .simple-plot{ border: 1px solid #bbbec2; box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important; } rts-model-plot .plot-container,[data-is="rts-model-plot"] .plot-container{ padding-top: 10px; height: calc(100% - 70px); width: calc(100% - 30px); left: 0; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend,rts-model-plot .dygraph-legend .legend-time,[data-is="rts-model-plot"] .dygraph-legend .legend-time{ background: rgb(237, 237, 237); } rts-model-plot .dygraph-legend .legend-values,[data-is="rts-model-plot"] .dygraph-legend .legend-values{ background: #f5f6f7; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend{ position: absolute; min-width: 100px; border: 1px solid rgb(205, 205, 205); zoom: 0.8; } rts-model-plot .legend-container,[data-is="rts-model-plot"] .legend-container{ padding: 5px; } rts-model-plot .label,[data-is="rts-model-plot"] .label{ height: 20px; padding: 5px; user-select: text; cursor: text; } rts-model-plot .legend-label,[data-is="rts-model-plot"] .legend-label{ padding-right: 5px; filter: brightness(100%); font-weight: bold; } rts-model-plot .legend-line,[data-is="rts-model-plot"] .legend-line{ min-width: 10px; display: inline-block; height: 5px; position: relative; top: -4px; } rts-model-plot *,[data-is="rts-model-plot"] *{ -webkit-user-drag: none !important; user-select: none; cursor: default; }', '', function(opts) {
 
 
     const self = this;
@@ -6,7 +6,9 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
     config.width = !!config.width ? config.width : "100%";
     config.height = !!config.height ? config.height : "400px";
     config.type = !!config.type ? config.type : "plain";
+    config.title = !!config.title ? config.title : "Plot";
 
+    const model = () => config.model;
     self.series_1 = {
       enabled: true,
       x: 0,
@@ -50,6 +52,37 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
     self.zoomout = () => self._zoom(zoom_factor / (zoom_factor - 1))
 
     self.zoomin = () => self._zoom(zoom_factor)
+
+    self.save_image = () => {
+      const require_ = require;
+      const fs = require_('fs');
+      const {
+        dialog
+      } = require_("electron").remote;
+      const node = self.root.querySelector(".plot-container");
+
+      const sanitize = (n) => !n || n.toLowerCase().replace(/[\s\W]+/g, "-").replace(/\-+/g, "-").trim();
+
+      var reader = new FileReader()
+
+      dialog.showSaveDialog({
+        title: "Save plot",
+        defaultPath: sanitize(config.title) + '.png',
+        filters: [{
+          name: 'Image',
+          extensions: ['png']
+        }]
+      }, function (file_path) {
+        if (file_path) {
+          domtoimage.toBlob(node).then((blob) => {
+            reader.onload = () => {
+              fs.writeFile(file_path, new Buffer(reader.result), {}, () => {});
+            }
+            reader.readAsArrayBuffer(blob);
+          });
+        }
+      });
+    };
 
     const acfPlotter = (e) => {
       const ctx = e.drawingContext;
@@ -103,7 +136,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       }
     };
 
-    const lightenColor = (colorStr, alpha=1) => {
+    const lightenColor = (colorStr, alpha = 1) => {
       var color = Dygraph.toRGB_(colorStr);
       color.r = Math.floor((255 + color.r) / 2);
       color.g = Math.floor((255 + color.g) / 2);
@@ -181,7 +214,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
     graphic_category["loglikelihood"] = () => {
       let options = default_options();
       let data = dygraphize(
-        config.model.estimations.likelihood.change_points.map((i) => model.dates[i]),
+        config.model.estimations.likelihood.change_points.map((i) => config.model.dates[i]),
         config.model.estimations.likelihood.loglikelihood
       );
       options.labels = ["Time", "Loglikelihood"];
@@ -220,27 +253,15 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
     graphic_category["after-change-point-residuals"] = () => graphic_category["--change-point-residuals"](
       "after_change")
 
-    self.on("mount", () => {
-      self.root.style.cssText += `width: ${config.width}; height: ${config.height}; display: block;`
-
-      model = {}
-      model.dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-      model.dates = [...Array(model.dates.length).keys()].map((i) => new Date(new Date().setDate(i)))
-      model.x = [...Array(model.dates.length).keys()]
-      model.change_point = {}
-      model.change_point.theoretical = 5
-      model.change_point.before = 5
-      model.change_point.after = 6
-      model.y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
-      model.y = model.y.map((x) => x + 0.5 * Math.random())
-      model.estimations = RTSModel.robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
-        model.change_point.before, model.change_point.after)
-
-      config.model = model;
-
+    self.on("update", () => {
       self.graph = new Dygraph(
         self.root.querySelector(".plot-container"),
         ...graphic_category[config.type]()
       );
+    });
+
+    self.on("mount", () => {
+      self.root.style.cssText += `width: ${config.width}; height: ${config.height}; display: block;`;
+      self.update();
     });
 });

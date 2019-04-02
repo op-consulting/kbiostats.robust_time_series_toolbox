@@ -19,13 +19,13 @@
         </div>
 
         <rts-plot></rts-plot>
-        <rts-model-plot type="plain"></rts-model-plot>
-        <rts-model-plot type="loglikelihood"></rts-model-plot>
+        <rts-model-plot type="plain" ref="plain"></rts-model-plot>
+        <rts-model-plot type="loglikelihood" ref="loglikelihood"></rts-model-plot>
 
-        <rts-model-plot type="before-change-point-residuals"></rts-model-plot>
-        <rts-model-plot type="before-change-point-autocorrelation"></rts-model-plot>
-        <rts-model-plot type="after-change-point-residuals"></rts-model-plot>
-        <rts-model-plot type="after-change-point-autocorrelation"></rts-model-plot>
+        <rts-model-plot type="before-change-point-residuals" ref="residuals_pre"></rts-model-plot>
+        <rts-model-plot type="before-change-point-autocorrelation" ref="autocorrelation_pre"></rts-model-plot>
+        <rts-model-plot type="after-change-point-residuals" ref="residuals_post"></rts-model-plot>
+        <rts-model-plot type="after-change-point-autocorrelation" ref="autocorrelation_post"></rts-model-plot>
 
       </div>
 
@@ -314,8 +314,40 @@
       //self.root.querySelector(".paper-model-1 iframe").src = "./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&";
     };
 
+self.update_models = (model) => {
+      self.model = model;
+      const up = (c) => {self.refs[c].opts.model = model; self.refs[c].update(); };
+      up("plain");
+      up("loglikelihood");
+      up("autocorrelation_pre");
+      up("residuals_pre");
+      up("autocorrelation_post");
+      up("residuals_post");
+    };
+
     self.on("mount", () => {
       create_splitter([15, 70, 15]);
+
+
+
+
+      let model = {}
+      model.dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+      model.dates = [...Array(model.dates.length).keys()].map((i) => new Date(new Date().setDate(i)))
+      model.x = [...Array(model.dates.length).keys()]
+      model.change_point = {}
+      model.change_point.theoretical = 5
+      model.change_point.before = 5
+      model.change_point.after = 6
+      model.y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+      model.y = model.y.map((x) => x + 0.5 * Math.random())
+      model.estimations = RTSModel.robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
+        model.change_point.before, model.change_point.after)
+      self.update_models(model)
+      window.self0=self
+
     });
+
+
   </script>
 </rts-three-column-panel>
