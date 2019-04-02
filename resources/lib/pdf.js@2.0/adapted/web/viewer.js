@@ -3560,10 +3560,10 @@ exports.moveToEndOfArray = moveToEndOfArray;
 
 
 var pdfjsLib = void 0;
-if (typeof window !== 'undefined' && window['pdfjs-dist/build/pdf']) {
-  pdfjsLib = window['pdfjs-dist/build/pdf'];
+if (typeof window !== 'undefined' && window['pdfjs-dist/core/pdf']) {
+  pdfjsLib = window['pdfjs-dist/core/pdf'];
 } else {
-  pdfjsLib = require('../build/pdf.js');
+  pdfjsLib = require('../core/pdf.js');
 }
 module.exports = pdfjsLib;
 
@@ -4499,7 +4499,7 @@ var defaultOptions = {
     kind: OptionKind.WORKER
   },
   workerSrc: {
-    value: '../build/pdf.worker.js',
+    value: '../core/pdf.worker.js',
     kind: OptionKind.WORKER
   }
 };

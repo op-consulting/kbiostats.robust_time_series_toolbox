@@ -24,11 +24,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("pdfjs-dist/build/pdf.worker", [], factory);
+		define("pdfjs-dist/core/pdf.worker", [], factory);
 	else if(typeof exports === 'object')
-		exports["pdfjs-dist/build/pdf.worker"] = factory();
+		exports["pdfjs-dist/core/pdf.worker"] = factory();
 	else
-		root["pdfjs-dist/build/pdf.worker"] = root.pdfjsWorker = factory();
+		root["pdfjs-dist/core/pdf.worker"] = root.pdfjsWorker = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache

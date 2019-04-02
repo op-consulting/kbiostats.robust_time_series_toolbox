@@ -24,11 +24,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("pdfjs-dist/build/pdf", [], factory);
+		define("pdfjs-dist/core/pdf", [], factory);
 	else if(typeof exports === 'object')
-		exports["pdfjs-dist/build/pdf"] = factory();
+		exports["pdfjs-dist/core/pdf"] = factory();
 	else
-		root["pdfjs-dist/build/pdf"] = root.pdfjsLib = factory();
+		root["pdfjs-dist/core/pdf"] = root.pdfjsLib = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -7865,7 +7865,7 @@ var fakeWorkerFilesLoader = null;
     useRequireEnsure = true;
   }
   if (typeof requirejs !== 'undefined' && requirejs.toUrl) {
-    fallbackWorkerSrc = requirejs.toUrl('pdfjs-dist/build/pdf.worker.js');
+    fallbackWorkerSrc = requirejs.toUrl('pdfjs-dist/core/pdf.worker.js');
   }
   var dynamicLoaderSupported = typeof requirejs !== 'undefined' && requirejs.load;
   fakeWorkerFilesLoader = useRequireEnsure ? function () {
@@ -7882,7 +7882,7 @@ var fakeWorkerFilesLoader = null;
     });
   } : dynamicLoaderSupported ? function () {
     return new Promise(function (resolve, reject) {
-      requirejs(['pdfjs-dist/build/pdf.worker'], function (worker) {
+      requirejs(['pdfjs-dist/core/pdf.worker'], function (worker) {
         try {
           resolve(worker.WorkerMessageHandler);
         } catch (ex) {

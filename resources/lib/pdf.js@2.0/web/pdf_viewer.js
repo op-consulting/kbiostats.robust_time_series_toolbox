@@ -406,10 +406,10 @@ exports.DefaultAnnotationLayerFactory = DefaultAnnotationLayerFactory;
 
 var pdfjsLib;
 
-if (typeof window !== 'undefined' && window['pdfjs-dist/build/pdf']) {
-  pdfjsLib = window['pdfjs-dist/build/pdf'];
+if (typeof window !== 'undefined' && window['pdfjs-dist/core/pdf']) {
+  pdfjsLib = window['pdfjs-dist/core/pdf'];
 } else {
-  pdfjsLib = require('../build/pdf.js');
+  pdfjsLib = require('../core/pdf.js');
 }
 
 module.exports = pdfjsLib;
