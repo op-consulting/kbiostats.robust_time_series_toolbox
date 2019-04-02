@@ -7,7 +7,9 @@ import strformat
 ###########################################################
 # OPERATIONS
 #const M = 120000
-const M = 50000
+const M = 10012
+const EPSILON = 1e-10
+
 type Vector = object
   length: int
   data*: ref array[M, float32]
@@ -76,7 +78,13 @@ proc `$`(v: Vector): string {.inline.} =
       result &= ", "
   result &= "]"
 
-
+proc vector_to_seq(v: Vector): seq[float] {.inline.} =
+  let length = v.len
+  newSeq(result, length)
+  var i: int = 0
+  for k in v.low..v.high:
+    result[i] = v.data[k]
+    inc(i)
 
 # ACCESSORS
 proc `[]`*(v: Vector, i: int): float {.inline.} =
@@ -245,7 +253,9 @@ proc sum*(v: Vector): float  {.inline.} = v.data[].sum
 proc mean*(v: Vector): float  {.inline.} = v.sum / v.len.float
 proc avg*(v: Vector): float  {.inline.} = mean(v)
 proc variance*(v: Vector): float  {.inline.}= (v .* v).sum / v.len.float - v.mean ^ 2
-proc covariance*(v: Vector, w: Vector): float  {.inline.}= dot(v, w) / v.len.float - v.mean * w.mean
+proc sample_variance*(v: Vector): float  {.inline.} = ((v .* v).sum / v.len.float - v.mean ^ 2) * (v.len.float) / (v.len.float - 1)
+proc covariance*(v: Vector, w: Vector): float  {.inline.} = (dot(v, w) / v.len.float - v.mean * w.mean)
+proc sample_covariance*(v: Vector, w: Vector): float  {.inline.} = (dot(v, w) / v.len.float - v.mean * w.mean) * (v.len.float) / (v.len.float - 1)
 
 proc student_t_ppf_95p(df: int): float {.inline.} =
   const table_ppf = [1.0e50, 12.71, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365,
@@ -261,6 +271,41 @@ proc student_t_ppf_95p(df: int): float {.inline.} =
 
 proc student_t_ppf_95p(df: float): float {.inline.} =
   student_t_ppf_95p(df.int)
+
+###########################################################
+type AutocorrelationFunction = object
+  autocorrelation: seq[float]
+  confidence_interval: float
+
+proc acf_confidence_interval(x: Vector): float = 
+  1.96 * sqrt(1 / x.len)
+
+proc acf(x: Vector, max_lag: int = 20): Vector = 
+  new result.data
+  let
+    n = x.high
+    u = x.mean
+    s2 = x.variance
+  result[0] = 1
+  for h in 1..min(max_lag, n):
+    let
+      a = x[0..(n - h)]
+      b = x[h..n]
+    result[h] = (((a - u) .* (b - u)).mean + EPSILON)/ (n.float * s2 + EPSILON )
+
+proc acf_information(x: Vector, max_lag: int = 20): AutocorrelationFunction =
+  result.autocorrelation = acf(x, max_lag).vector_to_seq
+  result.confidence_interval = acf_confidence_interval(x)
+
+when isMainModule:
+  let
+    x = vector([3,2,1,9,4,2,5,3,3,6,8,9,10])
+    y = acf(x, 10)
+  echo "AutocorrelationFunction"
+  echo fmt"  X: {x}"
+  echo fmt"  ACF: {y}"
+  echo fmt"  ACF-info: {acf_information(x, 10)}"
+  echo ""
 
 ###########################################################
 
@@ -285,8 +330,12 @@ type LinearRegressionParameters = object
   #
   R2: float
   #
+  residual: seq[float]
   residual_sum_squares: float
   residual_variance: float
+  #
+  autocorrelation_function: AutocorrelationFunction
+  #
   n: int
 
 type AR1Ma1ModelParameters = object
@@ -318,7 +367,6 @@ proc `$`(params: LinearRegressionParameters): string =
     R2: {params.R2:.3f}
     SSE: {params.residual_sum_squares:.3f}"""
 
-const EPSILON = 1e-10
 # y = ax + b
 proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters {.exportc.} =
   let
@@ -334,9 +382,13 @@ proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters 
   #
   result.R2 = (n * Sxy - Sx * Sy) ^ 2 / (n * Sxx - Sx ^ 2) / (n * Syy - Sy ^ 2 + EPSILON)
   #
-  result.residual_sum_squares = ((Y - (result.intercept + result.slope * X)) .^ 2.0).sum
+  let residual = Y - (result.intercept + result.slope * X)
+  result.residual = residual.vector_to_seq
+  result.residual_sum_squares = (residual .^ 2.0).sum
   result.residual_variance = (n * Syy - Sy ^ 2 - result.slope ^ 2 * (n * Sxx - Sx ^ 2))/(n * n - 2 * n + EPSILON)
   #result.residual_variance = result.residual_sum_squares / (n - 2 + EPSILON)
+  #
+  result.autocorrelation_function = acf_information(residual, 100)
   #
   result.slope_variance = n * result.residual_variance / (n * Sxx - Sx ^ 2 + EPSILON)
   result.intercept_variance = result.slope_variance * Sxx / n
@@ -364,8 +416,12 @@ proc simple_linear_regression_wo_intercept(X: Vector, Y: Vector): LinearRegressi
   #
   result.R2 = (Sxy ^ 2 + EPSILON) / (Sxx * Syy + EPSILON) # Sample R2, by the model it is assumed that E[Y] = 0
   #
-  result.residual_sum_squares = ((Y - (result.slope .* X)) .^ 2.0).sum
+  let residual = Y - (result.intercept + result.slope * X)
+  result.residual = residual.vector_to_seq
+  result.residual_sum_squares = (residual .^ 2.0).sum
   result.residual_variance = result.residual_sum_squares / (n - 1 + EPSILON)
+  #
+  result.autocorrelation_function = acf_information(residual, 100)
   #
   result.slope_variance = result.residual_variance / (Sxx + EPSILON)
   result.intercept_variance = 0
