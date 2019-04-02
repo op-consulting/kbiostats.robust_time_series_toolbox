@@ -47667,7 +47667,7 @@ input[dir=rtl] {
 
 @font-face {
   font-family: 'metro';
-  src: url('./metro.ttf') format('truetype'), url('./metro.woff') format('woff'), url('./mif/metro.svg') format('svg');
+  src: url('./metro.ttf') format('truetype'), url('./metro.woff') format('woff'), url('./metro.svg') format('svg');
   font-weight: normal;
   font-style: normal;
 }

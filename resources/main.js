@@ -54,6 +54,9 @@ _global.ApexCharts = require("./lib/apexcharts@3.5.0/apexcharts.js");
 // Panel spliting
 _global.Split = require("./lib/split.js@1.5.10/split.js");
 
+// Panel spliting
+_global.domtoimage = require("./lib/dom-to-image@2.6.0/dom-to-image.js");
+
 // Components
 require("./src/op-components@2.0/components.js");
 require("./src/rtsjs@2.0/components/components.js");
