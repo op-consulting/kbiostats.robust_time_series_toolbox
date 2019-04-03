@@ -410,16 +410,8 @@
         } = params;
         console.log("===================, ", unitindex)
         let unit_names = data_source.units;
-        const executive_summary_targets = Array.from(self.root.querySelectorAll(
-          selector_other_panels));  
-        self.refs.window.refs.panels.refs.plot_collection.update();
         self.refs.window.refs.panels.show_filtered_plots(unitindex, current_plot_type);
-        self.refs.window.refs.panels.refs.plot_collection.update()
-        //plot_collection.filter(current_plot_type, [unit_names[unitindex - 1]]);
-        //raise_resize_event();
-        executive_summary_targets.forEach((es) => {
-          es.classList.add("hidden")
-        });
+        
       });
     };
     //

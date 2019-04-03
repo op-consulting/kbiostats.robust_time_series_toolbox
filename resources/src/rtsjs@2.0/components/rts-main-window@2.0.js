@@ -343,15 +343,8 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
         } = params;
         console.log("===================, ", unitindex)
         let unit_names = data_source.units;
-        const executive_summary_targets = Array.from(self.root.querySelectorAll(
-          selector_other_panels));
-        self.refs.window.refs.panels.refs.plot_collection.update();
         self.refs.window.refs.panels.show_filtered_plots(unitindex, current_plot_type);
-        self.refs.window.refs.panels.refs.plot_collection.update()
 
-        executive_summary_targets.forEach((es) => {
-          es.classList.add("hidden")
-        });
       });
     };
 

@@ -562,7 +562,7 @@ function nimCopyAux(dest_17235, src_17236, n_17238) {
 function vector_131240(v_131243) {
 	var result_131244 = {length: 0, data: null};
 
-		result_131244.data = new Float32Array(10012);
+		result_131244.data = new Float32Array(1012);
 		result_131244.length = (v_131243 != null ? v_131243.length : 0);
 		var i_131259 = 0;
 		L1: do {
@@ -708,7 +708,7 @@ function HEX5BHEX5D_132597(v_132599, i_132600) {
 function HEX2EHEX2A_135156(v_135158, w_135159) {
 	var result_135160 = [{length: 0, data: null}];
 
-		result_135160[0].data = new Float32Array(10012);
+		result_135160[0].data = new Float32Array(1012);
 		L1: do {
 			var i_135177 = 0;
 			var colontmp__135180 = 0;
@@ -778,7 +778,7 @@ function variance_136076(v_136078) {
 function HEX5BHEX5D_133414(v_133416, idx_133424) {
 	var result_133425 = {length: 0, data: null};
 
-		result_133425.data = new Float32Array(10012);
+		result_133425.data = new Float32Array(1012);
 		var k_133435 = 0;
 		L1: do {
 			var i_133474 = 0;
@@ -820,7 +820,7 @@ function HEX2EHEX2E_56828(a_56833, b_56835) {
 function HEX2D_135028(v_135030, k_135031) {
 	var result_135032 = [{length: 0, data: null}];
 
-		result_135032[0].data = new Float32Array(10012);
+		result_135032[0].data = new Float32Array(1012);
 		L1: do {
 			var i_135049 = 0;
 			var colontmp__135052 = 0;
@@ -845,7 +845,7 @@ function HEX2D_135028(v_135030, k_135031) {
 function acf_136647(x_136649, max_lag_136650) {
 	var result_136651 = [{length: 0, data: null}];
 
-		result_136651[0].data = new Float32Array(10012);
+		result_136651[0].data = new Float32Array(1012);
 		var n_136660 = high_131797(x_136649);
 		var u_136661 = mean_136041(x_136649);
 		var s2_136662 = variance_136076(x_136649);
@@ -1602,7 +1602,7 @@ rawEcho([]);
 function HEX2D_134983(v_134985, w_134986) {
 	var result_134987 = [{length: 0, data: null}];
 
-		result_134987[0].data = new Float32Array(10012);
+		result_134987[0].data = new Float32Array(1012);
 		L1: do {
 			var i_135004 = 0;
 			var colontmp__135007 = 0;
@@ -1627,7 +1627,7 @@ function HEX2D_134983(v_134985, w_134986) {
 function HEX2B_134882(v_134884, k_134885) {
 	var result_134886 = [{length: 0, data: null}];
 
-		result_134886[0].data = new Float32Array(10012);
+		result_134886[0].data = new Float32Array(1012);
 		L1: do {
 			var i_134903 = 0;
 			var colontmp__134906 = 0;
@@ -1661,7 +1661,7 @@ function HEX2B_134927(k_134929, v_134930) {
 function HEX2EHEX2A_135201(v_135203, k_135204) {
 	var result_135205 = [{length: 0, data: null}];
 
-		result_135205[0].data = new Float32Array(10012);
+		result_135205[0].data = new Float32Array(1012);
 		L1: do {
 			var i_135222 = 0;
 			var colontmp__135225 = 0;
@@ -1713,7 +1713,7 @@ function HEX5E_135619(v_135621, w_135622) {
 function HEX2EHEX5E_135682(v_135684, k_135685) {
 	var result_135686 = [{length: 0, data: null}];
 
-		result_135686[0].data = new Float32Array(10012);
+		result_135686[0].data = new Float32Array(1012);
 		L1: do {
 			var i_135703 = 0;
 			var colontmp__135706 = 0;
@@ -1948,7 +1948,7 @@ function robust_interrupted_time_series(x_145030, y_145032, change_point_145033,
 function vector_reduced_131689(v_131692, sampling_131693) {
 	var result_131694 = {length: 0, data: null};
 
-		result_131694.data = new Float32Array(10012);
+		result_131694.data = new Float32Array(1012);
 		result_131694.length = (v_131692 != null ? v_131692.length : 0);
 		var i_131709 = 0;
 		L1: do {

@@ -1,0 +1,52 @@
+<rts-plot-collection>
+  <div>
+    <virtual if={_anyPlotFilter()}>
+      <div class={"graph-collection collection-" + (plot.index + 1)} each={plot, index in opts.plots}>
+          <rts-model-plot type={plot.type} class={plot.type} model={opts.models[plot.index]}></rts-model-plot>
+      </div>
+    </virtual>
+    <!--
+          <rts-model-plot type="plain" class="plain" model={model}></rts-model-plot>
+          <rts-model-plot type="loglikelihood" class="loglikelihood" model={model}></rts-model-plot>
+          
+          <rts-model-plot type="before-change-point-residuals" class="before-change-point-residuals" model={model}></rts-model-plot>
+          <rts-model-plot type="before-change-point-autocorrelation" class="before-change-point-autocorrelation" model={model}></rts-model-plot>
+          <rts-model-plot type="after-change-point-residuals" class="after-change-point-residuals" model={model}></rts-model-plot>
+          <rts-model-plot type="after-change-point-autocorrelation" class="after-change-point-autocorrelation" model={model}></rts-model-plot>
+          <rts-model-plot type="box-plot-residuals" class="box-plot-residuals" model={model}></rts-model-plot>
+      -->
+  </div>
+  <style>
+  .hidden{
+    display: none!important;
+  }
+  </style>
+  <script>
+    /* globals opts: false */
+    /* globals jQuery: false */
+    /* globals FileReader: false */
+
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+
+
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
+    const self = this;
+    const config = opts;
+    //config.unit_names = !!config.unit_names ? config.unit_names : ["Unit A", "Unit 2", "Other unit"];
+    config.models = !!config.models ? config.models : [];
+    config.plots = !!config.plots ? config.plots : [];
+
+self._anyPlotFilter = () => (!!config.plots && config.plots.length > 0)
+    self.on("update", () => {
+      console.log("config.plots ", config.plots )
+    });
+    self.on("mount", () => {
+      //
+      self.update();
+    });
+  </script>
+</rts-plot-collection>

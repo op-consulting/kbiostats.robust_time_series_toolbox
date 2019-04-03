@@ -1,4 +1,3 @@
-
 <rts-three-column-panel>
   <div class="split-parent h-100 w-100">
     <div class="outlinepanel-container panel-container h-100">
@@ -23,7 +22,7 @@
       </div>
 
       <div class="plot-container main-panel-container hidden">
-          <rts-plot-collection ref="plot_collection"></rts-plot-collection>
+        <rts-plot-collection ref="plot_collection"></rts-plot-collection>
       </div>
       <div class="content-containe3r main-panel-container hidden">
 
@@ -194,10 +193,11 @@
     }
 
     /* BLOCK THREE COLUMN*/
-    .gutter.gutter-horizontal.gutter-2{
+    .gutter.gutter-horizontal.gutter-2 {
       display: none;
     }
-    .plotpanel-container.panel-container{
+
+    .plotpanel-container.panel-container {
       margin-left: 5px;
     }
   </style>
@@ -323,10 +323,15 @@
       Array.from(self.root.querySelectorAll(".main-panel-container")).forEach(el => el.classList.add("hidden"));
       self.root.querySelector(selector).classList.remove("hidden");
     };
-    
-    self.show_filtered_plots = (unit, types) => {
+
+    self.show_filtered_plots = (unitindex, plot_types) => {
       self.show_main_panel(".plot-container");
-      self.refs.plot_collection.filter(unit, types);
+      self.refs.plot_collection.update()
+      self.refs.plot_collection.opts.plots = plot_types.map((plot_type) => ({
+        index: unitindex - 1,
+        type: plot_type
+      }));
+      self.refs.plot_collection.update()
     };
     self.show_main_container = () => {
       self.show_main_panel(".content-container");
