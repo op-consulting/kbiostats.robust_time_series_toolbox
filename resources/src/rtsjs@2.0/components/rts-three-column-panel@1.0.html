@@ -21,24 +21,11 @@
 
       </div>
 
-      <div class="plot-container main-panel-container hidden">
+      <div class="plot-container main-panel-container paper-style hidden">
         <rts-plot-collection ref="plot_collection"></rts-plot-collection>
       </div>
-      <div class="content-containe3r main-panel-container hidden">
-
-        <rts-model-plot type="plain" ref="plain"></rts-model-plot>
-        <rts-model-plot type="box-plot-residuals" ref="box_plot_residuals"></rts-model-plot>
-        <rts-model-plot type="loglikelihood" ref="loglikelihood"></rts-model-plot>
-
-        <rts-model-plot type="before-change-point-residuals" ref="residuals_pre"></rts-model-plot>
-        <rts-model-plot type="before-change-point-autocorrelation" ref="autocorrelation_pre"></rts-model-plot>
-        <rts-model-plot type="after-change-point-residuals" ref="residuals_post"></rts-model-plot>
-        <rts-model-plot type="after-change-point-autocorrelation" ref="autocorrelation_post"></rts-model-plot>
-      </div>
-
-      <div class="content-container main-panel-container hidden">
+      <div class="content-container main-panel-container paper-style hidden">
         <rts-data-summary ref="data_summary"></rts-data-summary>
-        <div class="plot_container" ref="plot_container"></div>
       </div>
 
       <div class="paper-model-1 paper-pdf w-100 h-100 main-panel-container hidden">
@@ -109,6 +96,10 @@
       display: none;
     }
 
+    .outlinepanel-container{
+      overflow: hidden;
+    }
+
     .panel-container {
       transitio1n: 10ms linear width;
       min-width: 0px !important;
@@ -137,14 +128,22 @@
     }
 
     .content-container {
-      width: 80%;
-      min-width: 700px !important;
-      margin: 15px auto;
-      padding: 30px;
+    }
+
+    .paper-style {
       background-color: white;
       border: 1px solid #bbbec2;
       box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+
+      min-width: 700px !important;
+      width: 80%;
+
+      position: relative;
+      margin: 15px auto;
+      margin-bottom: 40px;
+      padding: 30px;
     }
+
 
     .main-viewport {
       overflow: auto !important;
@@ -200,6 +199,15 @@
     .plotpanel-container.panel-container {
       margin-left: 5px;
     }
+
+
+    .outlinepanel-container [ref="outlinepanel"],
+    .outlinepanel-container [ref="configpanel"]{
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
   </style>
   <script>
     /* globals opts: false */
@@ -279,29 +287,35 @@
     };
     const panel_visibility = (selector, action) => {
       self.root.querySelector(selector).classList[action]("hidden");
-      setTimeout(update_panel_widths, 10);
+      //setTimeout(update_panel_widths, 10);
     };
     self.close_outline_panel = () => {
       panel_visibility('[ref="outlinepanel"]', "add")
-      update_panel_widths(0, "hide");
+      panel_visibility('[ref="configpanel"]', "add")
+      //update_panel_widths(0, "hide");
     };
     self.show_outline_panel = () => {
       panel_visibility('[ref="outlinepanel"]', "remove")
-      update_panel_widths(0, "show");
+      panel_visibility('[ref="configpanel"]', "add")
+      //update_panel_widths(0, "show");
     };
     self.close_config_panel = () => {
       panel_visibility('[ref="outlinepanel"]', "add")
-      update_panel_widths(2, "hide");
+      panel_visibility('[ref="configpanel"]', "add")
+      //update_panel_widths(0, "hide");
     };
     self.show_config_panel = () => {
-      panel_visibility('[ref="outlinepanel"]', "remove")
-      update_panel_widths(2, "show");
+      panel_visibility('[ref="configpanel"]', "remove")
+      panel_visibility('[ref="outlinepanel"]', "add")
+      //update_panel_widths(0, "show");
     };
     self.toggle_config_panel = () => {
       update_panel_widths(2);
+      throw new Error("Not implemented")
     };
     self.toggle_outline_panel = () => {
       update_panel_widths(0);
+      throw new Error("Not implemented")
     };
     self.change_unit_names = (unit_names) => {
       self.refs.outlinepanel.opts.unit_names = unit_names;
@@ -324,12 +338,32 @@
       self.root.querySelector(selector).classList.remove("hidden");
     };
 
-    self.show_filtered_plots = (unitindex, plot_types) => {
+    self.show_filtered_plots = (unitindex, unitname, plot_types) => {
+      /*
+      "plain" class="plain" model={model}></rts-model-plot>
+          <rts-model-plot type="loglikelihood" class="loglikelihood" model={model}></rts-model-plot>
+          
+          <rts-model-plot type="before-change-point-residuals" class="before-change-point-residuals" model={model}></rts-model-plot>
+          <rts-model-plot type="before-change-point-autocorrelation" class="before-change-point-autocorrelation" model={model}></rts-model-plot>
+          <rts-model-plot type="after-change-point-residuals" class="after-change-point-residuals" model={model}></rts-model-plot>
+          <rts-model-plot type="after-change-point-autocorrelation" class="after-change-point-autocorrelation" model={model}></rts-model-plot>
+          <rts-model-plot type="box-plot-residuals" 
+      */
+      const default_title = {
+        "plain": (n) => `Time series (Unit: ${unitname})`,
+        "loglikelihood": (n) => `Log-likelihood (Unit: ${unitname})`,
+        "before-change-point-residuals": (n) => `Residuals of the model before change-point (Unit: ${unitname})`,
+        "after-change-point-residuals": (n) => `Residuals of the model after change-point (Unit: ${unitname})`,
+        "before-change-point-autocorrelation": (n) => `Autocorrelation function of the model before change-point (Unit: ${unitname})`,
+        "after-change-point-autocorrelation": (n) => `Autocorrelation function of the model after change-point (Unit: ${unitname})`,
+        "box-plot-residuals": (n) => `Box plot of the residuals of the models before and after change-point (Unit: ${unitname})`,
+      }
       self.show_main_panel(".plot-container");
       self.refs.plot_collection.update()
       self.refs.plot_collection.opts.plots = plot_types.map((plot_type) => ({
         index: unitindex - 1,
-        type: plot_type
+        type: plot_type,
+        title: default_title[plot_type](unitname)
       }));
       self.refs.plot_collection.update()
     };
@@ -366,21 +400,6 @@
 
     self.on("mount", () => {
       create_splitter([15, 70, 15]);
-      let model = {}
-      model.dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-      model.dates = [...Array(model.dates.length).keys()].map((i) => new Date(new Date().setDate(i)))
-      model.x = [...Array(model.dates.length).keys()]
-      model.change_point = {}
-      model.change_point.theoretical = 5
-      model.change_point.before = 5
-      model.change_point.after = 6
-      model.y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
-      model.y = model.y.map((x) => x + 0.5 * Math.random())
-      model.estimations = RTSModel.robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
-        model.change_point.before, model.change_point.after)
-      self.update_models(model)
-      window.self0 = self
-
     });
   </script>
 </rts-three-column-panel>

@@ -1,4 +1,4 @@
-riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div class="outlinepanel-container panel-container h-100"> <rts-outline-panel class="h-100 w-100" ref="outlinepanel"></rts-outline-panel> <rts-configuration-panel class="h-100 w-100" ref="configpanel"></rts-configuration-panel> </div> <div class="plotpanel-container panel-container h-100"> <div class="welcome-splash w-100 main-panel-container"> <img class="icon" src="../resources/images/app/app.png"> <div class="title"> Robust Time Series Toolbox </div> <div class="research-group"> KAUST Biostatistics group </div> <div> To start choose a dataset (in CSV format) and select the model parameters. </div> </div> <div class="plot-container main-panel-container hidden"> <rts-plot-collection ref="plot_collection"></rts-plot-collection> </div> <div class="content-containe3r main-panel-container hidden"> <rts-model-plot type="plain" ref="plain"></rts-model-plot> <rts-model-plot type="box-plot-residuals" ref="box_plot_residuals"></rts-model-plot> <rts-model-plot type="loglikelihood" ref="loglikelihood"></rts-model-plot> <rts-model-plot type="before-change-point-residuals" ref="residuals_pre"></rts-model-plot> <rts-model-plot type="before-change-point-autocorrelation" ref="autocorrelation_pre"></rts-model-plot> <rts-model-plot type="after-change-point-residuals" ref="residuals_post"></rts-model-plot> <rts-model-plot type="after-change-point-autocorrelation" ref="autocorrelation_post"></rts-model-plot> </div> <div class="content-container main-panel-container hidden"> <rts-data-summary ref="data_summary"></rts-data-summary> <div class="plot_container" ref="plot_container"></div> </div> <div class="paper-model-1 paper-pdf w-100 h-100 main-panel-container hidden"> <iframe class="w-100 h-100" src="./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&"></iframe> </div> </div> <div class="configpanel-container panel-container h-100"> </div> </div>', 'rts-three-column-panel .welcome-splash.hidden,[data-is="rts-three-column-panel"] .welcome-splash.hidden{ display: none; } rts-three-column-panel .welcome-splash,[data-is="rts-three-column-panel"] .welcome-splash{ text-align: center; margin-top: 50px; font-size: 12pt; font-weight: 200; } rts-three-column-panel .welcome-splash .icon,[data-is="rts-three-column-panel"] .welcome-splash .icon{ max-width: 250px; opacity: 0.5; } rts-three-column-panel .welcome-splash .title,[data-is="rts-three-column-panel"] .welcome-splash .title{ font-size: 18pt; font-weight: 200; } rts-three-column-panel .welcome-splash .research-group,[data-is="rts-three-column-panel"] .welcome-splash .research-group{ font-size: 12pt; font-weight: normal; margin-bottom: 30px; } rts-three-column-panel .plot_container [class^=\'apexcharts\'],[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\']{ cursor: default !important; } rts-three-column-panel .plot_container .apexcharts-menu.open,[data-is="rts-three-column-panel"] .plot_container .apexcharts-menu.open{ background-color: #dadbdc; background-color: #f5f6f7; border: 1px solid rgba(0, 0, 0, 0.2); } rts-three-column-panel .plot_container .apexcharts-menu.open .apexcharts-menu-item,[data-is="rts-three-column-panel"] .plot_container .apexcharts-menu.open .apexcharts-menu-item{ margin: 1px; border: 1px solid transparent; } rts-three-column-panel .plot_container .apexcharts-menu.open .apexcharts-menu-item:hover,[data-is="rts-three-column-panel"] .plot_container .apexcharts-menu.open .apexcharts-menu-item:hover{ background-color: rgba(164, 206, 249, 0.2); border: 1px solid #a4cef9; } rts-three-column-panel .plot_container [class^=\'apexcharts\'].selected,[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\'].selected{ border: none; box-shadow: none !important; } rts-three-column-panel .plot_container [class^=\'apexcharts\'].selected::before,[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\'].selected::before,rts-three-column-panel .plot_container [class^=\'apexcharts\'].selected::after,[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\'].selected::after{ display: none; } rts-three-column-panel .panel-container,[data-is="rts-three-column-panel"] .panel-container{ transitio1n: 10ms linear width; min-width: 0px !important; overflow-x: hidden; } rts-three-column-panel .panel-container.hidden,[data-is="rts-three-column-panel"] .panel-container.hidden{ } rts-three-column-panel .panel-container,[data-is="rts-three-column-panel"] .panel-container{ } rts-three-column-panel .plotpanel-container,[data-is="rts-three-column-panel"] .plotpanel-container{ overflow: auto; height: 100% !important; } rts-three-column-panel .hidden,[data-is="rts-three-column-panel"] .hidden{ display: none; } rts-three-column-panel .content-container,[data-is="rts-three-column-panel"] .content-container{ width: 80%; min-width: 700px !important; margin: 15px auto; padding: 30px; background-color: white; border: 1px solid #bbbec2; box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important; } rts-three-column-panel .main-viewport,[data-is="rts-three-column-panel"] .main-viewport{ overflow: auto !important; display: block !important; padding: 10px; } rts-three-column-panel .outline-panel.hidden-panel,[data-is="rts-three-column-panel"] .outline-panel.hidden-panel{ width: 1px !important; max-width: 1px !important; min-width: 1px !important; transition: 600ms linear width; } rts-three-column-panel .outline-panel,[data-is="rts-three-column-panel"] .outline-panel{ min-width: 100px !important; transition: 600ms linear width; } rts-three-column-panel .main-viewport>*,[data-is="rts-three-column-panel"] .main-viewport>*{ min-width: 500px; } rts-three-column-panel .main-viewport .apexcharts-canvas .apexcharts-toolbar .hidden,[data-is="rts-three-column-panel"] .main-viewport .apexcharts-canvas .apexcharts-toolbar .hidden{ display: none; } rts-three-column-panel .main-viewport .apexcharts-canvas .apexcharts-toolbar,[data-is="rts-three-column-panel"] .main-viewport .apexcharts-canvas .apexcharts-toolbar{ font-family: unset; font-size: 40pt; } rts-three-column-panel .split-parent,[data-is="rts-three-column-panel"] .split-parent{ display: flex; } rts-three-column-panel .gutter,[data-is="rts-three-column-panel"] .gutter{ background-color: #dadbdc; cursor: ew-resize; background: white; border: 1px solid #dadbdc; } rts-three-column-panel .gutter.gutter-horizontal .gutter-close,[data-is="rts-three-column-panel"] .gutter.gutter-horizontal .gutter-close{ background-color: rgba(58, 139, 199, 1) !important; } rts-three-column-panel .gutter.gutter-horizontal.gutter-2,[data-is="rts-three-column-panel"] .gutter.gutter-horizontal.gutter-2{ display: none; } rts-three-column-panel .plotpanel-container.panel-container,[data-is="rts-three-column-panel"] .plotpanel-container.panel-container{ margin-left: 5px; }', '', function(opts) {
+riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div class="outlinepanel-container panel-container h-100"> <rts-outline-panel class="h-100 w-100" ref="outlinepanel"></rts-outline-panel> <rts-configuration-panel class="h-100 w-100" ref="configpanel"></rts-configuration-panel> </div> <div class="plotpanel-container panel-container h-100"> <div class="welcome-splash w-100 main-panel-container"> <img class="icon" src="../resources/images/app/app.png"> <div class="title"> Robust Time Series Toolbox </div> <div class="research-group"> KAUST Biostatistics group </div> <div> To start choose a dataset (in CSV format) and select the model parameters. </div> </div> <div class="plot-container main-panel-container paper-style hidden"> <rts-plot-collection ref="plot_collection"></rts-plot-collection> </div> <div class="content-container main-panel-container paper-style hidden"> <rts-data-summary ref="data_summary"></rts-data-summary> </div> <div class="paper-model-1 paper-pdf w-100 h-100 main-panel-container hidden"> <iframe class="w-100 h-100" src="./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&"></iframe> </div> </div> <div class="configpanel-container panel-container h-100"> </div> </div>', 'rts-three-column-panel .welcome-splash.hidden,[data-is="rts-three-column-panel"] .welcome-splash.hidden{ display: none; } rts-three-column-panel .welcome-splash,[data-is="rts-three-column-panel"] .welcome-splash{ text-align: center; margin-top: 50px; font-size: 12pt; font-weight: 200; } rts-three-column-panel .welcome-splash .icon,[data-is="rts-three-column-panel"] .welcome-splash .icon{ max-width: 250px; opacity: 0.5; } rts-three-column-panel .welcome-splash .title,[data-is="rts-three-column-panel"] .welcome-splash .title{ font-size: 18pt; font-weight: 200; } rts-three-column-panel .welcome-splash .research-group,[data-is="rts-three-column-panel"] .welcome-splash .research-group{ font-size: 12pt; font-weight: normal; margin-bottom: 30px; } rts-three-column-panel .plot_container [class^=\'apexcharts\'],[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\']{ cursor: default !important; } rts-three-column-panel .plot_container .apexcharts-menu.open,[data-is="rts-three-column-panel"] .plot_container .apexcharts-menu.open{ background-color: #dadbdc; background-color: #f5f6f7; border: 1px solid rgba(0, 0, 0, 0.2); } rts-three-column-panel .plot_container .apexcharts-menu.open .apexcharts-menu-item,[data-is="rts-three-column-panel"] .plot_container .apexcharts-menu.open .apexcharts-menu-item{ margin: 1px; border: 1px solid transparent; } rts-three-column-panel .plot_container .apexcharts-menu.open .apexcharts-menu-item:hover,[data-is="rts-three-column-panel"] .plot_container .apexcharts-menu.open .apexcharts-menu-item:hover{ background-color: rgba(164, 206, 249, 0.2); border: 1px solid #a4cef9; } rts-three-column-panel .plot_container [class^=\'apexcharts\'].selected,[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\'].selected{ border: none; box-shadow: none !important; } rts-three-column-panel .plot_container [class^=\'apexcharts\'].selected::before,[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\'].selected::before,rts-three-column-panel .plot_container [class^=\'apexcharts\'].selected::after,[data-is="rts-three-column-panel"] .plot_container [class^=\'apexcharts\'].selected::after{ display: none; } rts-three-column-panel .outlinepanel-container,[data-is="rts-three-column-panel"] .outlinepanel-container{ overflow: hidden; } rts-three-column-panel .panel-container,[data-is="rts-three-column-panel"] .panel-container{ transitio1n: 10ms linear width; min-width: 0px !important; overflow-x: hidden; } rts-three-column-panel .panel-container.hidden,[data-is="rts-three-column-panel"] .panel-container.hidden{ } rts-three-column-panel .panel-container,[data-is="rts-three-column-panel"] .panel-container{ } rts-three-column-panel .plotpanel-container,[data-is="rts-three-column-panel"] .plotpanel-container{ overflow: auto; height: 100% !important; } rts-three-column-panel .hidden,[data-is="rts-three-column-panel"] .hidden{ display: none; } rts-three-column-panel .content-container,[data-is="rts-three-column-panel"] .content-container{ } rts-three-column-panel .paper-style,[data-is="rts-three-column-panel"] .paper-style{ background-color: white; border: 1px solid #bbbec2; box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important; min-width: 700px !important; width: 80%; position: relative; margin: 15px auto; margin-bottom: 40px; padding: 30px; } rts-three-column-panel .main-viewport,[data-is="rts-three-column-panel"] .main-viewport{ overflow: auto !important; display: block !important; padding: 10px; } rts-three-column-panel .outline-panel.hidden-panel,[data-is="rts-three-column-panel"] .outline-panel.hidden-panel{ width: 1px !important; max-width: 1px !important; min-width: 1px !important; transition: 600ms linear width; } rts-three-column-panel .outline-panel,[data-is="rts-three-column-panel"] .outline-panel{ min-width: 100px !important; transition: 600ms linear width; } rts-three-column-panel .main-viewport>*,[data-is="rts-three-column-panel"] .main-viewport>*{ min-width: 500px; } rts-three-column-panel .main-viewport .apexcharts-canvas .apexcharts-toolbar .hidden,[data-is="rts-three-column-panel"] .main-viewport .apexcharts-canvas .apexcharts-toolbar .hidden{ display: none; } rts-three-column-panel .main-viewport .apexcharts-canvas .apexcharts-toolbar,[data-is="rts-three-column-panel"] .main-viewport .apexcharts-canvas .apexcharts-toolbar{ font-family: unset; font-size: 40pt; } rts-three-column-panel .split-parent,[data-is="rts-three-column-panel"] .split-parent{ display: flex; } rts-three-column-panel .gutter,[data-is="rts-three-column-panel"] .gutter{ background-color: #dadbdc; cursor: ew-resize; background: white; border: 1px solid #dadbdc; } rts-three-column-panel .gutter.gutter-horizontal .gutter-close,[data-is="rts-three-column-panel"] .gutter.gutter-horizontal .gutter-close{ background-color: rgba(58, 139, 199, 1) !important; } rts-three-column-panel .gutter.gutter-horizontal.gutter-2,[data-is="rts-three-column-panel"] .gutter.gutter-horizontal.gutter-2{ display: none; } rts-three-column-panel .plotpanel-container.panel-container,[data-is="rts-three-column-panel"] .plotpanel-container.panel-container{ margin-left: 5px; } rts-three-column-panel .outlinepanel-container [ref="outlinepanel"],[data-is="rts-three-column-panel"] .outlinepanel-container [ref="outlinepanel"],rts-three-column-panel .outlinepanel-container [ref="configpanel"],[data-is="rts-three-column-panel"] .outlinepanel-container [ref="configpanel"]{ position: absolute; top: 0; left: 0; }', '', function(opts) {
 
 
     const self = this;
@@ -65,29 +65,35 @@ riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div
     };
     const panel_visibility = (selector, action) => {
       self.root.querySelector(selector).classList[action]("hidden");
-      setTimeout(update_panel_widths, 10);
+
     };
     self.close_outline_panel = () => {
       panel_visibility('[ref="outlinepanel"]', "add")
-      update_panel_widths(0, "hide");
+      panel_visibility('[ref="configpanel"]', "add")
+
     };
     self.show_outline_panel = () => {
       panel_visibility('[ref="outlinepanel"]', "remove")
-      update_panel_widths(0, "show");
+      panel_visibility('[ref="configpanel"]', "add")
+
     };
     self.close_config_panel = () => {
       panel_visibility('[ref="outlinepanel"]', "add")
-      update_panel_widths(2, "hide");
+      panel_visibility('[ref="configpanel"]', "add")
+
     };
     self.show_config_panel = () => {
-      panel_visibility('[ref="outlinepanel"]', "remove")
-      update_panel_widths(2, "show");
+      panel_visibility('[ref="configpanel"]', "remove")
+      panel_visibility('[ref="outlinepanel"]', "add")
+
     };
     self.toggle_config_panel = () => {
       update_panel_widths(2);
+      throw new Error("Not implemented")
     };
     self.toggle_outline_panel = () => {
       update_panel_widths(0);
+      throw new Error("Not implemented")
     };
     self.change_unit_names = (unit_names) => {
       self.refs.outlinepanel.opts.unit_names = unit_names;
@@ -110,12 +116,23 @@ riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div
       self.root.querySelector(selector).classList.remove("hidden");
     };
 
-    self.show_filtered_plots = (unitindex, plot_types) => {
+    self.show_filtered_plots = (unitindex, unitname, plot_types) => {
+
+      const default_title = {
+        "plain": (n) => `Time series (Unit: ${unitname})`,
+        "loglikelihood": (n) => `Log-likelihood (Unit: ${unitname})`,
+        "before-change-point-residuals": (n) => `Residuals of the model before change-point (Unit: ${unitname})`,
+        "after-change-point-residuals": (n) => `Residuals of the model after change-point (Unit: ${unitname})`,
+        "before-change-point-autocorrelation": (n) => `Autocorrelation function of the model before change-point (Unit: ${unitname})`,
+        "after-change-point-autocorrelation": (n) => `Autocorrelation function of the model after change-point (Unit: ${unitname})`,
+        "box-plot-residuals": (n) => `Box plot of the residuals of the models before and after change-point (Unit: ${unitname})`,
+      }
       self.show_main_panel(".plot-container");
       self.refs.plot_collection.update()
       self.refs.plot_collection.opts.plots = plot_types.map((plot_type) => ({
         index: unitindex - 1,
-        type: plot_type
+        type: plot_type,
+        title: default_title[plot_type](unitname)
       }));
       self.refs.plot_collection.update()
     };
@@ -152,20 +169,5 @@ riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div
 
     self.on("mount", () => {
       create_splitter([15, 70, 15]);
-      let model = {}
-      model.dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-      model.dates = [...Array(model.dates.length).keys()].map((i) => new Date(new Date().setDate(i)))
-      model.x = [...Array(model.dates.length).keys()]
-      model.change_point = {}
-      model.change_point.theoretical = 5
-      model.change_point.before = 5
-      model.change_point.after = 6
-      model.y = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
-      model.y = model.y.map((x) => x + 0.5 * Math.random())
-      model.estimations = RTSModel.robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
-        model.change_point.before, model.change_point.after)
-      self.update_models(model)
-      window.self0 = self
-
     });
 });

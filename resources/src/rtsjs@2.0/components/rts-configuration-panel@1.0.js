@@ -5,11 +5,18 @@ riot.tag2('rts-configuration-panel', '<div class="container-fluid p-0 h-100"> <u
         const config = opts;
         config.unit_names = !!config.unit_names ? config.unit_names : ["Unit A", "Unit 2", "Other unit", "D"];
 
+        const open_this_panel = () => {
+            if(self.parent && self.parent.show_config_panel)
+                self.parent.show_config_panel();
+        };
+
         self.view_date_settings = () => {
+            open_this_panel();
             self.root.querySelector(".date-settings-button").click();
         };
 
         self.view_change_point_settings = () => {
+            open_this_panel();
             self.root.querySelector(".change-point-settings-button").click();
         };
 

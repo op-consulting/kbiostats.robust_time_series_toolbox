@@ -1,4 +1,4 @@
-riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-role="appbar" class="pos-relative z-dropdown"> <button id="" class="button" title="Zoom reset" onclick="{zoomreset}"> <span class="mif-home"></span> </button> <button id="" class="button" title="Zoom in" onclick="{zoomin}"> <span class="mif-zoom-in"></span> </button> <button id="" class="button" title="Zoom in" onclick="{zoomin}"> <span class="ms-Icon ms-Icon--ZoomIn"></span> </button> <button id="" class="button" title="Zoom out" onclick="{zoomout}"> <span class="mif-zoom-out"></span> </button> <button id="" class="button" title="Download image" onclick="{save_image}"> <span class="ms-Icon ms-Icon--Save"></span> </button> </div> <div class="plot-container"></div> </div>', 'rts-model-plot .app-bar button,[data-is="rts-model-plot"] .app-bar button{ height: 34px !important; width: 34px !important; padding: 0; cursor: default; } rts-model-plot .app-bar,[data-is="rts-model-plot"] .app-bar{ text-align: left; display: block; min-height: 25px; height: 42px; padding: 3px; background: #f5f6f7; } rts-model-plot .simple-plot,[data-is="rts-model-plot"] .simple-plot{ border: 1px solid #bbbec2; box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important; } rts-model-plot .plot-container,[data-is="rts-model-plot"] .plot-container{ padding-top: 10px; height: calc(100% - 70px); width: calc(100% - 30px); left: 0; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend,rts-model-plot .dygraph-legend .legend-time,[data-is="rts-model-plot"] .dygraph-legend .legend-time{ background: rgb(237, 237, 237); } rts-model-plot .dygraph-legend .legend-values,[data-is="rts-model-plot"] .dygraph-legend .legend-values{ background: #f5f6f7; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend{ position: absolute; min-width: 100px; border: 1px solid rgb(205, 205, 205); zoom: 0.8; } rts-model-plot .legend-container,[data-is="rts-model-plot"] .legend-container{ padding: 5px; } rts-model-plot .label,[data-is="rts-model-plot"] .label{ height: 20px; padding: 5px; user-select: text; cursor: text; } rts-model-plot .legend-label,[data-is="rts-model-plot"] .legend-label{ padding-right: 5px; filter: brightness(100%); font-weight: bold; } rts-model-plot .legend-line,[data-is="rts-model-plot"] .legend-line{ min-width: 10px; display: inline-block; height: 5px; position: relative; top: -4px; } rts-model-plot *,[data-is="rts-model-plot"] *{ -webkit-user-drag: none !important; user-select: none; cursor: default; }', '', function(opts) {
+riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-role="appbar" class="pos-relative z-dropdown"> <button class="button" title="Zoom reset" onclick="{zoomreset}"> <span class="ms-Icon ms-Icon--Home"></span> </button> <button class="button" title="Zoom in" onclick="{zoomin}"> <span class="ms-Icon ms-Icon--ZoomIn"></span> </button> <button class="button" title="Zoom out" onclick="{zoomout}"> <span class="ms-Icon ms-Icon--ZoomOut"></span> </button> <button id="" class="button" title="Download image" onclick="{save_image}"> <span class="ms-Icon ms-Icon--Save"></span> </button> </div> <div class="image-container"> <h4 class="text-light">{opts.title}</h4> <div class="pre-plot-container"> <div class="plot-container"></div> </div> </div> </div>', 'rts-model-plot .app-bar button,[data-is="rts-model-plot"] .app-bar button{ height: 34px !important; width: 34px !important; padding: 0; cursor: default; } rts-model-plot .app-bar,[data-is="rts-model-plot"] .app-bar{ text-align: left; display: block; min-height: 25px; height: 42px; padding: 3px; background: #f5f6f7; } rts-model-plot .simple-plot,[data-is="rts-model-plot"] .simple-plot{ border: 1px solid #bbbec2; box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important; } rts-model-plot .image-container,[data-is="rts-model-plot"] .image-container{ padding-top: 10px; height: calc(100% - 70px); width: calc(100% - 30px); left: 0; } rts-model-plot .pre-plot-container,[data-is="rts-model-plot"] .pre-plot-container{ width: 100%; height: inherit; } rts-model-plot .plot-container,[data-is="rts-model-plot"] .plot-container{ height: 100%!important; width: 100%!important; max-height: 100%; min-height: 100%; min-width: 100%; max-width: 100%; position: absolute; right: 10px; left: 10px; bottom: 10px; top: 10px; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend,rts-model-plot .dygraph-legend .legend-time,[data-is="rts-model-plot"] .dygraph-legend .legend-time{ background: rgb(237, 237, 237); } rts-model-plot .dygraph-legend .legend-values,[data-is="rts-model-plot"] .dygraph-legend .legend-values{ background: #f5f6f7; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend{ position: absolute; min-width: 100px; border: 1px solid rgb(205, 205, 205); zoom: 0.8; } rts-model-plot .legend-container,[data-is="rts-model-plot"] .legend-container{ padding: 5px; } rts-model-plot .label,[data-is="rts-model-plot"] .label{ height: 20px; padding: 5px; user-select: text; cursor: text; } rts-model-plot .legend-label,[data-is="rts-model-plot"] .legend-label{ padding-right: 5px; filter: brightness(100%); font-weight: bold; } rts-model-plot .legend-line,[data-is="rts-model-plot"] .legend-line{ min-width: 10px; display: inline-block; height: 5px; position: relative; top: -4px; } rts-model-plot *,[data-is="rts-model-plot"] *{ -webkit-user-drag: none !important; user-select: none; cursor: default; }', '', function(opts) {
 
 
     const self = this;
@@ -22,14 +22,16 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       self.root.querySelector(".plot-type-button").click();
     };
 
-    self._zoom = (factor = 0.8) => {
+    self._zoom = (factor = 0.8, e) => {
       var r = self.graph.xAxisRange();
+      console.log(r);
       var delta = 0.5 * factor * (r[1] - r[0])
       var x0 = r[0] + delta,
         x1 = r[1] - delta;
       self.graph.updateOptions({
         dateWindow: [x0, x1]
       });
+      e.preventUpdate = true;
     }
 
     self.zoomreset = () => {
@@ -39,9 +41,9 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       });
     }
     const zoom_factor = 0.2
-    self.zoomout = () => self._zoom(zoom_factor / (zoom_factor - 1))
+    self.zoomout = (e) => self._zoom(zoom_factor / (zoom_factor - 1),e)
 
-    self.zoomin = () => self._zoom(zoom_factor)
+    self.zoomin = (e) => self._zoom(zoom_factor,e)
 
     self.save_image = () => {
       const require_ = require;
@@ -49,7 +51,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       const {
         dialog
       } = require_("electron").remote;
-      const node = self.root.querySelector(".plot-container");
+      const node = self.root.querySelector(".image-container");
 
       const sanitize = (n) => !n || n.toLowerCase().replace(/[\s\W]+/g, "-").replace(/\-+/g, "-").trim();
 

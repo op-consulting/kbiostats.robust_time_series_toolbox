@@ -2,7 +2,7 @@
   <div>
     <virtual if={_anyPlotFilter()}>
       <div class={"graph-collection collection-" + (plot.index + 1)} each={plot, index in opts.plots}>
-          <rts-model-plot type={plot.type} class={plot.type} model={opts.models[plot.index]}></rts-model-plot>
+          <rts-model-plot type={plot.type} class={plot.type} model={opts.models[plot.index]} title={plot.title}></rts-model-plot>
       </div>
     </virtual>
     <!--
@@ -19,6 +19,14 @@
   <style>
   .hidden{
     display: none!important;
+  }
+  .graph-collection rts-model-plot > div{
+    border: none!important;
+    box-shadow: none!important;
+  }
+  .graph-collection rts-model-plot{
+    margin-top:10px;
+    margin-bottom: 20px;
   }
   </style>
   <script>

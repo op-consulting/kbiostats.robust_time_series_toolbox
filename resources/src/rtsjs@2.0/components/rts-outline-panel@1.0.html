@@ -22,7 +22,7 @@
         ul.tabs-list.headers {
             display: none !important;
         }
-
+    
         .panel-title {
             background-color: rgba(58, 139, 199, 1);
             color: white;
@@ -56,15 +56,23 @@
         config.unit_title = !!config.unit_title ? config.unit_title : "Units";
         config.plot_title = !!config.plot_title ? config.plot_title : "Type of plots";
 
+        const open_this_panel = () => {
+            if(self.parent && self.parent.show_outline_panel)
+                self.parent.show_outline_panel();
+        };
+
         self.view_blank = () => {
+            open_this_panel();
             self.root.querySelector(".outline-blank-button").click();
         };
 
         self.view_list_unit_names = () => {
+            open_this_panel();
             self.root.querySelector(".unit-name-button").click();
         };
 
         self.view_list_plot_types = () => {
+            open_this_panel();
             self.root.querySelector(".plot-type-button").click();
         };
 

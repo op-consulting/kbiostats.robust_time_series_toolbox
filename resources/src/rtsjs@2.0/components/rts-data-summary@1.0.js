@@ -1,5 +1,5 @@
 
-riot.tag2('rts-data-block-summary', '<div class="model-title" style="" colspan="2"> <span class="mif-dashboard icon"></span> <span>{opts.model.unit_name}</span> </div> <div class="model-description"> <div class="model-mini-plot"> <rts-model-plot style="width: 100%; height: 300px;" type="plain" ref="plain" id="{\'executive-plot-\' + opts.index}" model="{opts.model}"></rts-model-plot> </div> </div> <div class="model-mini-info"> <ul class="v-menu model-information" style="width:100%;"> <li class="menu-title">Change point</li> <li class="change-point">{change_point(opts.model)}</li> <li class="menu-title">Slope estimation</li> <li class="info-before-TET"> {mean_estimate[\'slope\'](opts.model, 0)} </li> <li class="info-after-TET"> {mean_estimate[\'slope\'](opts.model, 1)} </li> <li class="info-diff"> {estimate_difference_on[\'slope\'](opts.model)} </li> <li class="info-95CI"> {confidence_interval[\'slope\'](opts.model)} </li> <li class="menu-title">Slope estimation</li> <li class="info-before-TET"> {mean_estimate[\'intercept\'](opts.model, 0)} </li> <li class="info-after-TET"> {mean_estimate[\'intercept\'](opts.model, 1)} </li> <li class="info-diff"> {estimate_difference_on[\'intercept\'](opts.model)} </li> <li class="info-95CI"> {confidence_interval[\'intercept\'](opts.model)} </li> <li class="menu-title">White noise estimation</li> <li class="info-before-TET"> {mean_estimate[\'white_noise\'](opts.model, 0)} </li> <li class="info-after-TET"> {mean_estimate[\'white_noise\'](opts.model, 1)} </li> <li class="info-diff"> {estimate_difference_on[\'white_noise\'](opts.model)} </li> <li class="info-95CI"> {confidence_interval[\'white_noise\'](opts.model)} </li> </ul> </div> </div>', 'rts-data-block-summary *,[data-is="rts-data-block-summary"] *{ cursor: default !important; } rts-data-block-summary .model-mini-plot,[data-is="rts-data-block-summary"] .model-mini-plot{ width: 50%; position: absolute; top: 0; left: 0; } rts-data-block-summary .model-mini-info,[data-is="rts-data-block-summary"] .model-mini-info{ width: 50%; position: relative; right: 0; left: 50%; } rts-data-block-summary .model-title,[data-is="rts-data-block-summary"] .model-title{ width: 100%; background-color: #efefef; font-size: 15pt; font-weight: 300 } rts-data-block-summary .model-information li,[data-is="rts-data-block-summary"] .model-information li{ font-weight: 500; font-size: 11pt; } rts-data-block-summary .model-information .menu-title,[data-is="rts-data-block-summary"] .model-information .menu-title{ font-size: 12pt; font-weight: 200; } rts-data-block-summary .model-information .change-point-TET,[data-is="rts-data-block-summary"] .model-information .change-point-TET{ color: rgb(75, 22, 22); } rts-data-block-summary .model-information .info-before-TET,[data-is="rts-data-block-summary"] .model-information .info-before-TET{ font-weight: normal; } rts-data-block-summary .model-information .info-after-TET,[data-is="rts-data-block-summary"] .model-information .info-after-TET{ font-weight: normal; } rts-data-block-summary .model-information .info-diff,[data-is="rts-data-block-summary"] .model-information .info-diff{ color: rgb(19, 38, 66); color: rgb(15, 56, 56); } rts-data-block-summary .model-information .info-95CI,[data-is="rts-data-block-summary"] .model-information .info-95CI{ color: rgb(15, 56, 56); } rts-data-block-summary .model-information li::before,[data-is="rts-data-block-summary"] .model-information li::before{ font-size: 10pt; font-weight: normal; width: 160px; display: inline-block; } rts-data-block-summary .model-information .change-point::before,[data-is="rts-data-block-summary"] .model-information .change-point::before{ content: "Estimated change-point:"; } rts-data-block-summary .model-information .info-before-TET::before,[data-is="rts-data-block-summary"] .model-information .info-before-TET::before{ content: "Before change-point:"; } rts-data-block-summary .model-information .info-after-TET::before,[data-is="rts-data-block-summary"] .model-information .info-after-TET::before{ content: "After change-point:"; } rts-data-block-summary .model-information .info-diff::before,[data-is="rts-data-block-summary"] .model-information .info-diff::before{ content: "Difference:"; } rts-data-block-summary .model-information .info-95CI::before,[data-is="rts-data-block-summary"] .model-information .info-95CI::before{ content: "95% C.I.:"; } rts-data-block-summary .model-information-table .model-title,[data-is="rts-data-block-summary"] .model-information-table .model-title{ width: 100%; background-color: #efefef; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Helvetica Neue", sans-serif; font-size: 15pt; font-weight: 300; }', '', function(opts) {
+riot.tag2('rts-data-block-summary', '<div class="model-title" style="" colspan="2"> <span class="mif-dashboard icon"></span> <span>{opts.model.unit_name}</span> </div> <div class="model-description"> <div class="model-mini-plot"> <rts-model-plot type="plain" ref="plain" id="{\'executive-plot-\' + opts.index}" model="{opts.model}"></rts-model-plot> </div> </div> <div class="model-mini-info"> <ul class="v-menu model-information" style="width:100%;"> <li class="menu-title">Change point</li> <li class="change-point">{change_point(opts.model)}</li> <li class="menu-title">Slope estimation</li> <li class="info-before-TET"> {mean_estimate[\'slope\'](opts.model, 0)} </li> <li class="info-after-TET"> {mean_estimate[\'slope\'](opts.model, 1)} </li> <li class="info-diff"> {estimate_difference_on[\'slope\'](opts.model)} </li> <li class="info-95CI"> {confidence_interval[\'slope\'](opts.model)} </li> <li class="menu-title">Slope estimation</li> <li class="info-before-TET"> {mean_estimate[\'intercept\'](opts.model, 0)} </li> <li class="info-after-TET"> {mean_estimate[\'intercept\'](opts.model, 1)} </li> <li class="info-diff"> {estimate_difference_on[\'intercept\'](opts.model)} </li> <li class="info-95CI"> {confidence_interval[\'intercept\'](opts.model)} </li> <li class="menu-title">White noise estimation</li> <li class="info-before-TET"> {mean_estimate[\'white_noise\'](opts.model, 0)} </li> <li class="info-after-TET"> {mean_estimate[\'white_noise\'](opts.model, 1)} </li> <li class="info-diff"> {estimate_difference_on[\'white_noise\'](opts.model)} </li> <li class="info-95CI"> {confidence_interval[\'white_noise\'](opts.model)} </li> </ul> </div> </div>', 'rts-data-block-summary *,[data-is="rts-data-block-summary"] *{ cursor: default !important; } rts-data-block-summary .model-mini-plot,[data-is="rts-data-block-summary"] .model-mini-plot{ width: 50%; position: absolute; top: 0; left: 0; } rts-data-block-summary .model-mini-info,[data-is="rts-data-block-summary"] .model-mini-info{ width: 50%; position: relative; right: 0; left: 50%; } rts-data-block-summary .model-title,[data-is="rts-data-block-summary"] .model-title{ width: 100%; background-color: #efefef; font-size: 15pt; font-weight: 300 } rts-data-block-summary .model-information li,[data-is="rts-data-block-summary"] .model-information li{ font-weight: 500; font-size: 11pt; } rts-data-block-summary .model-information .menu-title,[data-is="rts-data-block-summary"] .model-information .menu-title{ font-size: 12pt; font-weight: 200; } rts-data-block-summary .model-information .change-point-TET,[data-is="rts-data-block-summary"] .model-information .change-point-TET{ color: rgb(75, 22, 22); } rts-data-block-summary .model-information .info-before-TET,[data-is="rts-data-block-summary"] .model-information .info-before-TET{ font-weight: normal; } rts-data-block-summary .model-information .info-after-TET,[data-is="rts-data-block-summary"] .model-information .info-after-TET{ font-weight: normal; } rts-data-block-summary .model-information .info-diff,[data-is="rts-data-block-summary"] .model-information .info-diff{ color: rgb(19, 38, 66); color: rgb(15, 56, 56); } rts-data-block-summary .model-information .info-95CI,[data-is="rts-data-block-summary"] .model-information .info-95CI{ color: rgb(15, 56, 56); } rts-data-block-summary .model-information li::before,[data-is="rts-data-block-summary"] .model-information li::before{ font-size: 10pt; font-weight: normal; width: 160px; display: inline-block; } rts-data-block-summary .model-information .change-point::before,[data-is="rts-data-block-summary"] .model-information .change-point::before{ content: "Estimated change-point:"; } rts-data-block-summary .model-information .info-before-TET::before,[data-is="rts-data-block-summary"] .model-information .info-before-TET::before{ content: "Before change-point:"; } rts-data-block-summary .model-information .info-after-TET::before,[data-is="rts-data-block-summary"] .model-information .info-after-TET::before{ content: "After change-point:"; } rts-data-block-summary .model-information .info-diff::before,[data-is="rts-data-block-summary"] .model-information .info-diff::before{ content: "Difference:"; } rts-data-block-summary .model-information .info-95CI::before,[data-is="rts-data-block-summary"] .model-information .info-95CI::before{ content: "95% C.I.:"; } rts-data-block-summary .model-information-table .model-title,[data-is="rts-data-block-summary"] .model-information-table .model-title{ width: 100%; background-color: #efefef; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Helvetica Neue", sans-serif; font-size: 15pt; font-weight: 300; } rts-data-block-summary .model-mini-plot rts-model-plot > div,[data-is="rts-data-block-summary"] .model-mini-plot rts-model-plot > div{ border: none!important; box-shadow: none!important; } rts-data-block-summary .model-mini-plot rts-model-plot,[data-is="rts-data-block-summary"] .model-mini-plot rts-model-plot{ margin-to3p:5px; margin-bot3tom: 5px; max-width: 110%; min-width: 110%; width: 110%!important; min-height: 450px; max-height: 450px; height: 450px!important; margin-left: -10%; } rts-data-block-summary .model-mini-plot rts-model-plot [data-role="appbar"],[data-is="rts-data-block-summary"] .model-mini-plot rts-model-plot [data-role="appbar"],rts-data-block-summary .model-mini-plot rts-model-plot .image-container h4,[data-is="rts-data-block-summary"] .model-mini-plot rts-model-plot .image-container h4{ display: none; }', '', function(opts) {
 
 
     const self = this;
@@ -14,17 +14,17 @@ riot.tag2('rts-data-block-summary', '<div class="model-title" style="" colspan="
         console.log(model)
         x0 = model.estimations.before_change.mean_structure.slope;
         x1 = model.estimations.after_change.mean_structure.slope;
-        return rnd(x0 - x1);
+        return rnd(x1 - x0);
       },
       intercept: (model) => {
         x0 = model.estimations.before_change.mean_structure.intercept;
         x1 = model.estimations.after_change.mean_structure.intercept;
-        return rnd(x0 - x1);
+        return rnd(x1 - x0);
       },
       white_noise: (model) => {
         x0 = model.estimations.before_change.autoregressive_structure.slope;
         x1 = model.estimations.after_change.autoregressive_structure.slope;
-        return rnd(x0 - x1);
+        return rnd(x1 - x0);
       },
     };
     self.mean_estimate = {
@@ -51,9 +51,10 @@ riot.tag2('rts-data-block-summary', '<div class="model-title" style="" colspan="
         .estimations.before_change[model_struct][estimate + "_variance"];
       let df = model.x.length + model.y.length - 4;
       let ci = [
-        rnd(difference - Math.sqrt(var_difference) * st.studentt.inv(0.975, df)),
+        rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.025, df)),
         rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.975, df))
       ];
+      console.log("ci", ci)
       return "(" + ci[0] + ", " + ci[1] + ")";
     }
     self.confidence_interval = {
@@ -86,17 +87,17 @@ riot.tag2('rts-data-table-summary', '<h4 class="text-light">Data summary</h4> <u
       slope: (model) => {
         x0 = model.estimations.before_change.mean_structure.slope;
         x1 = model.estimations.after_change.mean_structure.slope;
-        return rnd(x0 - x1);
+        return rnd(x1 - x0);
       },
       intercept: (model) => {
         x0 = model.estimations.before_change.mean_structure.intercept;
         x1 = model.estimations.after_change.mean_structure.intercept;
-        return rnd(x0 - x1);
+        return rnd(x1 - x0);
       },
       white_noise: (model) => {
         x0 = model.estimations.before_change.autoregressive_structure.slope;
         x1 = model.estimations.after_change.autoregressive_structure.slope;
-        return rnd(x0 - x1);
+        return rnd(x1 - x0);
       },
     };
     self.mean_estimate = {
@@ -123,7 +124,7 @@ riot.tag2('rts-data-table-summary', '<h4 class="text-light">Data summary</h4> <u
         .estimations.before_change[model_struct][estimate + "_variance"];
       let df = model.x.length + model.y.length - 4;
       let ci = [
-        rnd(difference - Math.sqrt(var_difference) * st.studentt.inv(0.975, df)),
+        rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.025, df)),
         rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.975, df))
       ];
       return "(" + ci[0] + ", " + ci[1] + ")";

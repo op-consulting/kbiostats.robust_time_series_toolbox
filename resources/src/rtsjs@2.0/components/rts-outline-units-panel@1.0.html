@@ -5,49 +5,12 @@
     <div class="container-sidenav">
     <ul class="sidenav-counter sidenav-counter-expand-fs h-100 w-100 list-mini-plots">
         <li each={name, index in opts.unit_names}>
-            <a href="#" onclick={_trigger_event(index + 1)}>
+            <a href="#" onclick={_trigger_event(index + 1, name)}>
                 <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
                 <span class="title">UNIT {(index + 1)}</span>
                 <span class="counter">{name}</span>
             </a>
         </li>
-        <li each={name, index in opts.unit_names}>
-            <a href="#" onclick={_trigger_event(index + 1)}>
-                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
-                <span class="title">UNIT {(index + 1)}</span>
-                <span class="counter">{name}</span>
-            </a>
-        </li>
-        <!--
-        <li each={name, index in opts.unit_names}>
-            <a href="#" onclick={_trigger_event(index + 1)}>
-                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
-                <span class="title">UNIT {(index + 1)}</span>
-                <span class="counter">{name}</span>
-            </a>
-        </li>
-        <li each={name, index in opts.unit_names}>
-            <a href="#" onclick={_trigger_event(index + 1)}>
-                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
-                <span class="title">UNIT {(index + 1)}</span>
-                <span class="counter">{name}</span>
-            </a>
-        </li>
-        <li each={name, index in opts.unit_names}>
-            <a href="#" onclick={_trigger_event(index + 1)}>
-                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
-                <span class="title">UNIT {(index + 1)}</span>
-                <span class="counter">{name}</span>
-            </a>
-        </li>
-        <li each={name, index in opts.unit_names}>
-            <a href="#" onclick={_trigger_event(index + 1)}>
-                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
-                <span class="title">UNIT {(index + 1)}</span>
-                <span class="counter">{name}</span>
-            </a>
-        </li>
-        -->
     </ul>
     </div>
 
@@ -101,8 +64,8 @@
         config.title = !!config.title ? config.title : "";
         config.unit_names = !!config.unit_names ? config.unit_names : [""];
 
-        self._trigger_event = (index) => {
-            return () => self.trigger('app:request:current:unit:allplots', {unitindex: index});
+        self._trigger_event = (index, name) => {
+            return () => self.trigger('app:request:current:unit:allplots', {unitindex: index, unitname: name});
         };
 
         self.on("mount", () => {

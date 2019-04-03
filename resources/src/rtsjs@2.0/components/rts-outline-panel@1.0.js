@@ -7,15 +7,23 @@ riot.tag2('rts-outline-panel', '<div class="container-fluid p-0 h-100"> <ul clas
         config.unit_title = !!config.unit_title ? config.unit_title : "Units";
         config.plot_title = !!config.plot_title ? config.plot_title : "Type of plots";
 
+        const open_this_panel = () => {
+            if(self.parent && self.parent.show_outline_panel)
+                self.parent.show_outline_panel();
+        };
+
         self.view_blank = () => {
+            open_this_panel();
             self.root.querySelector(".outline-blank-button").click();
         };
 
         self.view_list_unit_names = () => {
+            open_this_panel();
             self.root.querySelector(".unit-name-button").click();
         };
 
         self.view_list_plot_types = () => {
+            open_this_panel();
             self.root.querySelector(".plot-type-button").click();
         };
 

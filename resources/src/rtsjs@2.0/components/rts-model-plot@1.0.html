@@ -1,23 +1,36 @@
 <rts-model-plot>
   <div class="simple-plot w-100 h-100">
     <div data-role="appbar" class="pos-relative z-dropdown">
+      <button class="button" title="Zoom reset" onclick={zoomreset}>
+        <span class="ms-Icon ms-Icon--Home"></span>
+      </button>
+      <button class="button" title="Zoom in" onclick={zoomin}>
+        <span class="ms-Icon ms-Icon--ZoomIn"></span>
+      </button>
+      <button class="button" title="Zoom out" onclick={zoomout}>
+        <span class="ms-Icon ms-Icon--ZoomOut"></span>
+      </button>
+      <!--
       <button id="" class="button" title="Zoom reset" onclick={zoomreset}>
         <span class="mif-home"></span>
       </button>
       <button id="" class="button" title="Zoom in" onclick={zoomin}>
         <span class="mif-zoom-in"></span>
       </button>
-      <button id="" class="button" title="Zoom in" onclick={zoomin}>
-        <span class="ms-Icon ms-Icon--ZoomIn"></span>
-      </button>
       <button id="" class="button" title="Zoom out" onclick={zoomout}>
         <span class="mif-zoom-out"></span>
       </button>
+    -->
       <button id="" class="button" title="Download image" onclick={save_image}>
         <span class="ms-Icon ms-Icon--Save"></span>
       </button>
     </div>
-    <div class="plot-container"></div>
+    <div class="image-container">
+      <h4 class="text-light">{opts.title}</h4>
+      <div class="pre-plot-container">
+        <div class="plot-container"></div>
+      </div>
+    </div>
   </div>
   <style>
     /****/
@@ -42,11 +55,29 @@
       box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
     }
 
-    .plot-container {
+    .image-container {
       padding-top: 10px;
       height: calc(100% - 70px);
       width: calc(100% - 30px);
       left: 0;
+    }
+
+    .pre-plot-container {
+      width: 100%;
+      height: inherit;
+    }
+    .plot-container {
+      height: 100%!important;
+      width: 100%!important;
+      max-height: 100%;
+      min-height: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      position: absolute;
+      right: 10px;
+      left: 10px;
+      bottom: 10px;
+      top: 10px;
     }
 
     .dygraph-legend,
@@ -131,14 +162,17 @@
       self.root.querySelector(".plot-type-button").click();
     };
 
-    self._zoom = (factor = 0.8) => {
+
+    self._zoom = (factor = 0.8, e) => {
       var r = self.graph.xAxisRange();
+      console.log(r);
       var delta = 0.5 * factor * (r[1] - r[0])
       var x0 = r[0] + delta,
         x1 = r[1] - delta;
       self.graph.updateOptions({
         dateWindow: [x0, x1]
       });
+      e.preventUpdate = true;
     }
 
     self.zoomreset = () => {
@@ -148,9 +182,9 @@
       });
     }
     const zoom_factor = 0.2
-    self.zoomout = () => self._zoom(zoom_factor / (zoom_factor - 1))
+    self.zoomout = (e) => self._zoom(zoom_factor / (zoom_factor - 1),e)
 
-    self.zoomin = () => self._zoom(zoom_factor)
+    self.zoomin = (e) => self._zoom(zoom_factor,e)
 
     /////////////////////////////////////////////////////////////////////
     self.save_image = () => {
@@ -159,7 +193,7 @@
       const {
         dialog
       } = require_("electron").remote;
-      const node = self.root.querySelector(".plot-container");
+      const node = self.root.querySelector(".image-container");
       /*domtoimage.toPng(node).then((dataUrl) => {
         var img = new Image();
         img.src = dataUrl;

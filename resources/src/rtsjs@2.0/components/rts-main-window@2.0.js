@@ -261,39 +261,6 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       create_thumbnails(data_source);
 
       console.log("========= D", new Date() - t0);
-
-      if (false) {
-        let models = data_source.units.map(unit_name => (
-          RTSModel.fit_model(data_source.datesOfUnit(unit_name),
-            data_source.valuesOfUnit(unit_name),
-            model_parameters.theoretical_change_point,
-            model_parameters.candidates_before,
-            model_parameters.candidates_after)
-        ));
-        const target = document.querySelector(".plot_container");
-        while (target.firstChild) {
-          target.removeChild(target.firstChild);
-        }
-        console.log("========= D", new Date() - t0);
-        t0 = new Date();
-        let plot_collection = new RTSModel.PlotCollector(target, models);
-        console.log("========= E", new Date() - t0);
-        t0 = new Date();
-        let plot_thumbnails = new RTSModel.PlotThumbnailsCollector(models);
-        console.log("========= F", new Date() - t0);
-        t0 = new Date();
-
-        update_unit_names_in_outline(data_source.units);
-        update_models_in_summary(models);
-        console.log("========= G", new Date() - t0);
-        t0 = new Date();
-        create_thumbnails(data_source);
-        console.log("========= H", new Date() - t0);
-        t0 = new Date();
-        create_interactive_thumbnails(plot_thumbnails, models, (i) => `#executive-plot-${i}`);
-        console.log("========= I", new Date() - t0);
-        t0 = new Date();
-      }
       self.refs.window.refs.menubar.enable_model_related_buttons();
       self.trigger('app:view:summary');
       console.log("========= H", new Date() - t0);
@@ -325,12 +292,16 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
       });
       self.on('app:view:modelbeforechangepoint', () => {
-        current_plot_type = ["before-change-point-residuals", "before-change-point-autocorrelation"];
+        current_plot_type = ["box-plot-residuals", "before-change-point-residuals",
+          "before-change-point-autocorrelation"
+        ];
         change_title_unit_options("Model before change-point: Choose a unit")
 
       });
       self.on('app:view:modelafterchangepoint', () => {
-        current_plot_type = ["before-change-point-residuals", "after-change-point-autocorrelation"];
+        current_plot_type = ["box-plot-residuals", "after-change-point-residuals",
+          "after-change-point-autocorrelation"
+        ];
         change_title_unit_options("Model after change-point: Choose a unit")
 
       });
@@ -339,11 +310,12 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
           data_source,
         } = RTSdata;
         const {
-          unitindex
+          unitindex,
+          unitname
         } = params;
         console.log("===================, ", unitindex)
         let unit_names = data_source.units;
-        self.refs.window.refs.panels.show_filtered_plots(unitindex, current_plot_type);
+        self.refs.window.refs.panels.show_filtered_plots(unitindex, unitname, current_plot_type);
 
       });
     };
@@ -355,16 +327,15 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       });
     };
 
-    const visualizing_executive_summary = (selector, other_selectors) => {
+    const visualizing_executive_summary = () => {
       self.on('app:view:summary', () => {
-        const executive_summary_target = self.root.querySelector(selector);
-        const other_targets = Array.from(self.root.querySelectorAll(other_selectors));
+        Array.from(self.root.querySelectorAll(".main-panel-container")).forEach((el) => el.classList.add(
+          "hidden"));
+        self.root.querySelector(".content-container").classList.remove("hidden");
+        self.root.querySelector(".executive-summary").classList.remove("hidden");
         self.refs.window.refs.panels.refs.outlinepanel.view_blank();
-        executive_summary_target.classList.remove("hidden");
-        other_targets.forEach((el) => {
-          el.style.display = "none";
-        });
-        raise_resize_event();
+        self.refs.window.refs.panels.refs.data_summary.update();
+
       });
     };
 
@@ -435,6 +406,9 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
         let data_source = global_state().data_source.clone();
         data_source.filter(filter_start_date, filter_end_date);
         try {
+          if (data_source.__data[Object.keys(data_source.__data)[0]].length == 0){
+            throw new Error("Invalid date!");
+          }
           view_data_source(app_state, global_state, data_source);
         } catch (e) {
           Metro.infobox.create(`<h3>Error processing the data</h3>
