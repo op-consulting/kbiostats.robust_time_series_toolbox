@@ -9,16 +9,6 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
     config.title = !!config.title ? config.title : "Plot";
 
     const model = () => config.model;
-    self.series_1 = {
-      enabled: true,
-      x: 0,
-      y: 0
-    }
-    self.series_2 = {
-      enabled: true,
-      x: 0,
-      y: 0
-    }
 
     self.view_blank = () => {
       self.root.querySelector(".outline-blank-button").click();
@@ -84,6 +74,85 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       });
     };
 
+    const boxPlotter = (...data) => {
+      const mean = (a, b) => a + b;
+      const quantiles = (x) => st.quantiles(x, [0.25, 0.5, 0.75])
+      const _properties = (x, q1, q2, q3) => [Math.min(...x), q1 - 1.5 * (q3 - q1), q1, q2, q3, q1 + 1.5 * (q3 - q1),
+        Math.max(...x)
+      ]
+      const properties = (x) => _properties(x, ...quantiles(x))
+
+      const data_properties = data.map((d) => properties(d));
+
+      const draw_box_plot = (e, index) => {
+        const ctx = e.drawingContext;
+        const delta = 0.25;
+        const color = e.dygraph.getOption("colors")[index];
+        let k = 0;
+        const property_values = data_properties[index];
+        const y_max = e.dygraph.toDomYCoord(property_values[k++]);
+        let y_q0 = e.dygraph.toDomYCoord(property_values[k++]);
+        const y_q1 = e.dygraph.toDomYCoord(property_values[k++]);
+        const y_q2 = e.dygraph.toDomYCoord(property_values[k++]);
+        const y_q3 = e.dygraph.toDomYCoord(property_values[k++]);
+        let y_q4 = e.dygraph.toDomYCoord(property_values[k++]);
+        const y_min = e.dygraph.toDomYCoord(property_values[k++]);
+
+        y_q0 = y_min;
+        y_q4 = y_max;
+
+        const x_c = e.dygraph.toDomXCoord(index);
+        const x_0 = e.dygraph.toDomXCoord(index - delta);
+        const x_1 = e.dygraph.toDomXCoord(index + delta);
+
+        const radius = 4;
+
+        ctx.beginPath();
+        ctx.strokeStyle = darkenColor(color);
+        ctx.moveTo(x_c, y_q0);
+        ctx.lineTo(x_c, y_q4);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = lightenColor(color, 0.2);
+        ctx.fillRect(x_0, y_q3, x_1 - x_0, -y_q3 + y_q1);
+        ctx.strokeStyle = darkenColor(color, 0.8);
+        ctx.strokeRect(x_0, y_q3, x_1 - x_0, -y_q3 + y_q1);
+
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = darkenColor(color);
+        ctx.moveTo(x_0, y_q2);
+        ctx.lineTo(x_1, y_q2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(x_0, y_q0);
+        ctx.lineTo(x_1, y_q0);
+        ctx.moveTo(x_0, y_q4);
+        ctx.lineTo(x_1, y_q4);
+        ctx.moveTo(x_c, y_max);
+        ctx.stroke();
+
+        ctx.fillStyle = darkenColor(color, 0.8);
+        ctx.setLineDash([]);
+        ctx.beginPath();
+        ctx.arc(x_c, y_max, radius, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(x_c, y_min);
+        ctx.arc(x_c, y_min, radius, 0, Math.PI * 2, true);
+        ctx.fill();
+
+      };
+      return (e) => {
+        for (let index = 0; index < e.points.length; index++) {
+          draw_box_plot(e, index);
+        }
+      };
+    };
+
     const acfPlotter = (e) => {
       const ctx = e.drawingContext;
       const p = e.points[0];
@@ -144,13 +213,13 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
     };
 
-    const darkenColor = (colorStr) => {
+    const darkenColor = (colorStr, alpha = 1) => {
 
       var color = Dygraph.toRGB_(colorStr);
       color.r = Math.floor((0 + color.r) / 2);
       color.g = Math.floor((0 + color.g) / 2);
       color.b = Math.floor((0 + color.b) / 2);
-      return 'rgb(' + color.r + ',' + color.g + ',' + color.b + ')';
+      return `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`;
     };
 
     const defaultLegendFormatter = (data) => {
@@ -164,7 +233,9 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       } catch (e) {}
       try {
         if (data.xHTML.contains(" ")) {
+          const r = data.xHTML;
           data.xHTML = moment(data.xHTML).format("MMM D YYYY");
+          data.xHTML = (data.xHTML != "Invalid date") ? data.xHTML : r;
         }
       } catch (e) {}
       let html = `
@@ -193,6 +264,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
     self.graph = null;
 
     const dygraphize = (x, y) => x.map((_x, i) => [_x, y[i]])
+    const dygraphize_with_index = (...x) => x[0].map((_x, i) => [i, ...(x.map((o) => o[i]))])
 
     const default_options = () => ({
       fillGraph: true,
@@ -241,6 +313,51 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <div data-rol
       );
       options.plotter = acfPlotter;
       options.labels = ["Lag", "Autocorrelation"];
+      return [data, options]
+    };
+
+    graphic_category["box-plot-residuals"] = () => {
+      const messages = [
+        'Before intervention',
+        'After intervention',
+      ];
+      var pre_residual = config.model.estimations.before_change.autoregressive_structure.residual;
+      var post_residual = config.model.estimations.after_change.autoregressive_structure.residual;
+      let options = default_options();
+      let data = [
+        [0, st.mean(pre_residual)],
+        [1, st.mean(post_residual)],
+      ]
+      options.plotter = boxPlotter(pre_residual, post_residual);
+      options.dateWindow = [-0.5, 1.5];
+      options.valueRange = [Math.min(...[...pre_residual, ...post_residual]), Math.max(...[...pre_residual, ...post_residual])];
+      const delta = options.valueRange[1] - options.valueRange[0]
+      options.valueRange[0] -= delta
+      options.valueRange[1] += delta
+
+      console.log(options.valueRange)
+
+      options.axes = {
+        x: {},
+        y: {}
+      }
+
+      options.axes.x.valueFormatter = (d) => d == 0 ? messages[0] : (d == 1 ? messages[1] : ".");
+
+      options.axes.x.ticker = () => [{
+          v: 0,
+          label_v: 0,
+          label: messages[0]
+        },
+        {
+          v: 1,
+          label_v: 1,
+          label: messages[1]
+        },
+      ]
+      options.axes.x.axisLabelWidth = 150
+
+      options.labels = ["Type", "Mean"];
       return [data, options]
     };
 

@@ -2,6 +2,7 @@
   <div class="split-parent h-100 w-100">
     <div class="outlinepanel-container panel-container h-100">
       <rts-outline-panel class="h-100 w-100" ref="outlinepanel"></rts-outline-panel>
+      <rts-configuration-panel class="h-100 w-100" ref="configpanel"></rts-configuration-panel>
     </div>
 
     <div class="plotpanel-container panel-container h-100">
@@ -18,15 +19,21 @@
           To start choose a dataset (in CSV format) and select the model parameters.
         </div>
 
-        <rts-plot></rts-plot>
+      </div>
+
+      <div class="content-container main-panel-container">
+          <rts-plot-collection ref="plot_collection"></rts-plot-collection>
+      </div>
+      <div class="content-container main-panel-container">
+
         <rts-model-plot type="plain" ref="plain"></rts-model-plot>
+        <rts-model-plot type="box-plot-residuals" ref="box_plot_residuals"></rts-model-plot>
         <rts-model-plot type="loglikelihood" ref="loglikelihood"></rts-model-plot>
 
         <rts-model-plot type="before-change-point-residuals" ref="residuals_pre"></rts-model-plot>
         <rts-model-plot type="before-change-point-autocorrelation" ref="autocorrelation_pre"></rts-model-plot>
         <rts-model-plot type="after-change-point-residuals" ref="residuals_post"></rts-model-plot>
         <rts-model-plot type="after-change-point-autocorrelation" ref="autocorrelation_post"></rts-model-plot>
-
       </div>
 
       <div class="content-container main-panel-container hidden">
@@ -41,7 +48,6 @@
 
     </div>
     <div class="configpanel-container panel-container h-100">
-      <rts-configuration-panel class="h-100 w-100" ref="configpanel"></rts-configuration-panel>
     </div>
   </div>
 
@@ -182,8 +188,16 @@
       border: 1px solid #dadbdc;
     }
 
-    .gutter.gutter-horizontal .gutter-close{
-      background-color: rgba(58, 139, 199, 1)!important;
+    .gutter.gutter-horizontal .gutter-close {
+      background-color: rgba(58, 139, 199, 1) !important;
+    }
+
+    /* BLOCK THREE COLUMN*/
+    .gutter.gutter-horizontal.gutter-2{
+      display: none;
+    }
+    .plotpanel-container.panel-container{
+      margin-left: 5px;
     }
   </style>
   <script>
@@ -210,6 +224,10 @@
       const PP = self.root.querySelector(".plotpanel-container");
       const PC = self.root.querySelector(".configpanel-container");
       const containers = [PO, PP, PC];
+      //
+      ratio_width[1] += ratio_width[2];
+      ratio_width[2] = 0;
+      //
       splitter = Split(containers, {
         sizes: ratio_width,
         minSize: [250, 250, 250].map((c, i) => Math.abs(ratio_width[i] - 0) < 1e-3 ? 0 : c),
@@ -263,15 +281,19 @@
       setTimeout(update_panel_widths, 10);
     };
     self.close_outline_panel = () => {
+      panel_visibility('[ref="outlinepanel"]', "add")
       update_panel_widths(0, "hide");
     };
     self.show_outline_panel = () => {
+      panel_visibility('[ref="outlinepanel"]', "remove")
       update_panel_widths(0, "show");
     };
     self.close_config_panel = () => {
+      panel_visibility('[ref="outlinepanel"]', "add")
       update_panel_widths(2, "hide");
     };
     self.show_config_panel = () => {
+      panel_visibility('[ref="outlinepanel"]', "remove")
       update_panel_widths(2, "show");
     };
     self.toggle_config_panel = () => {
@@ -314,23 +336,23 @@
       //self.root.querySelector(".paper-model-1 iframe").src = "./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&";
     };
 
-self.update_models = (model) => {
+    self.update_models = (model) => {
       self.model = model;
-      const up = (c) => {self.refs[c].opts.model = model; self.refs[c].update(); };
+      const up = (c) => {
+        self.refs[c].opts.model = model;
+        self.refs[c].update();
+      };
       up("plain");
       up("loglikelihood");
       up("autocorrelation_pre");
       up("residuals_pre");
       up("autocorrelation_post");
       up("residuals_post");
+      up("box_plot_residuals");
     };
 
     self.on("mount", () => {
       create_splitter([15, 70, 15]);
-
-
-
-
       let model = {}
       model.dates = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
       model.dates = [...Array(model.dates.length).keys()].map((i) => new Date(new Date().setDate(i)))
@@ -344,10 +366,8 @@ self.update_models = (model) => {
       model.estimations = RTSModel.robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
         model.change_point.before, model.change_point.after)
       self.update_models(model)
-      window.self0=self
+      window.self0 = self
 
     });
-
-
   </script>
 </rts-three-column-panel>
