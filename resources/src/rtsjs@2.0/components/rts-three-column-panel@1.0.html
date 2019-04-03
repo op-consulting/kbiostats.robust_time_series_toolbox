@@ -1,3 +1,4 @@
+
 <rts-three-column-panel>
   <div class="split-parent h-100 w-100">
     <div class="outlinepanel-container panel-container h-100">
@@ -21,10 +22,10 @@
 
       </div>
 
-      <div class="content-container main-panel-container">
+      <div class="plot-container main-panel-container hidden">
           <rts-plot-collection ref="plot_collection"></rts-plot-collection>
       </div>
-      <div class="content-container main-panel-container">
+      <div class="content-containe3r main-panel-container hidden">
 
         <rts-model-plot type="plain" ref="plain"></rts-model-plot>
         <rts-model-plot type="box-plot-residuals" ref="box_plot_residuals"></rts-model-plot>
@@ -36,7 +37,6 @@
         <rts-model-plot type="after-change-point-autocorrelation" ref="autocorrelation_post"></rts-model-plot>
       </div>
 
-      <rts-data-summary></rts-data-summary>
       <div class="content-container main-panel-container hidden">
         <rts-data-summary ref="data_summary"></rts-data-summary>
         <div class="plot_container" ref="plot_container"></div>
@@ -319,13 +319,20 @@
       self.refs.outlinepanel.opts.plot_title = title;
       self.refs.outlinepanel.update();
     };
-    self.show_main_container = () => {
+    self.show_main_panel = (selector) => {
       Array.from(self.root.querySelectorAll(".main-panel-container")).forEach(el => el.classList.add("hidden"));
-      self.root.querySelector(".content-container").classList.remove("hidden");
+      self.root.querySelector(selector).classList.remove("hidden");
+    };
+    
+    self.show_filtered_plots = (unit, types) => {
+      self.show_main_panel(".plot-container");
+      self.refs.plot_collection.filter(unit, types);
+    };
+    self.show_main_container = () => {
+      self.show_main_panel(".content-container");
     };
     self.show_paper_model_1 = () => {
-      Array.from(self.root.querySelectorAll(".main-panel-container")).forEach(el => el.classList.add("hidden"));
-      self.root.querySelector(".paper-model-1").classList.remove("hidden");
+      self.show_main_panel(".paper-model-1");
       iframe = self.root.querySelector(".paper-model-1 iframe").contentWindow.PDFViewerApplication.pdfViewer
         .scrollPageIntoView({
           pageNumber: 1,

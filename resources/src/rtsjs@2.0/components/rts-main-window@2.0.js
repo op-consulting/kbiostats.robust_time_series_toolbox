@@ -255,6 +255,13 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       self.refs.window.refs.panels.refs.plot_collection.opts.models = infomodels;
       self.refs.window.refs.panels.refs.plot_collection.update();
 
+      update_unit_names_in_outline(data_source.units);
+      update_models_in_summary(infomodels);
+      t0 = new Date();
+      create_thumbnails(data_source);
+
+      console.log("========= D", new Date() - t0);
+
       if (false) {
         let models = data_source.units.map(unit_name => (
           RTSModel.fit_model(data_source.datesOfUnit(unit_name),
@@ -294,7 +301,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
       app_state().model_parameters = model_parameters;
       app_state().data_source = data_source;
-      app_state().models = models;
+      app_state().models = infomodels;
     }
 
     const visualizing_dataset_events = (RTSdata, selector_other_panels = "") => {
@@ -308,39 +315,40 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       ];
 
       self.on('app:view:rawtimeseries', () => {
-        current_plot_type = ["time-series"];
+        current_plot_type = ["plain"];
         change_title_unit_options("Original series: Choose a unit")
 
       });
       self.on('app:view:estimatedtimeseries', () => {
-        current_plot_type = ["time-series-estimation", "likelihood"];
+        current_plot_type = ["plain", "loglikelihood"];
         change_title_unit_options("Estimated series: Choose a unit")
 
       });
       self.on('app:view:modelbeforechangepoint', () => {
-        current_plot_type = ["pre-event-residuals-histogram", "pre-event-residuals-acf"];
+        current_plot_type = ["before-change-point-residuals", "before-change-point-autocorrelation"];
         change_title_unit_options("Model before change-point: Choose a unit")
 
       });
       self.on('app:view:modelafterchangepoint', () => {
-        current_plot_type = ["post-event-residuals-histogram", "post-event-residuals-acf"];
+        current_plot_type = ["before-change-point-residuals", "after-change-point-autocorrelation"];
         change_title_unit_options("Model after change-point: Choose a unit")
 
       });
       self.on('app:request:current:unit:allplots', (params) => {
         const {
           data_source,
-          plot_collection
         } = RTSdata;
         const {
           unitindex
         } = params;
+        console.log("===================, ", unitindex)
         let unit_names = data_source.units;
         const executive_summary_targets = Array.from(self.root.querySelectorAll(
           selector_other_panels));
-        self.refs.window.refs.panels.show_main_container();
-        plot_collection.filter(current_plot_type, [unit_names[unitindex - 1]]);
-        raise_resize_event();
+        self.refs.window.refs.panels.refs.plot_collection.update();
+        self.refs.window.refs.panels.show_filtered_plots(unitindex, current_plot_type);
+        self.refs.window.refs.panels.refs.plot_collection.update()
+
         executive_summary_targets.forEach((es) => {
           es.classList.add("hidden")
         });
