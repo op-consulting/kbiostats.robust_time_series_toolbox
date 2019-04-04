@@ -96,7 +96,7 @@
       display: none;
     }
 
-    .outlinepanel-container{
+    .outlinepanel-container {
       overflow: hidden;
     }
 
@@ -127,8 +127,7 @@
       display: none;
     }
 
-    .content-container {
-    }
+    .content-container {}
 
     .paper-style {
       background-color: white;
@@ -202,12 +201,11 @@
 
 
     .outlinepanel-container [ref="outlinepanel"],
-    .outlinepanel-container [ref="configpanel"]{
+    .outlinepanel-container [ref="configpanel"] {
       position: absolute;
       top: 0;
       left: 0;
     }
-
   </style>
   <script>
     /* globals opts: false */
@@ -349,21 +347,14 @@
           <rts-model-plot type="after-change-point-autocorrelation" class="after-change-point-autocorrelation" model={model}></rts-model-plot>
           <rts-model-plot type="box-plot-residuals" 
       */
-      const default_title = {
-        "plain": (n) => `Time series (Unit: ${unitname})`,
-        "loglikelihood": (n) => `Log-likelihood (Unit: ${unitname})`,
-        "before-change-point-residuals": (n) => `Residuals of the model before change-point (Unit: ${unitname})`,
-        "after-change-point-residuals": (n) => `Residuals of the model after change-point (Unit: ${unitname})`,
-        "before-change-point-autocorrelation": (n) => `Autocorrelation function of the model before change-point (Unit: ${unitname})`,
-        "after-change-point-autocorrelation": (n) => `Autocorrelation function of the model after change-point (Unit: ${unitname})`,
-        "box-plot-residuals": (n) => `Box plot of the residuals of the models before and after change-point (Unit: ${unitname})`,
-      }
+      
       self.show_main_panel(".plot-container");
       self.refs.plot_collection.update()
       self.refs.plot_collection.opts.plots = plot_types.map((plot_type) => ({
         index: unitindex - 1,
         type: plot_type,
-        title: default_title[plot_type](unitname)
+        title: null,
+        subtitle: `Unit: '${unitname}'`,
       }));
       self.refs.plot_collection.update()
     };

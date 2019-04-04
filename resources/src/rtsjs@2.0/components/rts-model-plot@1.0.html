@@ -26,7 +26,8 @@
       </button>
     </div>
     <div class="image-container">
-      <h4 class="text-light">{opts.title}</h4>
+      <h4 class="text-light">{opts.title_}</h4>
+      <h5 class="text-light" if={opts.subtitle}>{opts.subtitle}</h5>
       <div class="pre-plot-container">
         <div class="plot-container"></div>
       </div>
@@ -93,7 +94,7 @@
       position: absolute;
       min-width: 100px;
       border: 1px solid rgb(205, 205, 205);
-      zoom: 0.8;
+      zoom: 0.95;
     }
 
     .legend-container {
@@ -146,7 +147,8 @@
     config.width = !!config.width ? config.width : "100%";
     config.height = !!config.height ? config.height : "400px";
     config.type = !!config.type ? config.type : "plain";
-    config.title = !!config.title ? config.title : "Plot";
+    config.title = typeof config.title == 'undefined'? null : config.title;
+    //config.title = !!config.title ? config.title : "Plot";
 
     const model = () => config.model;
 
@@ -434,10 +436,13 @@
       colors: ["#0074ce", "#6fce00"],
       legend: 'follow',
       legendFormatter: defaultLegendFormatter,
+      axes: {x:{pixelsPerLabel: 80}},
     });
 
     const graphic_category = {};
+    const default_titles = {};
 
+    default_titles["plain"] = "Time series"
     graphic_category["plain"] = () => {
       let options = default_options();
       let data = dygraphize(config.model.dates, config.model.y);
@@ -445,6 +450,7 @@
       return [data, options]
     };
 
+    default_titles["loglikelihood"] = "Log-likelihood"
     graphic_category["loglikelihood"] = () => {
       let options = default_options();
       let data = dygraphize(
@@ -478,6 +484,7 @@
       return [data, options]
     };
 
+    default_titles["box-plot-residuals"] = "Box plot of the residuals"
     graphic_category["box-plot-residuals"] = () => {
       const messages = [
         'Before intervention',
@@ -524,15 +531,18 @@
       return [data, options]
     };
 
-    graphic_category["before-change-point-autocorrelation"] = () => graphic_category["--change-point-autocorrelation"](
-      "before_change")
-    graphic_category["after-change-point-autocorrelation"] = () => graphic_category["--change-point-autocorrelation"](
-      "after_change")
-    graphic_category["before-change-point-residuals"] = () => graphic_category["--change-point-residuals"](
-      "before_change")
-    graphic_category["after-change-point-residuals"] = () => graphic_category["--change-point-residuals"](
-      "after_change")
-
+    default_titles["before-change-point-autocorrelation"] = "Autocorrelation function (before change-point)"
+    graphic_category["before-change-point-autocorrelation"] = () => graphic_category["--change-point-autocorrelation"]("before_change")
+    
+    default_titles["after-change-point-autocorrelation"] = "Autocorrelation function (after change-point)"
+    graphic_category["after-change-point-autocorrelation"] = () => graphic_category["--change-point-autocorrelation"]("after_change")
+    
+    default_titles["before-change-point-residuals"] = "Residuals (before change-point)"
+    graphic_category["before-change-point-residuals"] = () => graphic_category["--change-point-residuals"]("before_change")
+    
+    default_titles["after-change-point-residuals"] = "Residuals (after change-point)"
+    graphic_category["after-change-point-residuals"] = () => graphic_category["--change-point-residuals"]("after_change")
+    
     self.on("update", () => {
       self.graph = new Dygraph(
         self.root.querySelector(".plot-container"),
@@ -541,6 +551,7 @@
     });
 
     self.on("mount", () => {
+      config.title_ = config.title != null? config.title: default_titles[config.type];
       self.root.style.cssText += `width: ${config.width}; height: ${config.height}; display: block;`;
       self.update();
     });

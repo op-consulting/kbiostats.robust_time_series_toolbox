@@ -15,7 +15,8 @@
     <ul class="v-menu model-information" style="width:100%;">
       <li class="menu-title">Change point</li>
       <li class="change-point">{change_point(opts.model)}</li>
-      <li class="menu-title">Slope estimation</li>
+      <!---->
+      <li class="menu-title">Slope estimate</li>
       <li class="info-before-TET">
         {mean_estimate['slope'](opts.model, 0)}
       </li>
@@ -28,7 +29,8 @@
       <li class="info-95CI">
         {confidence_interval['slope'](opts.model)}
       </li>
-      <li class="menu-title">Slope estimation</li>
+      <!---->
+      <li class="menu-title">Intercept estimate</li>
       <li class="info-before-TET">
         {mean_estimate['intercept'](opts.model, 0)}
       </li>
@@ -41,7 +43,8 @@
       <li class="info-95CI">
         {confidence_interval['intercept'](opts.model)}
       </li>
-      <li class="menu-title">White noise estimation</li>
+      <!---->
+      <li class="menu-title">White noise estimate</li>
       <li class="info-before-TET">
         {mean_estimate['white_noise'](opts.model, 0)}
       </li>

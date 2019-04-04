@@ -292,8 +292,8 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
       });
       self.on('app:view:modelbeforechangepoint', () => {
-        current_plot_type = ["box-plot-residuals", "before-change-point-residuals",
-          "before-change-point-autocorrelation"
+        current_plot_type = ["box-plot-residuals", "combined-change-point-residuals",
+          "combined-change-point-autocorrelation"
         ];
         change_title_unit_options("Model before change-point: Choose a unit")
 
