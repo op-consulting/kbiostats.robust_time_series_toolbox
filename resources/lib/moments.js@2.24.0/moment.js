@@ -462,19 +462,19 @@
     }
 
     var defaultRelativeTime = {
-        future : 'in %s',
-        past   : '%s ago',
-        s  : 'a few seconds',
+        future : '%s before',
+        past   : '%s after',
+        s  : 'A few seconds',
         ss : '%d seconds',
-        m  : 'a minute',
+        m  : 'A minute',
         mm : '%d minutes',
-        h  : 'an hour',
+        h  : 'An hour',
         hh : '%d hours',
-        d  : 'a day',
+        d  : 'A day',
         dd : '%d days',
-        M  : 'a month',
+        M  : 'A month',
         MM : '%d months',
-        y  : 'a year',
+        y  : 'A year',
         yy : '%d years'
     };
 

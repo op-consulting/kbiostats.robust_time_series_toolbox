@@ -33,6 +33,10 @@
           src="./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&"></iframe>
       </div>
 
+      <div class="report-container main-panel-container paper-style hidden">
+        <rts-report ref="full_data_report"></rts-report>
+      </div>
+
     </div>
     <div class="configpanel-container panel-container h-100">
     </div>
@@ -323,6 +327,10 @@
       self.refs.data_summary.opts.models = models;
       self.refs.data_summary.update();
     };
+    self.change_report_models = (models) => {
+      self.refs.full_data_report.opts.models = models;
+      self.refs.full_data_report.update();
+    };
     self.change_title_unit_choose = (title = "Units") => {
       self.refs.outlinepanel.opts.unit_title = title;
       self.refs.outlinepanel.update();
@@ -373,20 +381,22 @@
         });
       //self.root.querySelector(".paper-model-1 iframe").src = "./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&";
     };
+    
+    self.show_full_report = () => {
+      self.show_main_panel(".report-container");
+      self.refs.full_data_report.update();
+    };
+    
+    self.save_full_report_as_docx = () => {
+      self.show_main_panel(".report-container");
+      self.refs.full_data_report.update();
+      self.refs.full_data_report.save_as_docx();
+    };
 
-    self.update_models = (model) => {
-      self.model = model;
-      const up = (c) => {
-        self.refs[c].opts.model = model;
-        self.refs[c].update();
-      };
-      up("plain");
-      up("loglikelihood");
-      up("autocorrelation_pre");
-      up("residuals_pre");
-      up("autocorrelation_post");
-      up("residuals_post");
-      up("box_plot_residuals");
+    self.save_full_report_as_pdf = () => {
+      self.show_main_panel(".report-container");
+      self.refs.full_data_report.update();
+      console.error("Not implemented!");
     };
 
     self.on("mount", () => {

@@ -7,7 +7,7 @@ import strformat
 ###########################################################
 # OPERATIONS
 #const M = 120000
-const M = 10012
+const M = 1012
 const EPSILON = 1e-10
 
 type Vector = object
@@ -291,7 +291,7 @@ proc acf(x: Vector, max_lag: int = 20): Vector =
     let
       a = x[0..(n - h)]
       b = x[h..n]
-    result[h] = (((a - u) .* (b - u)).mean + EPSILON)/ (n.float * s2 + EPSILON )
+    result[h] = (((a - u) .* (b - u)).mean + EPSILON) / (n.float * s2 + EPSILON )
 
 proc acf_information(x: Vector, max_lag: int = 20): AutocorrelationFunction =
   result.autocorrelation = acf(x, max_lag).vector_to_seq
@@ -338,6 +338,23 @@ type LinearRegressionParameters = object
   #
   n: int
 
+type MeanStructureDifferenceParameters = object
+  intercept: float
+  intercept_variance: float 
+  intercept_confidence_interval: array[2, float]
+  intercept_width_confidence_interval: float 
+  #
+  slope: float
+  slope_variance: float
+  slope_confidence_interval: array[2, float]
+  slope_width_confidence_interval: float
+  #
+  autoregressive_slope: float
+  autoregressive_slope_variance: float
+  autoregressive_slope_confidence_interval: array[2, float]
+  autoregressive_slope_width_confidence_interval: float
+  #
+
 type AR1Ma1ModelParameters = object
   mean_structure: LinearRegressionParameters
   autoregressive_structure: LinearRegressionParameters
@@ -359,6 +376,30 @@ type RobustInterruptedModel = object
   before_change: AR1Ma1ModelParameters
   after_change: AR1Ma1ModelParameters
   likelihood: LikelihoodModel
+  parameter_differences: MeanStructureDifferenceParameters
+
+proc model_differences(before_change: AR1Ma1ModelParameters, after_change: AR1Ma1ModelParameters): MeanStructureDifferenceParameters =
+  result.intercept = after_change.mean_structure.intercept - before_change.mean_structure.intercept
+  result.slope = after_change.mean_structure.slope - before_change.mean_structure.slope
+  result.autoregressive_slope = after_change.autoregressive_structure.slope - before_change.autoregressive_structure.slope
+  
+  let
+    intercept_dof = after_change.mean_structure.n + before_change.mean_structure.n - 4
+    slope_dof = after_change.mean_structure.n + before_change.mean_structure.n - 4
+    autoregressive_slope_dof = after_change.autoregressive_structure.n + before_change.autoregressive_structure.n - 4
+  
+  result.intercept_variance = after_change.mean_structure.intercept_variance + before_change.mean_structure.intercept_variance
+  result.slope_variance = after_change.mean_structure.slope_variance + before_change.mean_structure.slope_variance
+  result.autoregressive_slope_variance = after_change.autoregressive_structure.slope_variance + before_change.autoregressive_structure.slope_variance
+  
+  result.intercept_width_confidence_interval = 2.0 * sqrt(result.intercept_variance) * student_t_ppf_95p(intercept_dof)
+  result.slope_width_confidence_interval = 2.0 * sqrt(result.slope_variance) * student_t_ppf_95p(slope_dof)
+  result.autoregressive_slope_width_confidence_interval = 2.0 * sqrt(result.autoregressive_slope_variance) * student_t_ppf_95p(autoregressive_slope_dof)
+
+  result.intercept_confidence_interval = [result.intercept - 0.5 * result.intercept_width_confidence_interval, result.intercept + 0.5 * result.intercept_width_confidence_interval]
+  result.slope_confidence_interval =  [result.slope - 0.5 * result.slope_width_confidence_interval, result.slope + 0.5 * result.slope_width_confidence_interval]
+  result.autoregressive_slope_confidence_interval =  [result.autoregressive_slope - 0.5 * result.autoregressive_slope_width_confidence_interval, result.autoregressive_slope + 0.5 * result.autoregressive_slope_width_confidence_interval]
+  
 
 proc `$`(params: LinearRegressionParameters): string =
   fmt"""
@@ -480,6 +521,7 @@ proc robust_interrupted_time_series_model(X: Vector, Y: Vector, change_point: in
       result.likelihood.best_time = X[t]
       result.before_change = ll_result.before_change
       result.after_change = ll_result.after_change
+      result.parameter_differences = model_differences(result.before_change, result.after_change)
 
 proc robust_interrupted_time_series(X: openArray[float], Y: openArray[float], change_point: int, candidates_before: int, candidates_after: int): RobustInterruptedModel  {.exportc: "robust_interrupted_time_series".} =
   robust_interrupted_time_series_model(vector(X), vector(Y), change_point, candidates_before, candidates_after)

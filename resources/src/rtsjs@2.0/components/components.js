@@ -9,5 +9,6 @@ require('./rts-outline-plots-panel@1.0.js');
 require('./rts-outline-units-panel@1.0.js');
 require('./rts-plot-collection@2.0.js');
 require('./rts-plot.js');
+require('./rts-report@1.0.js');
 require('./rts-ribbon-menu-bar@1.0.js');
 require('./rts-three-column-panel@1.0.js');

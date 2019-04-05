@@ -8,7 +8,8 @@
     <!--Plot-->
     <div class="model-mini-plot">
       <rts-model-plot type="plain" ref="plain" id={'executive-plot-' + opts.index }
-        model={opts.model}></rts-model-plot>
+        model={opts.model} toolbar={false} header={false}
+        ></rts-model-plot>
     </div>
   </div>
   <div class="model-mini-info">
@@ -228,29 +229,17 @@
         return rnd([x0, x1][idx]);
       },
     };
-    const calc_confidence_interval = (model, model_struct, estimate) => {
-      let difference = model.estimations.after_change[model_struct][estimate] - model.estimations
-        .before_change[model_struct][estimate];
-      let var_difference = model.estimations.after_change[model_struct][estimate + "_variance"] + model
-        .estimations.before_change[model_struct][estimate + "_variance"];
-      let df = model.x.length + model.y.length - 4;
-      let ci = [
-        rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.025, df)),
-        rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.975, df))
-      ];
-      console.log("ci", ci)
-      return "(" + ci[0] + ", " + ci[1] + ")";
+    const calc_confidence_interval = (model, estimate) => {
+      let ci = model.estimations.parameter_differences[estimate + "_confidence_interval"];
+      return `(${rnd(ci[0])}, ${rnd(ci[1])})`
     }
     self.confidence_interval = {
-      slope: (model, idx) => calc_confidence_interval(model, "mean_structure", "slope"),
-      intercept: (model, idx) => calc_confidence_interval(model, "mean_structure", "intercept"),
-      white_noise: (model, idx) => calc_confidence_interval(model, "autoregressive_structure", "slope"),
+      slope: (model, idx) => calc_confidence_interval(model, "slope"),
+      intercept: (model, idx) => calc_confidence_interval(model, "intercept"),
+      white_noise: (model, idx) => calc_confidence_interval(model, "autoregressive_slope"),
     };
 
     self.on("update", () => {
-      console.log("1234567890")
-      console.log(self.refs.plain)
-      console.log(self.refs.plain.opts.model)
       self.refs.plain.update();
     });
 
@@ -443,22 +432,14 @@
         return rnd([x0, x1][idx]);
       },
     };
-    const calc_confidence_interval = (model, model_struct, estimate) => {
-      let difference = model.estimations.after_change[model_struct][estimate] - model.estimations
-        .before_change[model_struct][estimate];
-      let var_difference = model.estimations.after_change[model_struct][estimate + "_variance"] + model
-        .estimations.before_change[model_struct][estimate + "_variance"];
-      let df = model.x.length + model.y.length - 4;
-      let ci = [
-        rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.025, df)),
-        rnd(difference + Math.sqrt(var_difference) * st.studentt.inv(0.975, df))
-      ];
-      return "(" + ci[0] + ", " + ci[1] + ")";
+    const calc_confidence_interval = (model, estimate) => {
+      let ci = model.estimations.parameter_differences[estimate + "_confidence_interval"];
+      return `(${rnd(ci[0])}, ${rnd(ci[1])})`
     }
     self.confidence_interval = {
-      slope: (model, idx) => calc_confidence_interval(model, "mean_structure", "slope"),
-      intercept: (model, idx) => calc_confidence_interval(model, "mean_structure", "intercept"),
-      white_noise: (model, idx) => calc_confidence_interval(model, "autoregressive_structure", "slope"),
+      slope: (model, idx) => calc_confidence_interval(model, "slope"),
+      intercept: (model, idx) => calc_confidence_interval(model, "intercept"),
+      white_noise: (model, idx) => calc_confidence_interval(model, "autoregressive_slope"),
     };
 
     self.on("mount", () => {

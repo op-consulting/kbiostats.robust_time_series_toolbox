@@ -10,8 +10,9 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
     const update_unit_names_in_outline = (unit_names) => {
       self.refs.window.refs.panels.change_unit_names(unit_names);
     };
-    const update_models_in_summary = (models) => {
+    const update_models_in_summary_reports = (models) => {
       self.refs.window.refs.panels.change_summary_models(models);
+      self.refs.window.refs.panels.change_report_models(models);
     };
 
     const raise_resize_event = () => {
@@ -82,6 +83,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       event_registry('app:view:estimatedtimeseries', self.refs.window.refs.menubar);
       event_registry('app:view:modelbeforechangepoint', self.refs.window.refs.menubar);
       event_registry('app:view:modelafterchangepoint', self.refs.window.refs.menubar);
+      event_registry('app:report:view:full', self.refs.window.refs.menubar);
       event_registry('app:export:report:docx', self.refs.window.refs.menubar);
       event_registry('app:export:report:pdf', self.refs.window.refs.menubar);
       event_registry('app:export:tables:regression', self.refs.window.refs.menubar);
@@ -256,7 +258,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       self.refs.window.refs.panels.refs.plot_collection.update();
 
       update_unit_names_in_outline(data_source.units);
-      update_models_in_summary(infomodels);
+      update_models_in_summary_reports(infomodels);
       t0 = new Date();
       create_thumbnails(data_source);
 
@@ -287,7 +289,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
       });
       self.on('app:view:estimatedtimeseries', () => {
-        current_plot_type = ["plain", "loglikelihood"];
+        current_plot_type = ["estimation", "loglikelihood"];
         change_title_unit_options("Estimated series: Choose a unit")
 
       });
@@ -320,10 +322,9 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       });
     };
 
-    const visualizing_help = () => {
+    const register_help_reports = () => {
       self.on('app:help:model', () => {
         self.refs.window.refs.panels.show_paper_model_1();
-        console.log(123456789)
       });
     };
 
@@ -473,6 +474,20 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       });
     };
 
+    const register_events_reports = () => {
+      self.on("app:report:view:full", () => {
+        self.refs.window.refs.panels.show_full_report();
+      });
+      self.on("app:export:report:docx", () => {
+        self.refs.window.refs.panels.show_full_report();
+        self.refs.window.refs.panels.save_full_report_as_docx();
+      });
+      self.on("app:export:report:pdf", () => {
+        self.refs.window.refs.panels.show_full_report();
+        self.refs.window.refs.panels.save_full_report_as_pdf();
+      });
+    }
+
     const self = this;
     const config = opts;
 
@@ -488,6 +503,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       register_events_in_toolbar();
       register_events_in_outline_panel();
       register_events_in_date_settings_panel();
+      register_events_reports();
 
       link_visual_interface_behaviour();
 
@@ -505,7 +521,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       }
       visualizing_dataset_events(_global.__RTSdata, ".executive-summary, .paper-pdf");
       visualizing_executive_summary(".executive-summary", ".plot_container > *");
-      visualizing_help();
+      register_help_reports();
 
       self.on('app:load:csv', open_file);
     });
