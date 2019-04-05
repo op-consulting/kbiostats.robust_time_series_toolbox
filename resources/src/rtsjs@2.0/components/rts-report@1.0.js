@@ -1,6 +1,7 @@
 riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4> <table border="1" cellpadding="0" cellspacing="0"> <tr> <td>Unit</td> <td>Formal intervention</td> <td>Estimated change point</td> <td>Intervention lag</td> <td>Supremum Wald-test decision</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{theoretical_change_point(model)}</td> <td>{estimated_change_point(model)}</td> <td>{diff_change_point(model)}</td> <td>{supremum_wald(model)}</td> </tr> </table>', '', '', function(opts) {
 
 
+        const self = this;
         self.theoretical_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_time]).format(
             "MMM DD, YYYY");
         self.estimated_change_point = (model) => moment(model.dates[model.change_point.theoretical]).format(
@@ -13,6 +14,7 @@ riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4
 riot.tag2('rts-model-pre-change-point-table', '<h4>Unit-specific pre-change point intercepts and slopes</h4> <table border="1" cellpadding="0" cellspacing="0" class="double-header"> <tr> <td rowspan="2">Unit</td> <td colspan="3">Intercept pre-change point</td> <td colspan="3">Slope pre-change point</td> </tr> <tr> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{estimate_1(model)}</td> <td>{ci_1(model)}</td> <td>{pval_1(model)}</td> <td>{estimate_2(model)}</td> <td>{ci_2(model)}</td> <td>{pval_2(model)}</td> </tr> </table>', '', '', function(opts) {
 
 
+        const self = this;
         const estimation_type = "after_change";
         const rnd = (r) => Math.round(1000 * r) / 1000;
         const confidence_interval = (ci) => `(${rnd(ci[0])}, ${rnd(ci[1])})`;
@@ -20,13 +22,14 @@ riot.tag2('rts-model-pre-change-point-table', '<h4>Unit-specific pre-change poin
         self.estimate_2 = (model) => rnd(model.estimations[estimation_type].mean_structure.slope);
         self.ci_1 = (model) => confidence_interval(model.estimations[estimation_type].mean_structure.intercept_confidence_interval);
         self.ci_2 = (model) => confidence_interval(model.estimations[estimation_type].mean_structure.slope_confidence_interval);
-        self.pval_1 = (model) => -12345;
-        self.pval_2 = (model) => -12345;
+        self.pval_1 = (model) => rnd(model.estimations[estimation_type].mean_structure.intercept_p_value);
+        self.pval_2 = (model) => rnd(model.estimations[estimation_type].mean_structure.slope_p_value);
 });
 
 riot.tag2('rts-model-post-change-point-table', '<h4>Unit-specific post-change point intercepts and slopes</h4> <table border="1" cellpadding="0" cellspacing="0" class="double-header"> <tr> <td rowspan="2">Unit</td> <td colspan="3">Intercept post-change point</td> <td colspan="3">Slope post-change point</td> </tr> <tr> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{estimate_1(model)}</td> <td>{ci_1(model)}</td> <td>{pval_1(model)}</td> <td>{estimate_2(model)}</td> <td>{ci_2(model)}</td> <td>{pval_2(model)}</td> </tr> </table>', '', '', function(opts) {
 
 
+        const self = this;
         const estimation_type = "before_change";
         const rnd = (r) => Math.round(1000 * r) / 1000;
         const confidence_interval = (ci) => `(${rnd(ci[0])}, ${rnd(ci[1])})`;
@@ -34,14 +37,16 @@ riot.tag2('rts-model-post-change-point-table', '<h4>Unit-specific post-change po
         self.estimate_2 = (model) => rnd(model.estimations[estimation_type].mean_structure.slope);
         self.ci_1 = (model) => confidence_interval(model.estimations[estimation_type].mean_structure.intercept_confidence_interval);
         self.ci_2 = (model) => confidence_interval(model.estimations[estimation_type].mean_structure.slope_confidence_interval);
-        self.pval_1 = (model) => -12345;
-        self.pval_2 = (model) => -12345;
+        self.pval_1 = (model) => rnd(model.estimations[estimation_type].mean_structure.intercept_p_value);
+        self.pval_2 = (model) => rnd(model.estimations[estimation_type].mean_structure.slope_p_value);
+
 });
 
 
 riot.tag2('rts-model-parameter-changes-table', '<h4>Unit-specific changes in level and slope</h4> <table border="1" cellpadding="0" cellspacing="0" class="double-header"> <tr> <td rowspan="2">Unit</td> <td colspan="3">Changes in level</td> <td colspan="3">Changes in slope</td> </tr> <tr> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{estimate_1(model)}</td> <td>{ci_1(model)}</td> <td>{pval_1(model)}</td> <td>{estimate_2(model)}</td> <td>{ci_2(model)}</td> <td>{pval_2(model)}</td> </tr> </table>', '', '', function(opts) {
 
 
+        const self = this;
         const estimation_type_1 = "intercept";
         const estimation_type_2 = "slope";
         const rnd = (r) => Math.round(1000 * r) / 1000;
@@ -50,13 +55,15 @@ riot.tag2('rts-model-parameter-changes-table', '<h4>Unit-specific changes in lev
         self.estimate_2 = (model) => rnd(model.estimations.parameter_differences[estimation_type_2]);
         self.ci_1 = (model) => confidence_interval(model.estimations.parameter_differences[estimation_type_1 + "_confidence_interval"]);
         self.ci_2 = (model) => confidence_interval(model.estimations.parameter_differences[estimation_type_2 + "_confidence_interval"]);
-        self.pval_1 = (model) => -12345;
-        self.pval_2 = (model) => -12345;
+        self.pval_1 = (model) => rnd(model.estimations.parameter_differences[estimation_type_1 + "_p_value"]);
+        self.pval_2 = (model) => rnd(model.estimations.parameter_differences[estimation_type_2 + "_p_value"]);
+
 });
 
 riot.tag2('rts-model-stochastic-parameter-changes-table', '<h4>Estimates of the stochastic component parameters</h4> <table border="1" cellpadding="0" cellspacing="0" class="double-header"> <tr> <td rowspan="2">Unit</td> <td colspan="2">Pre-change point</td> <td colspan="2">Post-change point</td> </tr> <tr> <td>Adjacent correlation</td> <td>Standard deviation</td> <td>Adjacent correlation</td> <td>Standard deviation</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{estimate_1(model)}</td> <td>{std_1(model)}</td> <td>{estimate_2(model)}</td> <td>{std_2(model)}</td> </tr> </table>', '', '', function(opts) {
 
 
+        const self = this;
         const estimation_type_1 = "intercept";
         const estimation_type_2 = "slope";
         const rnd = (r) => Math.round(1000 * r) / 1000;

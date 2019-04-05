@@ -257,6 +257,10 @@ proc sample_variance*(v: Vector): float  {.inline.} = ((v .* v).sum / v.len.floa
 proc covariance*(v: Vector, w: Vector): float  {.inline.} = (dot(v, w) / v.len.float - v.mean * w.mean)
 proc sample_covariance*(v: Vector, w: Vector): float  {.inline.} = (dot(v, w) / v.len.float - v.mean * w.mean) * (v.len.float) / (v.len.float - 1)
 
+proc student_t_cdf(t: float, df: int): float {.inline.} =
+  let y = (df.float + 2.0/19.0) / (df.float + 22.0/71.0) * sqrt((df.float + 2.0/19.0) * ln(1.0 + t * t / (df.float + 13.0/50.0)))
+  return 1.0/(1.0 + exp(-1.6 * y - 0.07 * y * y * y))
+
 proc student_t_ppf_95p(df: int): float {.inline.} =
   const table_ppf = [1.0e50, 12.71, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365,
   2.306, 2.262, 2.228, 2.201, 2.179, 2.160, 2.145, 2.131,
@@ -322,11 +326,13 @@ type LinearRegressionParameters = object
   intercept_variance: float 
   intercept_confidence_interval: array[2, float]
   intercept_width_confidence_interval: float 
+  intercept_p_value: float
   #
   slope: float
   slope_variance: float
   slope_confidence_interval: array[2, float]
   slope_width_confidence_interval: float
+  slope_p_value: float
   #
   R2: float
   #
@@ -343,16 +349,19 @@ type MeanStructureDifferenceParameters = object
   intercept_variance: float 
   intercept_confidence_interval: array[2, float]
   intercept_width_confidence_interval: float 
+  intercept_p_value: float 
   #
   slope: float
   slope_variance: float
   slope_confidence_interval: array[2, float]
   slope_width_confidence_interval: float
+  slope_p_value: float
   #
   autoregressive_slope: float
   autoregressive_slope_variance: float
   autoregressive_slope_confidence_interval: array[2, float]
   autoregressive_slope_width_confidence_interval: float
+  autoregressive_slope_p_value: float
   #
 
 type AR1Ma1ModelParameters = object
@@ -378,6 +387,9 @@ type RobustInterruptedModel = object
   likelihood: LikelihoodModel
   parameter_differences: MeanStructureDifferenceParameters
 
+proc p_value_of_t_distr(mean: float, variance: float, n: int): float {.inline.} =
+  2.0 - 2.0 * student_t_cdf(mean / sqrt(variance), n.int - 2)
+
 proc model_differences(before_change: AR1Ma1ModelParameters, after_change: AR1Ma1ModelParameters): MeanStructureDifferenceParameters =
   result.intercept = after_change.mean_structure.intercept - before_change.mean_structure.intercept
   result.slope = after_change.mean_structure.slope - before_change.mean_structure.slope
@@ -391,6 +403,10 @@ proc model_differences(before_change: AR1Ma1ModelParameters, after_change: AR1Ma
   result.intercept_variance = after_change.mean_structure.intercept_variance + before_change.mean_structure.intercept_variance
   result.slope_variance = after_change.mean_structure.slope_variance + before_change.mean_structure.slope_variance
   result.autoregressive_slope_variance = after_change.autoregressive_structure.slope_variance + before_change.autoregressive_structure.slope_variance
+  
+  result.intercept_p_value = p_value_of_t_distr(result.intercept, result.intercept_variance, intercept_dof + 2);
+  result.slope_p_value = p_value_of_t_distr(result.slope, result.slope_variance, slope_dof + 2);
+  result.autoregressive_slope_p_value = p_value_of_t_distr(result.autoregressive_slope, result.autoregressive_slope_variance, autoregressive_slope_dof + 2);
   
   result.intercept_width_confidence_interval = 2.0 * sqrt(result.intercept_variance) * student_t_ppf_95p(intercept_dof)
   result.slope_width_confidence_interval = 2.0 * sqrt(result.slope_variance) * student_t_ppf_95p(slope_dof)
@@ -408,6 +424,7 @@ proc `$`(params: LinearRegressionParameters): string =
     R2: {params.R2:.3f}
     SSE: {params.residual_sum_squares:.3f}"""
 
+
 # y = ax + b
 proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters {.exportc.} =
   let
@@ -417,6 +434,8 @@ proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters 
     Sy = Y.sum
     Sxy = (X .* Y).sum
     Syy = (Y .* Y).sum
+    t_value = student_t_ppf_95p(n - 2)
+
   result.n = n.int
   result.slope = (n * Sxy - Sx * Sy) / (n * Sxx - Sx ^ 2 + EPSILON)
   result.intercept = (Sy / n - result.slope * Sx / n)
@@ -434,10 +453,13 @@ proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters 
   result.slope_variance = n * result.residual_variance / (n * Sxx - Sx ^ 2 + EPSILON)
   result.intercept_variance = result.slope_variance * Sxx / n
   #
-  result.slope_width_confidence_interval = 2.0 * sqrt(result.slope_variance) * student_t_ppf_95p(n - 2)
+  result.slope_p_value = p_value_of_t_distr(result.slope, result.slope_variance, n.int);
+  result.intercept_p_value = p_value_of_t_distr(result.intercept, result.intercept_variance, n.int);
+  #
+  result.slope_width_confidence_interval = 2.0 * sqrt(result.slope_variance) * t_value
   result.slope_confidence_interval[0] = result.slope - 0.5 * result.slope_width_confidence_interval
   result.slope_confidence_interval[1] = result.slope + 0.5 * result.slope_width_confidence_interval
-  result.intercept_width_confidence_interval = 2.0 * sqrt(result.intercept_variance) * student_t_ppf_95p(n - 2)
+  result.intercept_width_confidence_interval = 2.0 * sqrt(result.intercept_variance) * t_value
   result.intercept_confidence_interval[0] = result.intercept - 0.5 * result.intercept_width_confidence_interval
   result.intercept_confidence_interval[1] = result.intercept + 0.5 * result.intercept_width_confidence_interval
 
@@ -466,6 +488,9 @@ proc simple_linear_regression_wo_intercept(X: Vector, Y: Vector): LinearRegressi
   #
   result.slope_variance = result.residual_variance / (Sxx + EPSILON)
   result.intercept_variance = 0
+  #
+  result.slope_p_value = p_value_of_t_distr(result.slope, result.slope_variance, n.int);
+  result.intercept_p_value = 0#p_value_of_t_distr(result.intercept, result.intercept_variance, n.int);
   #
   result.slope_width_confidence_interval = 2.0 * sqrt(result.slope_variance) * student_t_ppf_95p(n - 1)
   result.slope_confidence_interval[0] = result.slope - 0.5 * result.slope_width_confidence_interval
