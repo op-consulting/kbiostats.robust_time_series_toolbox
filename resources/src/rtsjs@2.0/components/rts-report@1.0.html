@@ -13,7 +13,9 @@
             <td>{theoretical_change_point(model)}</td>
             <td>{estimated_change_point(model)}</td>
             <td>{diff_change_point(model)}</td>
-            <td>{supremum_wald(model)}</td>
+            <td>{supremum_wald_decision(model)}
+                (p-val: {supremum_wald_p_value(model)})
+            </td>
         </tr>
     </table>
     <style>
@@ -29,7 +31,8 @@
             "MMM DD, YYYY");
         self.diff_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_time]).from(
             moment(model.dates[model.change_point.theoretical]));
-        self.supremum_wald = (model) => -12345;
+        self.supremum_wald_p_value = (model) => RTSModel.supremum_wald_test(opts.models).p_value;
+        self.supremum_wald_decision = (model) => RTSModel.supremum_wald_test(opts.models).p_value < 0.05? "Change-point": "No change-point";
     </script>
 </rts-model-wald-test-decision>
 

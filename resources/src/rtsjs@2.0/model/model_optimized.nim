@@ -424,7 +424,6 @@ proc `$`(params: LinearRegressionParameters): string =
     R2: {params.R2:.3f}
     SSE: {params.residual_sum_squares:.3f}"""
 
-
 # y = ax + b
 proc simple_linear_regression(X: Vector, Y: Vector): LinearRegressionParameters {.exportc.} =
   let
@@ -498,6 +497,32 @@ proc simple_linear_regression_wo_intercept(X: Vector, Y: Vector): LinearRegressi
   result.intercept_width_confidence_interval = 0
   result.intercept_confidence_interval[0] = 0
   result.intercept_confidence_interval[1] = 0
+
+#######################################################################################
+
+proc estimated_var_matrix(autocorrelation: float, variance: float, Y: Vector): array[2, array[2, float]] =
+  var
+    d1 = 1.0
+    d2 = 1.0
+    tau = - variance
+    abs_autocorrelation = abs(autocorrelation)
+    ln_autocorrelation = ln(autocorrelation)
+    T = Y.high
+    X = Y[0..(T-2)]
+  var
+    sumX = X.sum()
+    sumX2 = (X .* X).sum()
+  if abs_autocorrelation > 2.0:
+    echo "Range not allowed!"
+  if abs_autocorrelation > 0.1:
+    d1 = 1 - 1/(10 * ln_autocorrelation) - 2/(1 + exp(-10 * ln_autocorrelation))
+    d2 = 1 - 1/(10 * ln_autocorrelation) - 1/(1 + exp(-10 * ln_autocorrelation))
+    tau = 1/(5 * ln_autocorrelation)
+  result[0][0] = d1 * 2.0 + tau * (2.0 * T.float - 6.0) + (T.float - 4.0) * d2
+  result[1][0] = d1 * (X[0] + X[T-2]) + d2 * (sumX - X[0] - X[T-2]) + tau * (2.0 * sumX - X[T-2] - X[0])
+  result[0][1] = result[1][0]
+  result[1][1] = d1 * (X[0] ^ X[0] + X[T-2] * X[T-2]) + d2 * (sumX2 - X[0] * X[0] - X[T-2] * X[T-2]) + tau * (2.0 * sumX2 - X[0] * X[0] - X[T-2] * X[T-2])
+#######################################################################################
 
 # OLS Method
 # y[t] = a x[t] + b + r[t]

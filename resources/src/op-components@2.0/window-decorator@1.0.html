@@ -55,7 +55,7 @@ Plain format file input
       <div class="buttons right-side">
         <yield from="right-title"></yield>
       </div>
-      <virtual if={platform!='OSX' }>
+      <virtual if={platform!='OSX' && haveClosablebuttons()}>
         <div class="buttons win-buttons win-side">
           <span class="btn-min win-min"></span>
           <span class="btn-max win-max"></span>
@@ -236,8 +236,11 @@ Plain format file input
     const config = opts;
     const self$ = jQuery(self.root);
     const reader = new FileReader();
+    config.showbuttons = typeof config.showbuttons == "undefined"? true: config.showbuttons;
     self.electronIsInstalled = electronIsInstalled();
     self.platform = platform();
+
+    self.haveClosablebuttons = () => config.showbuttons;
 
     self.on("mount", () => {
       if (self.electronIsInstalled) {
@@ -271,7 +274,7 @@ Plain format file input
         self.root.querySelector(".main-window").classList.add(((!this_window.isMaximized()) ? "un" : "") +
           "maximized");
 
-        if (self.platform != "OSX") {
+        if (self.platform != "OSX" && config.showbuttons) {
           self.root.querySelector(".main-window .win-close").addEventListener("click", () => this_window
             .close());
           self.root.querySelector(".main-window .win-max").addEventListener("click", toggleWindow);

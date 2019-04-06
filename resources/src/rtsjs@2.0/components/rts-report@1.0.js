@@ -1,4 +1,4 @@
-riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4> <table border="1" cellpadding="0" cellspacing="0"> <tr> <td>Unit</td> <td>Formal intervention</td> <td>Estimated change point</td> <td>Intervention lag</td> <td>Supremum Wald-test decision</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{theoretical_change_point(model)}</td> <td>{estimated_change_point(model)}</td> <td>{diff_change_point(model)}</td> <td>{supremum_wald(model)}</td> </tr> </table>', '', '', function(opts) {
+riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4> <table border="1" cellpadding="0" cellspacing="0"> <tr> <td>Unit</td> <td>Formal intervention</td> <td>Estimated change point</td> <td>Intervention lag</td> <td>Supremum Wald-test decision</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{theoretical_change_point(model)}</td> <td>{estimated_change_point(model)}</td> <td>{diff_change_point(model)}</td> <td>{supremum_wald_decision(model)} (p-val: {supremum_wald_p_value(model)}) </td> </tr> </table>', '', '', function(opts) {
 
 
         const self = this;
@@ -8,7 +8,8 @@ riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4
             "MMM DD, YYYY");
         self.diff_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_time]).from(
             moment(model.dates[model.change_point.theoretical]));
-        self.supremum_wald = (model) => -12345;
+        self.supremum_wald_p_value = (model) => RTSModel.supremum_wald_test(opts.models).p_value;
+        self.supremum_wald_decision = (model) => RTSModel.supremum_wald_test(opts.models).p_value < 0.05? "Change-point": "No change-point";
 });
 
 riot.tag2('rts-model-pre-change-point-table', '<h4>Unit-specific pre-change point intercepts and slopes</h4> <table border="1" cellpadding="0" cellspacing="0" class="double-header"> <tr> <td rowspan="2">Unit</td> <td colspan="3">Intercept pre-change point</td> <td colspan="3">Slope pre-change point</td> </tr> <tr> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> <td>Estimate</td> <td>95% CI</td> <td>p-val</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{estimate_1(model)}</td> <td>{ci_1(model)}</td> <td>{pval_1(model)}</td> <td>{estimate_2(model)}</td> <td>{ci_2(model)}</td> <td>{pval_2(model)}</td> </tr> </table>', '', '', function(opts) {

@@ -105,6 +105,7 @@ app.on('ready', function () {
   //mainWindow.maximize();
   //
   mainWindow.toggleDevTools();
+  //modalWindow.toggleDevTools();
 
   
 });

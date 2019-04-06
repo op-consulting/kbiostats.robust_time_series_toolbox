@@ -35,6 +35,9 @@ _global.metro = require("./lib/metroui@4.2.38/metro.js");
 // Math library
 _global.np = require("./lib/numjs@0.15.1/numjs.js");
 
+// Math library
+_global.mathjs = require("./lib/mathjs@5.8.0/math.js");
+
 // Stat library
 _global.st = require("./lib/jstat@1.7.1/jstat.js");
 
