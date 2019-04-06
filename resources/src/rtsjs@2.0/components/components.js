@@ -3,6 +3,7 @@ require('./rts-configuration-date-panel@1.0.js');
 require('./rts-configuration-panel@1.0.js');
 require('./rts-data-summary@1.0.js');
 require('./rts-main-window@2.0.js');
+require('./rts-modal-window@1.0.js');
 require('./rts-model-plot@1.0.js');
 require('./rts-outline-panel@1.0.js');
 require('./rts-outline-plots-panel@1.0.js');

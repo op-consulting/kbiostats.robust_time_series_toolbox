@@ -6,8 +6,8 @@ riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4
             "MMM DD, YYYY");
         self.estimated_change_point = (model) => moment(model.dates[model.change_point.theoretical]).format(
             "MMM DD, YYYY");
-        self.diff_change_point = (model) => moment(model.dates[model.change_point.theoretical]).from(
-            moment(model.dates[model.estimations.likelihood.best_time]));
+        self.diff_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_time]).from(
+            moment(model.dates[model.change_point.theoretical]));
         self.supremum_wald = (model) => -12345;
 });
 
