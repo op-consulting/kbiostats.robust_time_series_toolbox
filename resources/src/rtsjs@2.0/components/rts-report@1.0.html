@@ -1,6 +1,6 @@
 <rts-model-wald-test-decision>
     <h4>Supremum Wald test conclusion</h4>
-    <table border="1" cellpadding="0" cellspacing="0">
+    <table border="1" cellpadding="0" cellspacing="0" width="100%">
         <tr>
         <td>Unit</td>
         <td>Formal intervention</td>
@@ -25,11 +25,11 @@
         /* globals jQuery: false */
         /* globals FileReader: false */
         const self = this;
-        self.theoretical_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_time]).format(
+        self.theoretical_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_index]).format(
             "MMM DD, YYYY");
         self.estimated_change_point = (model) => moment(model.dates[model.change_point.theoretical]).format(
             "MMM DD, YYYY");
-        self.diff_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_time]).from(
+        self.diff_change_point = (model) => moment(model.dates[model.estimations.likelihood.best_index]).from(
             moment(model.dates[model.change_point.theoretical]));
         self.supremum_wald_p_value = (model) => RTSModel.supremum_wald_test(opts.models).p_value;
         self.supremum_wald_decision = (model) => RTSModel.supremum_wald_test(opts.models).p_value < 0.05? "Change-point": "No change-point";
@@ -38,7 +38,7 @@
 
 <rts-model-pre-change-point-table>
     <h4>Unit-specific pre-change point intercepts and slopes</h4>
-    <table border="1" cellpadding="0" cellspacing="0" class="double-header">
+    <table border="1" cellpadding="0" cellspacing="0" class="double-header" width="100%">
         <tr>
         <td rowspan="2">Unit</td>
         <td colspan="3">Intercept pre-change point</td>
@@ -83,7 +83,7 @@
 
 <rts-model-post-change-point-table>
     <h4>Unit-specific post-change point intercepts and slopes</h4>
-    <table border="1" cellpadding="0" cellspacing="0" class="double-header">
+    <table border="1" cellpadding="0" cellspacing="0" class="double-header" width="100%">
         <tr>
         <td rowspan="2">Unit</td>
         <td colspan="3">Intercept post-change point</td>
@@ -130,7 +130,7 @@
 
 <rts-model-parameter-changes-table>
     <h4>Unit-specific changes in level and slope</h4>
-    <table border="1" cellpadding="0" cellspacing="0" class="double-header">
+    <table border="1" cellpadding="0" cellspacing="0" class="double-header" width="100%">
         <tr>
         <td rowspan="2">Unit</td>
         <td colspan="3">Changes in level</td>
@@ -177,7 +177,7 @@
 
 <rts-model-stochastic-parameter-changes-table>
     <h4>Estimates of the stochastic component parameters</h4>
-    <table border="1" cellpadding="0" cellspacing="0" class="double-header">
+    <table border="1" cellpadding="0" cellspacing="0" class="double-header" width="100%">
         <tr>
         <td rowspan="2">Unit</td>
         <td colspan="2">Pre-change point</td>
@@ -217,7 +217,7 @@
     
 <rts-model-report>
     <div>
-        <h3>{opts.model.unit_name}</h3>
+        <h3>Plots: {opts.model.unit_name}</h3>
         <rts-model-plot type="plain" class="plain" model={opts.model} if={opts.plain_plot} toolbar={false}
             static_version={true}></rts-model-plot>
         <rts-model-plot type="estimation" class="estimation" model={opts.model} if={opts.estimation_plot}
@@ -241,6 +241,7 @@
 <rts-report>
     <div class="report-container">
         <virtual if={opts.models}>
+            <h3>Report tables</h3>
             <rts-model-wald-test-decision models={opts.models}></rts-model-wald-test-decision>
             <rts-model-pre-change-point-table models={opts.models}></rts-model-pre-change-point-table>
             <rts-model-post-change-point-table models={opts.models}></rts-model-post-change-point-table>
@@ -306,6 +307,9 @@
             padding: 10px;
             text-align: center;
             vertical-align: middle;
+        }
+        rts-model-plot{
+            margin-bottom: -70px;
         }
     </style>
     <script>

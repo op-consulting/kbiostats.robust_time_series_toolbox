@@ -1,4 +1,4 @@
-riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title"> <span class="btn-custom" role="button"><img src="./images/app/app.png" style="width: 23px;height: 23px;position: relative;top: 7px;display: block;"></span> <span class="label">Robust Time Series Toolbox - KAUST Biostatistics Group</span> </yield> <yield to="left-title"> <span class="btn-custom mif-eyedropper load-test-data"></span> </yield> <yield to="right-title"> <a href="https://biostats.kaust.edu.sa/"><span class="btn-custom mif-home fg-cyan"></span></a> </yield> <yield to="menu-bar"> <rts-ribbon-menu-bar ref="menubar"></rts-ribbon-menu-bar> </yield> <yield to="content"> <rts-three-column-panel ref="panels"></rts-three-column-panel> </yield> </window-decorator> </div>', 'rts-main-window .unit-miniplot,[data-is="rts-main-window"] .unit-miniplot{ width: 100px !important; height: 100px !important; } rts-main-window .window-content,[data-is="rts-main-window"] .window-content{ height: 100% !important; overflow: hidden; } rts-main-window .plot .apexcharts-title-text,[data-is="rts-main-window"] .plot .apexcharts-title-text{ color: #000001 !important; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Helvetica Neue", sans-serif !important; font-family: \'Segoe UI Web (West European)\' !important; font-weight: 200 !important; font-size: 16pt !important; }', '', function(opts) {
+riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title"> <span class="btn-custom" role="button"><img src="./images/app/app.png" style="width: 23px;height: 23px;position: relative;top: 7px;display: block;"></span> <span class="label">Robust Time Series Toolbox - KAUST Biostatistics Group</span> </yield> <yield to="left-title"> <span class="btn-custom mif-eyedropper load-test-data"></span> </yield> <yield to="right-title"> <span class="btn-custom mif-home open-home-page"></span> </yield> <yield to="menu-bar"> <rts-ribbon-menu-bar ref="menubar"></rts-ribbon-menu-bar> </yield> <yield to="content"> <rts-three-column-panel ref="panels"></rts-three-column-panel> </yield> </window-decorator> </div>', 'rts-main-window .unit-miniplot,[data-is="rts-main-window"] .unit-miniplot{ width: 100px !important; height: 100px !important; } rts-main-window .window-content,[data-is="rts-main-window"] .window-content{ height: 100% !important; overflow: hidden; } rts-main-window .plot .apexcharts-title-text,[data-is="rts-main-window"] .plot .apexcharts-title-text{ color: #000001 !important; font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Helvetica Neue", sans-serif !important; font-family: \'Segoe UI Web (West European)\' !important; font-weight: 200 !important; font-size: 16pt !important; }', '', function(opts) {
 
 
     const require_ = require;
@@ -94,6 +94,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
       self.root.querySelector(".load-test-data").onclick = () => process_data(app_state, global_state,
         read_test_data_source);
+      self.root.querySelector(".open-home-page").onclick = () => require_("electron").remote.shell.openExternal("https://biostats.kaust.edu.sa");
 
     };
 
@@ -525,4 +526,5 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
       self.on('app:load:csv', open_file);
     });
+
 });

@@ -522,6 +522,7 @@ proc estimated_var_matrix(autocorrelation: float, variance: float, Y: Vector): a
   result[1][0] = d1 * (X[0] + X[T-2]) + d2 * (sumX - X[0] - X[T-2]) + tau * (2.0 * sumX - X[T-2] - X[0])
   result[0][1] = result[1][0]
   result[1][1] = d1 * (X[0] ^ X[0] + X[T-2] * X[T-2]) + d2 * (sumX2 - X[0] * X[0] - X[T-2] * X[T-2]) + tau * (2.0 * sumX2 - X[0] * X[0] - X[T-2] * X[T-2])
+
 #######################################################################################
 
 # OLS Method

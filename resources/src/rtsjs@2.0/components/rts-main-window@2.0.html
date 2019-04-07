@@ -14,7 +14,7 @@
             -->
     </yield>
     <yield to="right-title">
-      <a href="https://biostats.kaust.edu.sa/"><span class="btn-custom mif-home fg-cyan"></span></a>
+      <span class="btn-custom mif-home open-home-page"></span>
     </yield>
     <yield to="menu-bar">
       <rts-ribbon-menu-bar ref="menubar"></rts-ribbon-menu-bar>
@@ -151,6 +151,7 @@
 
       self.root.querySelector(".load-test-data").onclick = () => process_data(app_state, global_state,
         read_test_data_source);
+      self.root.querySelector(".open-home-page").onclick = () => require_("electron").remote.shell.openExternal("https://biostats.kaust.edu.sa");
 
     };
 
@@ -605,5 +606,6 @@
       //
       self.on('app:load:csv', open_file);
     });
+
   </script>
 </rts-main-window>

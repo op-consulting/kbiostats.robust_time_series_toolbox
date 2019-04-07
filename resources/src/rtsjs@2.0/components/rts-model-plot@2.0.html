@@ -1,14 +1,313 @@
-riot.tag2('rts-model-plot-legend', '<div class="plot-labels w-100"> <virtual if="{opts.legend}"> <div class="data-series" each="{legend, idx in opts.legend}"> <div class="data-series-color" riot-style="{⁗background-color:⁗ + legend.color}"> </div> <div class="data-series-label" riot-style="{⁗color:⁗ + legend.color}"> {legend.label.replace(/\\[\\[/g, ⁗(⁗).replace(/\\]\\]/g, ⁗)⁗)} </div> </div> </virtual>', 'rts-model-plot-legend .data-series,[data-is="rts-model-plot-legend"] .data-series{ display: inline-flex; } rts-model-plot-legend .data-series-color,[data-is="rts-model-plot-legend"] .data-series-color{ display: inline-block; width: 18px; height: 5px; position: relative; top: 7px; margin-left: 15px; } rts-model-plot-legend .data-series-label,[data-is="rts-model-plot-legend"] .data-series-label{ margin-left: 3px; filter: brightness(90%); }', '', function(opts) {
+<rts-model-plot-change-point-marker>
+  <div class="change-point-markers w-100">
+    <virtual if={opts.change_point_information}>
+      <div class="data-marker">
+        <div class="cp-estimated-value cp-marker  cp-background" style={_date_style(0, true)}>
+          <div>Estimated</div>
+          <div>{moment(opts.change_point_information.estimated.value).format("MMM D YYYY")}</div>
+        </div>
+        <div class="cp-estimated-value cp-marker" style={_date_style(0)}>
+          <div>Estimated</div>
+          <div>{moment(opts.change_point_information.estimated.value).format("MMM D YYYY")}</div>
+        </div>
+        <div class="cp-theoretical-value cp-marker cp-background" style={_date_style(1, true)}>
+          <div>Theoretical</div>
+          <div>{moment(opts.change_point_information.theoretical.value).format("MMM D YYYY")}</div>
+        </div>
+        <div class="cp-theoretical-value cp-marker" style={_date_style(1)}>
+          <div>Theoretical</div>
+          <div>{moment(opts.change_point_information.theoretical.value).format("MMM D YYYY")}</div>
+        </div>
+      </div>
+    </virtual>
+    <style>
+      .cp-marker{
+        padding: 1px 5px;
+        text-align: center;
+      }
+      .cp-marker.cp-background {
+        opacity: 0.3;
+      }
+      .cp-marker.cp-background div:nth-child(1) {
+        filter: brightness(40%);
+        color: transparent;
+      }
+
+      .cp-marker div:nth-child(1) {
+        font-weight: 200;
+        /*color:white;*/
+        filter: brightness(50%);
+      }
+
+      .cp-marker.cp-background div:nth-child(2) {
+        background-color: white;
+        filter: none;
+      }
+
+      .cp-marker div:nth-child(2) {
+        filter: brightness(80%);
+        font-weight: 600;
+      }
+
+      .cp-marker p {
+        font-weight: bold;
+      }
+
+      .cp-marker {
+        display: block;
+        position: absolute;
+      }
+
+      .change-point-markers {
+        overflow: hidden;
+        height: 40px;
+      }
+    </style>
+    <script>
+      /* globals opts: false */
+      /* globals jQuery: false */
+      /* globals FileReader: false */
+
+      /**************************************************************************
+       * Helpers
+       **************************************************************************/
 
 
-    const self = this;
-    const config = opts;
+      /**************************************************************************
+       * Main script
+       **************************************************************************/
+      const self = this;
+      const config = opts;
+      //config.width = !!config.width ? config.width : "100%";
+      self._date_style = (index, background=false) => {
+        const y = [
+          opts.change_point_information.estimated.position,
+          opts.change_point_information.theoretical.position,
+        ];
+        const c = [
+          opts.change_point_information.estimated.color,
+          opts.change_point_information.theoretical.color,
+        ];
+        let sy = [
+          `color: ${c[0]};`+ (!background?"": `background-color: ${c[0]};`),
+          `color: ${c[1]};`+ (!background?"": `background-color: ${c[1]};`),
+        ];
+        if (y[0] < y[1]) {
+          sy[0] += `right: calc(100% - ${y[0]}px - 10px);`
+          sy[1] += `left: calc(${y[1]}px + 10px);`
+        } else {
+          sy[0] += `left: calc(${y[0]}px + 10px);`
+          sy[1] += `right: calc(100% - ${y[1]}px - 10px);`
+        }
+        return sy[index];
+      };
+    </script>
+</rts-model-plot-change-point-marker>
+<rts-model-plot-legend>
+  <div class="plot-labels w-100">
+    <virtual if={opts.legend}>
+      <div class="data-series" each={legend, idx in opts.legend}>
+        <div class="data-series-color" style={"background-color:" + legend.color}>
+        </div>
+        <div class="data-series-label" style={"color:" + legend.color}>
+          {legend.label.replace(/\[\[/g, "(").replace(/\]\]/g, ")")}
+        </div>
+      </div>
+    </virtual>
+    <style>
+      .data-series {
+        display: inline-flex;
+      }
 
-});
+      .data-series-color {
+        display: inline-block;
+        width: 18px;
+        height: 5px;
+        position: relative;
+        top: 7px;
+        margin-left: 15px;
+      }
 
-riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="{opts.toolbar}"> <div data-role="appbar" class="pos-relative z-dropdown"> <button class="button" title="Zoom reset" onclick="{zoomreset}"> <span class="ms-Icon ms-Icon--Home"></span> </button> <button class="button" title="Zoom in" onclick="{zoomin}"> <span class="ms-Icon ms-Icon--ZoomIn"></span> </button> <button class="button" title="Zoom out" onclick="{zoomout}"> <span class="ms-Icon ms-Icon--ZoomOut"></span> </button> <button id="" class="button" title="Download image" onclick="{save_image}"> <span class="ms-Icon ms-Icon--Save"></span> </button> </div> </virtual> <div class="image-container"> <virtual if="{opts.header}"> <h4 class="text-light">{opts.title_}</h4> <h5 class="text-light" if="{opts.subtitle}">{opts.subtitle}</h5> </virtual> <div class="pre-plot-container"> <div class="plot-container"></div> <rts-model-plot-legend ref="legend" riot-style="{(opts.legend?⁗⁗: ⁗display:hidden;⁗)}"></rts-model-plot-legend> </div> <img class="static-image hidden"> </div> </div>', 'rts-model-plot-legend{ position: absolute; bottom: -35px; } rts-model-plot .app-bar button,[data-is="rts-model-plot"] .app-bar button{ height: 34px !important; width: 34px !important; padding: 0; cursor: default; } rts-model-plot .app-bar,[data-is="rts-model-plot"] .app-bar{ text-align: left; display: block; min-height: 25px; height: 42px; padding: 3px; background: #f5f6f7; } rts-model-plot .simple-plot,[data-is="rts-model-plot"] .simple-plot{ border: 1px solid #bbbec2; box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important; } rts-model-plot .image-container,[data-is="rts-model-plot"] .image-container{ padding-top: 10px; height: calc(100% - 70px); width: calc(100% - 30px); left: 0; } rts-model-plot .pre-plot-container,[data-is="rts-model-plot"] .pre-plot-container{ width: 100%; height: inherit; } rts-model-plot .plot-container,[data-is="rts-model-plot"] .plot-container{ height: 100% !important; width: 100% !important; max-height: 100%; min-height: 100%; min-width: 100%; max-width: 100%; position: absolute; right: 10px; left: 10px; bottom: 10px; top: 10px; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend,rts-model-plot .dygraph-legend .legend-time,[data-is="rts-model-plot"] .dygraph-legend .legend-time{ background: rgb(237, 237, 237); } rts-model-plot .dygraph-legend .legend-values,[data-is="rts-model-plot"] .dygraph-legend .legend-values{ background: #f5f6f7; } rts-model-plot .dygraph-legend,[data-is="rts-model-plot"] .dygraph-legend{ position: absolute; min-width: 100px; border: 1px solid rgb(205, 205, 205); zoom: 0.95; } rts-model-plot .legend-container,[data-is="rts-model-plot"] .legend-container{ padding: 5px; } rts-model-plot .label,[data-is="rts-model-plot"] .label{ height: 20px; padding: 5px; user-select: text; cursor: text; } rts-model-plot .legend-label,[data-is="rts-model-plot"] .legend-label{ padding-right: 5px; filter: brightness(100%); font-weight: bold; } rts-model-plot .legend-line,[data-is="rts-model-plot"] .legend-line{ min-width: 10px; display: inline-block; height: 5px; position: relative; top: -4px; } rts-model-plot *,[data-is="rts-model-plot"] *{ -webkit-user-drag: none !important; user-select: none; cursor: default; } rts-model-plot .hidden,[data-is="rts-model-plot"] .hidden{ display: none; }', '', function(opts) {
+      .data-series-label {
+        margin-left: 3px;
+        filter: brightness(90%);
+      }
+    </style>
+    <script>
+      /* globals opts: false */
+      /* globals jQuery: false */
+      /* globals FileReader: false */
+
+      /**************************************************************************
+       * Helpers
+       **************************************************************************/
 
 
+      /**************************************************************************
+       * Main script
+       **************************************************************************/
+      const self = this;
+      const config = opts;
+      //config.width = !!config.width ? config.width : "100%";
+    </script>
+</rts-model-plot-legend>
+
+<rts-model-plot>
+  <div class="simple-plot w-100 h-100">
+    <virtual if={opts.toolbar}>
+      <div data-role="appbar" class="pos-relative z-dropdown">
+        <button class="button" title="Zoom reset" onclick={zoomreset}>
+          <span class="ms-Icon ms-Icon--Home"></span>
+        </button>
+        <button class="button" title="Zoom in" onclick={zoomin}>
+          <span class="ms-Icon ms-Icon--ZoomIn"></span>
+        </button>
+        <button class="button" title="Zoom out" onclick={zoomout}>
+          <span class="ms-Icon ms-Icon--ZoomOut"></span>
+        </button>
+        <button id="" class="button" title="Download image" onclick={save_image}>
+          <span class="ms-Icon ms-Icon--Save"></span>
+        </button>
+      </div>
+    </virtual>
+    <div class="image-container">
+      <virtual if={opts.header}>
+        <h4 class="text-light">{opts.title_}</h4>
+        <h5 class="text-light" if={opts.subtitle}>{opts.subtitle}</h5>
+      </virtual>
+      <div class="pre-plot-container">
+        <rts-model-plot-change-point-marker ref="change_point_marker"></rts-model-plot-change-point-marker>
+        <div class="plot-container"></div>
+        <rts-model-plot-legend ref="legend" style={(opts.legend?"": "display:none;")}></rts-model-plot-legend>
+      </div>
+      <img class="static-image hidden" />
+    </div>
+  </div>
+  <style>
+    /****/
+    rts-model-plot-legend {
+      width: 100%;
+      text-align: right;
+      position: absolute;
+      bottom: -35px;
+    }
+
+    .app-bar button {
+      height: 34px !important;
+      width: 34px !important;
+      padding: 0;
+      cursor: default;
+    }
+
+    .app-bar {
+      text-align: left;
+      display: block;
+      min-height: 25px;
+      height: 42px;
+      padding: 3px;
+      background: #f5f6f7;
+    }
+
+    .simple-plot {
+      border: 1px solid #bbbec2;
+      box-shadow: 0 10px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+    }
+
+    .image-container {
+      padding-top: 10px;
+      height: calc(100% - 70px);
+      width: calc(100% - 30px);
+      left: 0;
+    }
+
+    .pre-plot-container {
+      width: 100%;
+      height: inherit;
+    }
+
+    .plot-container {
+      height: 100% !important;
+      width: 100% !important;
+      max-height: 100%;
+      min-height: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      position: absolute;
+      right: 10px;
+      left: 10px;
+      bottom: 10px;
+      top: 10px;
+    }
+
+    .dygraph-legend,
+    .dygraph-legend .legend-time {
+      background: rgb(237, 237, 237);
+    }
+
+    .dygraph-legend .legend-values {
+      background: #f5f6f7;
+    }
+
+    .dygraph-legend {
+      position: absolute;
+      min-width: 100px;
+      border: 1px solid rgb(205, 205, 205);
+      zoom: 0.95;
+    }
+
+    .legend-container {
+      padding: 5px;
+    }
+
+    .label {
+      height: 20px;
+      padding: 5px;
+      user-select: text;
+      cursor: text;
+    }
+
+    .legend-label {
+      padding-right: 5px;
+      filter: brightness(100%);
+      font-weight: bold;
+    }
+
+    .legend-line {
+      min-width: 10px;
+      display: inline-block;
+      height: 5px;
+      position: relative;
+      top: -4px;
+    }
+
+    * {
+      -webkit-user-drag: none !important;
+      user-select: none;
+      cursor: default;
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+    .static-image{
+      
+    }
+  </style>
+
+  <script>
+    /* globals opts: false */
+    /* globals jQuery: false */
+    /* globals FileReader: false */
+
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+
+
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
     const self = this;
     const config = opts;
     config.width = !!config.width ? config.width : "100%";
@@ -19,6 +318,9 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
     config.header = typeof config.header == 'undefined' ? true : config.header;
     config.title = typeof config.title == 'undefined' ? null : config.title;
     config.static_version = typeof config.static_version == 'undefined' ? false : config.static_version;
+    //config.title = !!config.title ? config.title : "Plot";
+
+    self.change_point_information = null;
 
     const model = () => config.model;
 
@@ -33,6 +335,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
     self.view_list_plot_types = () => {
       self.root.querySelector(".plot-type-button").click();
     };
+
 
     self._zoom = (factor = 0.8, e) => {
       var r = self.graph.xAxisRange();
@@ -57,6 +360,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
 
     self.zoomin = (e) => self._zoom(zoom_factor, e)
 
+    /////////////////////////////////////////////////////////////////////
     self.save_image = () => {
       const require_ = require;
       const fs = require_('fs');
@@ -64,9 +368,20 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
         dialog
       } = require_("electron").remote;
       const node = self.root.querySelector(".image-container");
-
+      /*domtoimage.toPng(node).then((dataUrl) => {
+        var img = new Image();
+        img.src = dataUrl;
+        document.body.appendChild(img);
+      }).catch(function (error) {
+        console.error('oops, something went wrong!', error);
+      });
+      */
       const sanitize = (n) => !n || n.toLowerCase().replace(/[\s\W]+/g, "-").replace(/\-+/g, "-").trim();
-
+      /*
+      domtoimage.toBlob(node).then((blob) => {
+        window.saveAs(blob, sanitize(self.title) + '.png');
+      });
+      */
       var reader = new FileReader()
 
       dialog.showSaveDialog({
@@ -78,7 +393,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
         }]
       }, function (file_path) {
         if (file_path) {
-          domtoimage.toBlob(node).then((blob) => {
+          domtoimage.toBlob(node, {scale: 2}).then((blob) => {
             reader.onload = () => {
               fs.writeFile(file_path, new Buffer(reader.result), {}, () => {});
             }
@@ -87,14 +402,20 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
         }
       });
     };
-
+    /////////////////////////////////////////////////////////////////////
     const switch_to_static_version = () => {
       let dynamic = self.root.querySelector(".pre-plot-container");
       let img = self.root.querySelector(".static-image");
       if (!dynamic || dynamic.clientWidth == 0) return;
-      domtoimage.toPng(dynamic)
+      var {width, height} = dynamic.getClientRects()[0];
+      const factor_to_export_word = 0.7;
+      const default_factor_plot_height = 1.11;
+      domtoimage.toPng(dynamic, {scale: 2})
         .then(function (dataUrl) {
           img.src = dataUrl;
+          img.width = width * factor_to_export_word;
+          img.height = height * factor_to_export_word * default_factor_plot_height;
+          img.style.cssText = `zoom: ${1/factor_to_export_word}`;
           setTimeout(() => {
             img.classList.remove("hidden")
             dynamic.classList.add("hidden")
@@ -104,10 +425,55 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
           console.error('oops, something went wrong!', error);
         });
     };
+    /////////////////////////////////////////////////////////////////////
+    const draw_vertical_line = (ctx, color, x_c, y_0, y_1, linedash = []) => {
+      ctx.beginPath();
+      ctx.setLineDash(linedash);
+      ctx.strokeStyle = darkenColor(color);
+      ctx.moveTo(x_c, y_0);
+      ctx.lineTo(x_c, y_1);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    const estimatedSeriesPlotter = (colors) => {
+      const _ymax = Math.max(...config.model.y) * 2;
+      const _ymin = -_ymax;
+      //const _ymin = Math.min(...config.model.y);
+      const _xestimated = config.model.dates[config.model.estimations.likelihood.best_index];
+      const _xtheoretical = config.model.dates[config.model.change_point.theoretical];
+      return (e) => {
+        const ymax = e.dygraph.toDomYCoord(_ymax);
+        const ymin = e.dygraph.toDomYCoord(_ymin);
+        const xestimated = e.dygraph.toDomXCoord(_xestimated);
+        const xtheoretical = e.dygraph.toDomXCoord(_xtheoretical);
+        Dygraph.Plotters.fillPlotter(e);
+        Dygraph.Plotters.linePlotter(e);
+        const ctx = e.drawingContext;
+        draw_vertical_line(ctx, colors[0], xestimated, ymin, ymax, [5, 5]);
+        draw_vertical_line(ctx, colors[1], xtheoretical, ymin, ymax, [5, 5]);
+        self.change_point_information = {
+          estimated: {
+            value: _xestimated,
+            position: xestimated,
+            color: colors[0],
+          },
+          theoretical: {
+            value: _xtheoretical,
+            position: xtheoretical,
+            color: colors[1],
+          },
+        }
+        if (self.refs.change_point_marker) {
+          self.refs.change_point_marker.opts.change_point_information = self.change_point_information;
+          self.refs.change_point_marker.update();
+        }
+      };
+    };
 
     const boxPlotter = (...data) => {
       const mean = (a, b) => a + b;
-      const quantiles = (x) => st.quantiles(x, [0.25, 0.5, 0.75])
+      const quantiles = (x) => st.quantiles(x, [0.25, 0.5, 0.75]);
       const _properties = (x, q1, q2, q3) => [Math.min(...x), q1 - 1.5 * (q3 - q1), q1, q2, q3, q1 + 1.5 * (q3 - q1),
         Math.max(...x)
       ]
@@ -136,20 +502,18 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
         const x_0 = e.dygraph.toDomXCoord(index - delta);
         const x_1 = e.dygraph.toDomXCoord(index + delta);
 
-        const radius = 4;
+        const radius = 4; //e.dygraph.toDomXCoord(0.001)
 
-        ctx.beginPath();
-        ctx.strokeStyle = darkenColor(color);
-        ctx.moveTo(x_c, y_q0);
-        ctx.lineTo(x_c, y_q4);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        //Draw line min-max
+        draw_vertical_line(ctx, color, x_c, y_q0, y_q4);
 
+        //Draw middlebox
         ctx.fillStyle = lightenColor(color, 0.2);
         ctx.fillRect(x_0, y_q3, x_1 - x_0, -y_q3 + y_q1);
         ctx.strokeStyle = darkenColor(color, 0.8);
         ctx.strokeRect(x_0, y_q3, x_1 - x_0, -y_q3 + y_q1);
 
+        //Draw horizontal lines
         ctx.beginPath();
         ctx.setLineDash([]);
         ctx.strokeStyle = darkenColor(color);
@@ -197,10 +561,10 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       ctx.fillStyle = lightenColor(e.color, 0.2);
 
       ctx.fillRect(x_0, y_0, x_1 - x_0, y_1 - y_0);
-
+      //ctx.strokeRect(x_0, y_0, x_1 - x_0, y_1 - y_0);
       ctx.beginPath();
       ctx.setLineDash([5, 5]);
-
+      //ctx.setLineDash([]);
       ctx.moveTo(x_0, y_0);
       ctx.lineTo(x_1, y_0);
       ctx.strokeStyle = darkenColor(e.color);
@@ -217,6 +581,8 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
 
       ctx.fillStyle = lightenColor(e.color);
 
+      // Find the minimum separation between x-values.
+      // This determines the bar width.
       let min_sep = Infinity;
       for (let i = 1; i < points.length; i++) {
         const sep = points[i].canvasx - points[i - 1].canvasx;
@@ -224,6 +590,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       }
       const bar_width = Math.floor(2.0 / 3 * min_sep);
 
+      // Do the actual plotting.
       for (let i = 0; i < points.length; i++) {
         const p = points[i];
         const center_x = p.canvasx;
@@ -245,7 +612,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
     };
 
     const darkenColor = (colorStr, alpha = 1) => {
-
+      // Defined in dygraph-utils.js
       var color = Dygraph.toRGB_(colorStr);
       color.r = Math.floor((0 + color.r) / 2);
       color.g = Math.floor((0 + color.g) / 2);
@@ -328,13 +695,15 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       let period_model = config.model.estimations.after_change;
       let estimated_change_point = config.model.dates[change_point_index];
       let theoretical_change_point = config.model.dates[config.model.change_point.theoretical];
-
+      //[...Array(change_point_index).keys()].map((t) => period_model.mean_structure.intercept + period_model.mean_structure.slope * (t - change_point_index))
       let after_model = config.model.estimations.after_change.mean_structure;
       let before_model = config.model.estimations.before_change.mean_structure;
       let line_before = (t) => (t - change_point_index <= 0) ? (before_model.intercept + before_model.slope * t) :
         null;
       let line_after = (t) => (t - change_point_index < 0) ? null : (after_model.intercept + after_model.slope * t);
-
+      //let line_before = (t, y) => y;
+      //let line_after = (t, y) => y;
+      //const dygraphize3 = (x, y) => x.map((_x, i) => [_x, y[i] < theoretical_change_point? y[i]: null, y[i] >= theoretical_change_point? null: y[i]]);
       let labels = ["Time", "Observed value", "Estimated value [[before change-point]]",
         "Estimated value [[after change-point]]"
       ];
@@ -353,6 +722,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
         idx])]);
       data = data(config.model.x, config.model.dates, config.model.y);
       options.labels = labels;
+      options.plotter = estimatedSeriesPlotter([options.colors[1], options.colors[0]]);
       return [data, options]
     };
 
@@ -367,24 +737,26 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       return [data, options]
     };
 
-    graphic_category["--change-point-residuals"] = (before_or_after) => {
+    graphic_category["--change-point-residuals"] = (before_or_after, color_index) => {
       var residual = config.model.estimations[before_or_after].autoregressive_structure.residual;
       let options = default_options();
       let data = dygraphize(
         config.model.estimations.likelihood.change_points.map((i) => config.model.dates[i]),
         residual
       );
+      options.colors = [options.colors[color_index + 1], ...options.colors];
       options.labels = ["Time", "Residual"];
       return [data, options]
     };
 
-    graphic_category["--change-point-autocorrelation"] = (before_or_after) => {
+    graphic_category["--change-point-autocorrelation"] = (before_or_after, color_index) => {
       var acf = config.model.estimations[before_or_after].autoregressive_structure.autocorrelation_function;
       let options = default_options();
       let data = dygraphize(
         acf.autocorrelation.map((_, i) => i),
         acf.autocorrelation
       );
+      options.colors = [options.colors[color_index + 1], ...options.colors];
       options.plotter = acfPlotter;
       options.labels = ["Lag", "Autocorrelation"];
       return [data, options]
@@ -399,6 +771,8 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       var pre_residual = config.model.estimations.before_change.autoregressive_structure.residual;
       var post_residual = config.model.estimations.after_change.autoregressive_structure.residual;
       let options = default_options();
+      options.colors = [options.colors[1], options.colors[2], ...options.colors];
+      //
       let data = [
         [0, st.mean(pre_residual)],
         [1, st.mean(post_residual)],
@@ -412,7 +786,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       options.valueRange[0] -= delta
       options.valueRange[1] += delta
 
-      console.log(options.valueRange)
+      console.log(options.valueRange, "$$$$$$$$$$$")
 
       options.axes = {
         x: {},
@@ -420,7 +794,8 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       }
 
       options.axes.x.valueFormatter = (d) => d == 0 ? messages[0] : (d == 1 ? messages[1] : ".");
-
+      //options.axes.x.axisLabelFormatter = (d) => d==0?messages[0]:(d==1?messages[1]:"")
+      //options.axes.x.pixelsPerLabel = 100
       options.axes.x.ticker = () => [{
           v: 0,
           label_v: 0,
@@ -440,28 +815,36 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
 
     default_titles["before-change-point-autocorrelation"] = "Autocorrelation function (before change-point)"
     graphic_category["before-change-point-autocorrelation"] = () => graphic_category["--change-point-autocorrelation"](
-      "before_change")
+      "before_change", 0)
 
     default_titles["after-change-point-autocorrelation"] = "Autocorrelation function (after change-point)"
     graphic_category["after-change-point-autocorrelation"] = () => graphic_category["--change-point-autocorrelation"](
-      "after_change")
+      "after_change", 1)
 
     default_titles["before-change-point-residuals"] = "Residuals (before change-point)"
     graphic_category["before-change-point-residuals"] = () => graphic_category["--change-point-residuals"](
-      "before_change")
+      "before_change", 0)
 
     default_titles["after-change-point-residuals"] = "Residuals (after change-point)"
     graphic_category["after-change-point-residuals"] = () => graphic_category["--change-point-residuals"](
-      "after_change")
+      "after_change", 1)
 
     self.on("update", () => {
 
-      if (!opts.static_version || self.root.querySelectorAll(".static-image.hidden").length == 1)
+      if (!opts.static_version || self.root.querySelectorAll(".static-image.hidden").length == 1) {
         self.graph = new Dygraph(
           self.root.querySelector(".plot-container"),
           ...graphic_category[config.type]()
         );
-        self.refs.legend.opts.legend = Object.keys(self.graph.colorsMap_).map((k, i) => ({"label": k, "color": self.graph.colorsMap_[k]}));
+      }
+      //
+      const types_with_no_legend = ["box-plot-residuals", ];
+      if (!types_with_no_legend.contains(config.type) && self.refs.legend) {
+        self.refs.legend.opts.legend = Object.keys(self.graph.colorsMap_).map((k, i) => ({
+          "label": k,
+          "color": self.graph.colorsMap_[k]
+        }));
+      }
       if (opts.static_version) {
         switch_to_static_version();
       }
@@ -472,4 +855,5 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       self.root.style.cssText += `width: ${config.width}; height: ${config.height}; display: block;`;
       self.update();
     });
-});
+  </script>
+</rts-model-plot>

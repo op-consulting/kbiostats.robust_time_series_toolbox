@@ -7,8 +7,8 @@
   <div class="model-description">
     <!--Plot-->
     <div class="model-mini-plot">
-      <rts-model-plot type="plain" ref="plain" id={'executive-plot-' + opts.index }
-        model={opts.model} toolbar={false} header={false}
+      <rts-model-plot type="estimation" ref="plain" id={'executive-plot-' + opts.index }
+        model={opts.model} toolbar={false} header={false} legend={false}
         ></rts-model-plot>
     </div>
   </div>
@@ -190,7 +190,7 @@
     const self = this;
     const config = opts;
     config.model = !!config.model ? config.model : null;
-    self.change_point = (model) => moment(model.dates[model.estimations.likelihood.best_time]).format(
+    self.change_point = (model) => moment(model.dates[model.estimations.likelihood.best_index]).format(
       "MMM DD, YYYY");
 
     const rnd = (f) => Math.round(f * 1000) / 1000;

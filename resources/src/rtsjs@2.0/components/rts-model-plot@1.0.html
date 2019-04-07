@@ -1,3 +1,50 @@
+<rts-model-plot-legend>
+  <div class="plot-labels w-100">
+    <virtual if={opts.legend}>
+      <div class="data-series" each={legend, idx in opts.legend}>
+      <div class="data-series-color" style={"background-color:" + legend.color}>
+      </div>
+      <div class="data-series-label" style={"color:" + legend.color}>
+        {legend.label.replace(/\[\[/g, "(").replace(/\]\]/g, ")")}
+      </div>
+  </div>
+  </virtual>
+  <style>
+    .data-series{
+      display: inline-flex;
+    }
+  .data-series-color{
+    display: inline-block;
+    width: 18px;
+    height: 5px;
+    position: relative;
+    top: 7px;
+    margin-left: 15px;
+  }
+  .data-series-label{
+    margin-left: 3px;
+    filter: brightness(90%);
+  }
+  </style>
+  <script>
+    /* globals opts: false */
+    /* globals jQuery: false */
+    /* globals FileReader: false */
+
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+
+
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
+    const self = this;
+    const config = opts;
+    //config.width = !!config.width ? config.width : "100%";
+  </script>
+</rts-model-plot-legend>
+
 <rts-model-plot>
   <div class="simple-plot w-100 h-100">
     <virtual if={opts.toolbar}>
@@ -23,12 +70,18 @@
       </virtual>
       <div class="pre-plot-container">
         <div class="plot-container"></div>
+        <rts-model-plot-legend ref="legend" style={(opts.legend?"": "display:hidden;")}></rts-model-plot-legend>
       </div>
       <img class="static-image hidden" />
     </div>
   </div>
   <style>
     /****/
+    rts-model-plot-legend{
+      position: absolute;
+      bottom: -35px;
+    }
+
     .app-bar button {
       height: 34px !important;
       width: 34px !important;
@@ -123,7 +176,7 @@
       cursor: default;
     }
 
-    .hidden{
+    .hidden {
       display: none;
     }
   </style>
@@ -147,6 +200,7 @@
     config.height = !!config.height ? config.height : "400px";
     config.type = !!config.type ? config.type : "plain";
     config.toolbar = typeof config.toolbar == 'undefined' ? true : config.toolbar;
+    config.legend = typeof config.legend == 'undefined' ? true : config.legend;
     config.header = typeof config.header == 'undefined' ? true : config.header;
     config.title = typeof config.title == 'undefined' ? null : config.title;
     config.static_version = typeof config.static_version == 'undefined' ? false : config.static_version;
@@ -194,7 +248,9 @@
     self.save_image = () => {
       const require_ = require;
       const fs = require_('fs');
-      const {dialog} = require_("electron").remote;
+      const {
+        dialog
+      } = require_("electron").remote;
       const node = self.root.querySelector(".image-container");
       /*domtoimage.toPng(node).then((dataUrl) => {
         var img = new Image();
@@ -234,7 +290,7 @@
     const switch_to_static_version = () => {
       let dynamic = self.root.querySelector(".pre-plot-container");
       let img = self.root.querySelector(".static-image");
-      if(!dynamic || dynamic.clientWidth == 0) return;
+      if (!dynamic || dynamic.clientWidth == 0) return;
       domtoimage.toPng(dynamic)
         .then(function (dataUrl) {
           img.src = dataUrl;
@@ -431,10 +487,11 @@
       `
       data.series.forEach((series, index) => {
         if (typeof series.yHTML == "undefined") series.yHTML = ""
-        html += `
+        const labelHTML = !series.labelHTML ? "" : series.labelHTML.replace(/\[\[[\w\s-\.]+\]\]/g, "")
+        html += !series.yHTML ? "" : `
           <div class='series-${index + 1} ${series.isHighlighted?'highlighted':''}'>
             <span class="legend-line" style='background-color:${series.color};'></span>
-            <span class='legend-label' style='color:${series.color}; '>${series.labelHTML}</span>
+            <span class='legend-label' style='color:${series.color}; '>${labelHTML}</span>
             <span class='legend-value'>${series.yHTML}</span>
           </div>
         `
@@ -450,7 +507,7 @@
     const default_options = () => ({
       fillGraph: true,
       fillAlpha: 0.5,
-      colors: ["#0074ce", "#6fce00"],
+      colors: ["#0074ce", "#b76b68", "#39812e", "#6fce00"],
       legend: 'follow',
       legendFormatter: defaultLegendFormatter,
       axes: {
@@ -467,15 +524,43 @@
     graphic_category["plain"] = () => {
       let options = default_options();
       let data = dygraphize(config.model.dates, config.model.y);
-      options.labels = ["Time", "Value"];
+      options.labels = ["Time", "Observed value"];
       return [data, options]
     };
 
     default_titles["estimation"] = "Estimated time series"
     graphic_category["estimation"] = () => {
+      const change_point_index = config.model.estimations.likelihood.best_index;
+      let period_model = config.model.estimations.after_change;
+      let estimated_change_point = config.model.dates[change_point_index];
+      let theoretical_change_point = config.model.dates[config.model.change_point.theoretical];
+      //[...Array(change_point_index).keys()].map((t) => period_model.mean_structure.intercept + period_model.mean_structure.slope * (t - change_point_index))
+      let after_model = config.model.estimations.after_change.mean_structure;
+      let before_model = config.model.estimations.before_change.mean_structure;
+      let line_before = (t) => (t - change_point_index <= 0) ? (before_model.intercept + before_model.slope * t) :
+        null;
+      let line_after = (t) => (t - change_point_index < 0) ? null : (after_model.intercept + after_model.slope * t);
+      //let line_before = (t, y) => y;
+      //let line_after = (t, y) => y;
+      //const dygraphize3 = (x, y) => x.map((_x, i) => [_x, y[i] < theoretical_change_point? y[i]: null, y[i] >= theoretical_change_point? null: y[i]]);
+      let labels = ["Time", "Observed value", "Estimated value [[before change-point]]",
+        "Estimated value [[after change-point]]"
+      ];
       let options = default_options();
-      let data = dygraphize(config.model.dates, config.model.y);
-      options.labels = ["Time", "Value"];
+      options.series = {};
+      options.series[labels[1]] = {
+        fillAlpha: 0.3
+      };
+      options.series[labels[2]] = {
+        fillAlpha: 0.5
+      };
+      options.series[labels[3]] = {
+        fillAlpha: 0.5
+      };
+      let data = (x, d, y) => x.map((_x, idx) => [d[idx], y[idx], line_before(x[idx], y[idx]), line_after(x[idx], y[
+        idx])]);
+      data = data(config.model.x, config.model.dates, config.model.y);
+      options.labels = labels;
       return [data, options]
     };
 
@@ -579,13 +664,14 @@
       "after_change")
 
     self.on("update", () => {
-      
-      if(!opts.static_version || self.root.querySelectorAll(".static-image.hidden").length == 1)
+
+      if (!opts.static_version || self.root.querySelectorAll(".static-image.hidden").length == 1)
         self.graph = new Dygraph(
           self.root.querySelector(".plot-container"),
           ...graphic_category[config.type]()
         );
-      if(opts.static_version){
+        self.refs.legend.opts.legend = Object.keys(self.graph.colorsMap_).map((k, i) => ({"label": k, "color": self.graph.colorsMap_[k]}));
+      if (opts.static_version) {
         switch_to_static_version();
       }
     });
