@@ -1,75 +1,84 @@
 <example-annot>
-    <style>
-      #demodiv {
-        position: absolute;
-        left: 10px;
-        right: 200px;
-        height: 400px;
-        display: inline-block;
-      }
-      #status {
-        position: absolute;
-        right: 10px;
-        width: 180px;
-        height: 400px;
-        display: inline-block;
-      }
-      #controls {
-        position: absolute;
-        left: 10px;
-        margin-top: 420px;
-      }
+  <style>
+    #demodiv {
+      position: absolute;
+      left: 10px;
+      right: 200px;
+      height: 400px;
+      display: inline-block;
+    }
 
-      /* This style & the next show how you can customize the appearance of the
+    #status {
+      position: absolute;
+      right: 10px;
+      width: 180px;
+      height: 400px;
+      display: inline-block;
+    }
+
+    #controls {
+      position: absolute;
+      left: 10px;
+      margin-top: 420px;
+    }
+
+    /* This style & the next show how you can customize the appearance of the
          hairlines */
-      .hairline-info {
-        border: 1px solid black;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
+    .hairline-info {
+      border: 1px solid black;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
 
-        display: table;  /* shrink to fit */
-        min-width: 100px;
+      display: table;
+      /* shrink to fit */
+      min-width: 100px;
 
-        z-index: 10;  /* should appear on top of the chart */
-        padding: 3px;
-        background: white;
-        font-size: 14px;
-        cursor: move;
-      }
+      z-index: 10;
+      /* should appear on top of the chart */
+      padding: 3px;
+      background: white;
+      font-size: 14px;
+      cursor: move;
+    }
 
-      .dygraph-hairline {
-        /* border-right-style: dotted !important; */
-        cursor: move;
-      }
+    .dygraph-hairline {
+      /* border-right-style: dotted !important; */
+      cursor: move;
+    }
 
-      .dygraph-hairline.selected div {
-        left: 2px !important;
-        width: 2px !important;
-      }
-      .hairline-info.selected {
-        border: 2px solid black;
-        padding: 2px;
-      }
+    .dygraph-hairline.selected div {
+      left: 2px !important;
+      width: 2px !important;
+    }
 
-      .annotation-info {
-        background: white;
-        border-width: 1px;
-        border-style: solid;
-        padding: 4px;
-        display: table;  /* shrink to fit */
-        box-shadow: 0 0 4px gray;
-        cursor: move;
+    .hairline-info.selected {
+      border: 2px solid black;
+      padding: 2px;
+    }
 
-        min-width: 120px;  /* prevents squishing at the right edge of the chart */
-      }
-      .annotation-info.editable {
-        min-width: 180px;  /* prevents squishing at the right edge of the chart */
-      }
+    .annotation-info {
+      background: white;
+      border-width: 1px;
+      border-style: solid;
+      padding: 4px;
+      display: table;
+      /* shrink to fit */
+      box-shadow: 0 0 4px gray;
+      cursor: move;
 
-      .dygraph-annotation-line {
-        box-shadow: 0 0 4px gray;
-      }
-    </style>
+      min-width: 120px;
+      /* prevents squishing at the right edge of the chart */
+    }
+
+    .annotation-info.editable {
+      min-width: 180px;
+      /* prevents squishing at the right edge of the chart */
+    }
+
+    .dygraph-annotation-line {
+      box-shadow: 0 0 4px gray;
+    }
+  </style>
   <div>
     <h2>Hairlines Demo</h2>
 
@@ -87,14 +96,14 @@
       <div class='hairline-legend'></div>
     </div>
     <div id="annotation-template" class="annotation-info" style="display:none">
-      
+
     </div>
     <div id="annotation-editable-template" class="annotation-info" style="display:none">
       <button class='annotation-kill-button'>Delete</button>
       <button class='annotation-update'>Change</button>
-      <button class='annotation-cancel'>Cancel</button><br/>
+      <button class='annotation-cancel'>Cancel</button><br />
       <input dg-ann-field='text' type='text' size=30 />
-      
+
     </div>
 
     <div id="demodiv"></div>
@@ -106,51 +115,55 @@
       <button id="add-button">Add a Hairline</button>
       <button id="remove-button">Remove a Hairline</button>
       <button id="reset-button">Reset Hairlines</button>
-      <br/>
+      <br />
       Hairline mode:
       <input type=radio name="hairline-mode" id="hairline-interpolated" checked=true>
       <label for="hairline-interpolated"> Interpolated</label>
       <input type=radio name="hairline-mode" id="hairline-closest">
       <label for="hairline-closest"> Closest</label>
 
-      <p>Learn more about the <a href="https://docs.google.com/document/d/1OHNE8BNNmMtFlRQ969DACIYIJ9VVJ7w3dSPRJDEeIew/edit">Hairlines/Super-annotations plugins and their APIs</a>.</p>
+      <p>Learn more about the <a
+          href="https://docs.google.com/document/d/1OHNE8BNNmMtFlRQ969DACIYIJ9VVJ7w3dSPRJDEeIew/edit">Hairlines/Super-annotations
+          plugins and their APIs</a>.</p>
 
     </div>
-    </div>
+  </div>
 
-    <script type="text/javascript">
+  <script type="text/javascript">
     this.on("mount", () => {
-      jQuery(document).on('keyup', '.annotation-info input', function(e) {
-      var jQueryannotationDiv = jQuery(this).parent('.annotation-info');
-      if (e.keyCode == 13 || e.keyCode == 10) {  // enter
-        jQueryannotationDiv.find('.annotation-update').click();
-      } else if (e.keyCode == 27) {  // escape
-        jQueryannotationDiv.find('.annotation-cancel').click();
-      }
-    })
-    .on('dblclick', '.annotation-info', function(e) {
-      if (e.target.tagName == 'INPUT') return;
-      jQuery(this).find('.annotation-cancel').click();
-    });
+      jQuery(document).on('keyup', '.annotation-info input', function (e) {
+          var jQueryannotationDiv = jQuery(this).parent('.annotation-info');
+          if (e.keyCode == 13 || e.keyCode == 10) { // enter
+            jQueryannotationDiv.find('.annotation-update').click();
+          } else if (e.keyCode == 27) { // escape
+            jQueryannotationDiv.find('.annotation-cancel').click();
+          }
+        })
+        .on('dblclick', '.annotation-info', function (e) {
+          if (e.target.tagName == 'INPUT') return;
+          jQuery(this).find('.annotation-cancel').click();
+        });
 
 
       var last_t = 0;
       var data = [];
-      var fn = function(t) {
-        return Math.sin(Math.PI/180 * t * 4);
+      var fn = function (t) {
+        return Math.sin(Math.PI / 180 * t * 4);
       };
       for (; last_t < 200; last_t++) {
         data.push([last_t, fn(last_t)]);
       }
 
       hairlines = new Dygraph.Plugins.Hairlines({
-        divFiller: function(div, data) {
+        divFiller: function (div, data) {
           // This behavior is identical to what you'd get if you didn't set
           // this option. It illustrates how to write a 'divFiller'.
           var html = Dygraph.Plugins.Legend.generateLegendHTML(
-              data.dygraph, data.hairline.xval, data.points, 10);
+            data.dygraph, data.hairline.xval, data.points, 10);
           jQuery('.hairline-legend', div).html(html);
-          jQuery(div).data({xval: data.hairline.xval});  // see .hover() below.
+          jQuery(div).data({
+            xval: data.hairline.xval
+          }); // see .hover() below.
         }
       });
       annotations = new Dygraph.Plugins.SuperAnnotations({
@@ -159,54 +172,57 @@
         }
       });
       g = new Dygraph(
-              document.getElementById("demodiv"),
-              data,
-              {
-                labelsDiv: document.getElementById('status'),
-                labelsSeparateLines: true,
-                legend: 'always',
-                labels: [ 'Time', 'Value' ],
+        document.getElementById("demodiv"),
+        data, {
+          labelsDiv: document.getElementById('status'),
+          labelsSeparateLines: true,
+          legend: 'always',
+          labels: ['Time', 'Value'],
 
-                axes: {
-                  x: {
-                    valueFormatter: function(val) {
-                      return val.toFixed(2);
-                    }
-                  },
-                  y: {
-                    pixelsPerLabel: 50
-                  }
-                },
-
-                // Set the plug-ins in the options.
-                plugins : [
-                  annotations,
-                  hairlines
-                ]
+          axes: {
+            x: {
+              valueFormatter: function (val) {
+                return val.toFixed(2);
               }
-          );
+            },
+            y: {
+              pixelsPerLabel: 50
+            }
+          },
+
+          // Set the plug-ins in the options.
+          plugins: [
+            annotations,
+            hairlines
+          ]
+        }
+      );
 
       var shouldUpdate = true;
-      var update = function() {
+      var update = function () {
         if (!shouldUpdate) return;
         data.push([last_t, fn(last_t)]);
         last_t++;
         data.splice(0, 1);
-        g.updateOptions({file: data});
+        g.updateOptions({
+          file: data
+        });
       };
       window.setInterval(update, 1000);
 
       // Control handlers
-      jQuery('#update').on('change', function() {
+      jQuery('#update').on('change', function () {
         shouldUpdate = jQuery(this).is(':checked');
       });
 
-      jQuery('#add-button').on('click', function(e) {
+      jQuery('#add-button').on('click', function (e) {
         var h = hairlines.get();
-        h.push({xval: 137});
+        h.push({
+          xval: 137
+        });
         hairlines.set(h);
       });
-      jQuery('#remove-button').on('click', function(e) {
+      jQuery('#remove-button').on('click', function (e) {
         var h = hairlines.get();
         if (h.length > 0) {
           var idx = Math.floor(h.length / 2);
@@ -214,9 +230,10 @@
         }
         hairlines.set(h);
       });
-      jQuery('#reset-button').on('click', function(e) {
+      jQuery('#reset-button').on('click', function (e) {
         setDefaultState();
       });
+
       function setHairlineModeRadio() {
         var hs = hairlines.get();
         if (hs.length) {
@@ -225,7 +242,7 @@
           jQuery('#hairline-closest').prop('checked', !interpolated);
         }
       }
-      jQuery('[name=hairline-mode]').change(function() {
+      jQuery('[name=hairline-mode]').change(function () {
         var interpolated = jQuery('#hairline-interpolated').is(':checked');
         var hs = hairlines.get();
         for (var i = 0; i < hs.length; i++) {
@@ -240,42 +257,46 @@
         annotations.set(JSON.parse(localStorage.getItem('annotations')));
         setHairlineModeRadio();
       }
-      jQuery(hairlines).on('hairlinesChanged', function(e) {
+      jQuery(hairlines).on('hairlinesChanged', function (e) {
         localStorage.setItem('hairlines', JSON.stringify(hairlines.get()));
         setHairlineModeRadio();
       });
-      jQuery(annotations).on('annotationsChanged', function(e) {
+      jQuery(annotations).on('annotationsChanged', function (e) {
         localStorage.setItem('annotations', JSON.stringify(annotations.get()));
       });
+
       function setDefaultState() {
         // triggers 'hairlinesChanged' and 'annotationsChanged' events, above.
-        hairlines.set([{xval: 55}]);
-        annotations.set([{
-          xval: 67,
-          series: 'Value',
-          text: 'Bottom'
-        },
-        {
-          xval: 137,
-          series: 'Value',
-          text: 'Fast Change'
+        hairlines.set([{
+          xval: 55
         }]);
+        annotations.set([{
+            xval: 67,
+            series: 'Value',
+            text: 'Bottom'
+          },
+          {
+            xval: 137,
+            series: 'Value',
+            text: 'Fast Change'
+          }
+        ]);
       }
 
       if (!localStorage.getItem('hairlines') ||
-          !localStorage.getItem('annotations')) {
+        !localStorage.getItem('annotations')) {
         setDefaultState();
       } else {
         loadFromStorage();
       }
 
       // Set focus on text box when you edit an annotation.
-      jQuery(annotations).on('beganEditAnnotation', function(e, a) {
+      jQuery(annotations).on('beganEditAnnotation', function (e, a) {
         jQuery('input[type=text]', a.infoDiv).focus();
       });
 
       // Select/Deselect hairlines on click.
-      jQuery(document).on('click', '.hairline-info', function() {
+      jQuery(document).on('click', '.hairline-info', function () {
         console.log('click');
         var xval = jQuery(this).data('xval');
         var hs = hairlines.get();
@@ -289,36 +310,36 @@
 
       // Demonstration of how to use various other event listeners
       jQuery(hairlines).on({
-        'hairlineMoved': function(e, data) {
+        'hairlineMoved': function (e, data) {
           // console.log('hairline moved from', data.oldXVal, ' to ', data.newXVal);
         },
-        'hairlineCreated': function(e, data) {
+        'hairlineCreated': function (e, data) {
           console.log('hairline created at ', data.xval);
         },
-        'hairlineDeleted': function(e, data) {
+        'hairlineDeleted': function (e, data) {
           console.log('hairline deleted at ', data.xval);
         }
       });
       jQuery(annotations).on({
-        'annotationCreated': function(e, data) {
+        'annotationCreated': function (e, data) {
           console.log('annotation created at ', data.series, data.xval);
         },
-        'annotationMoved': function(e, data) {
+        'annotationMoved': function (e, data) {
           console.log('annotation moved from ', data.oldYFrac, ' to ', data.newYFrac);
         },
-        'annotationDeleted': function(e, data) {
+        'annotationDeleted': function (e, data) {
           console.log('annotation deleted at ', data.series, data.xval);
         },
-        'annotationEdited': function(e, data) {
+        'annotationEdited': function (e, data) {
           console.log('edited annotation at ', data.series, data.xval);
         },
-        'cancelEditAnnotation': function(e, data) {
+        'cancelEditAnnotation': function (e, data) {
           console.log('edit canceled on annotation at ', data.series, data.xval);
         }
       });
     })
-      // TODO(danvk): demonstrate other annotations API methods.
-    </script>
+    // TODO(danvk): demonstrate other annotations API methods.
+  </script>
 
 </example-annot>
 
@@ -350,6 +371,7 @@
       <div class="plot-container main-panel-container paper-style hidden">
         <rts-plot-collection ref="plot_collection"></rts-plot-collection>
       </div>
+
       <div class="content-container main-panel-container paper-style hidden">
         <rts-data-summary ref="data_summary"></rts-data-summary>
       </div>
@@ -681,7 +703,7 @@
           <rts-model-plot type="after-change-point-autocorrelation" class="after-change-point-autocorrelation" model={model}></rts-model-plot>
           <rts-model-plot type="box-plot-residuals" 
       */
-      
+
       self.show_main_panel(".plot-container");
       self.refs.plot_collection.update()
       self.refs.plot_collection.opts.plots = plot_types.map((plot_type) => ({
@@ -707,12 +729,12 @@
         });
       //self.root.querySelector(".paper-model-1 iframe").src = "./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&";
     };
-    
+
     self.show_full_report = () => {
       self.show_main_panel(".report-container");
       self.refs.full_data_report.update();
     };
-    
+
     self.save_full_report_as_docx = () => {
       self.show_main_panel(".report-container");
       self.refs.full_data_report.update();
