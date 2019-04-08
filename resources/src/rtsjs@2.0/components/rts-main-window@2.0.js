@@ -20,6 +20,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
         window.dispatchEvent(new Event('resize'));
       }, 30);
     };
+
     const connect_event_with_component_action = (event_name, component_receiver, action_name, condition = null) => {
       condition = !!condition ? condition : ((d) => true);
       self.on(event_name, (data) => {
@@ -67,70 +68,74 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       });
     };
 
-    const register_events_in_toolbar = () => {
-      event_registry('app:menubar:file', self.refs.window.refs.menubar);
-      event_registry('app:menubar:data', self.refs.window.refs.menubar);
-      event_registry('app:menubar:plots', self.refs.window.refs.menubar);
-      event_registry('app:menubar:export', self.refs.window.refs.menubar);
-      event_registry('app:menubar:help', self.refs.window.refs.menubar);
-      event_registry('app:load:csv', self.refs.window.refs.menubar);
-      event_registry('app:load:xls', self.refs.window.refs.menubar);
-      event_registry('app:settings:modeldates', self.refs.window.refs.menubar);
-      event_registry('app:settings:changepoint', self.refs.window.refs.menubar);
-      event_registry('app:view:summary', self.refs.window.refs.menubar);
-      event_registry('app:view:units', self.refs.window.refs.menubar);
-      event_registry('app:view:rawtimeseries', self.refs.window.refs.menubar);
-      event_registry('app:view:estimatedtimeseries', self.refs.window.refs.menubar);
-      event_registry('app:view:modelbeforechangepoint', self.refs.window.refs.menubar);
-      event_registry('app:view:modelafterchangepoint', self.refs.window.refs.menubar);
-      event_registry('app:report:view:full', self.refs.window.refs.menubar);
-      event_registry('app:export:report:docx', self.refs.window.refs.menubar);
-      event_registry('app:export:report:pdf', self.refs.window.refs.menubar);
-      event_registry('app:export:tables:regression', self.refs.window.refs.menubar);
-      event_registry('app:export:tables:analysis', self.refs.window.refs.menubar);
-      event_registry('app:export:tables:inference', self.refs.window.refs.menubar);
-      event_registry('app:help:model', self.refs.window.refs.menubar);
-      event_registry('app:help:program', self.refs.window.refs.menubar);
+    const register_events_in_toolbar = (menubar) => {
+      event_registry('app:menubar:file', menubar);
+      event_registry('app:menubar:data', menubar);
+      event_registry('app:menubar:plots', menubar);
+      event_registry('app:menubar:export', menubar);
+      event_registry('app:menubar:help', menubar);
+      event_registry('app:load:csv', menubar);
+      event_registry('app:load:xls', menubar);
+      event_registry('app:settings:modeldates', menubar);
+      event_registry('app:settings:changepoint', menubar);
+      event_registry('app:view:summary', menubar);
+      event_registry('app:view:units', menubar);
+      event_registry('app:view:rawtimeseries', menubar);
+      event_registry('app:view:estimatedtimeseries', menubar);
+      event_registry('app:view:modelbeforechangepoint', menubar);
 
-      self.root.querySelector(".load-test-data").onclick = () => process_data(app_state, global_state,
-        read_test_data_source);
-      self.root.querySelector(".open-home-page").onclick = () => require_("electron").remote.shell.openExternal("https://biostats.kaust.edu.sa");
+      event_registry('app:report:view:full', menubar);
+      event_registry('app:export:report:docx', menubar);
+      event_registry('app:export:report:pdf', menubar);
+      event_registry('app:export:tables:regression', menubar);
+      event_registry('app:export:tables:analysis', menubar);
+      event_registry('app:export:tables:inference', menubar);
+      event_registry('app:help:model', menubar);
+      event_registry('app:help:program', menubar);
+
+      self.root.querySelector(".load-test-data").onclick = () => process_data(read_test_data_source);
+      self.root.querySelector(".open-home-page").onclick = () => require_("electron").remote.shell.openExternal(
+        "https://biostats.kaust.edu.sa");
 
     };
 
-    const register_events_in_outline_panel = () => {
-      event_registry('app:request:current:plot:allunits', self.refs.window.refs.panels.refs.outlinepanel.refs
+    const register_events_in_leftpanel_panel = () => {
+      event_registry('app:request:current:plot:allunits', self.refs.window.refs.panels.refs.leftpanel.refs
         .plots);
-      event_registry('app:request:current:unit:allplots', self.refs.window.refs.panels.refs.outlinepanel.refs
+      event_registry('app:request:current:unit:allplots', self.refs.window.refs.panels.refs.leftpanel.refs
         .units);
     };
 
     const register_events_in_date_settings_panel = () => {
-      event_registry('app:request:change:model:changepoint', self.refs.window.refs.panels.refs
-        .configpanel.refs.changepoint);
-      event_registry('app:request:change:model:date:start', self.refs.window.refs.panels.refs.configpanel.refs
-        .date);
-      event_registry('app:request:change:model:date:end', self.refs.window.refs.panels.refs.configpanel.refs
-        .date);
+
     };
 
     const link_visual_interface_behaviour = () => {
       connect_event_with_component_action('app:view:rawtimeseries', self.refs.window.refs.panels.refs
-        .outlinepanel, 'view_list_unit_names');
+        .leftpanel, 'view_list_unit_names');
       connect_event_with_component_action('app:view:estimatedtimeseries', self.refs.window.refs.panels.refs
-        .outlinepanel, 'view_list_unit_names');
+        .leftpanel, 'view_list_unit_names');
       connect_event_with_component_action('app:view:modelbeforechangepoint', self.refs.window.refs.panels.refs
-        .outlinepanel, 'view_list_unit_names');
-      connect_event_with_component_action('app:view:modelafterchangepoint', self.refs.window.refs.panels.refs
-        .outlinepanel, 'view_list_unit_names');
-      connect_event_with_component_action('app:settings:modeldates', self.refs.window.refs.panels.refs
-        .configpanel, 'view_date_settings');
-      connect_event_with_component_action('app:settings:changepoint', self.refs.window.refs.panels.refs
-        .configpanel, 'view_change_point_settings');
+        .leftpanel, 'view_list_unit_names');
 
-      connect_event_with_component_action('app:view:units', self.refs.window.refs.panels.refs.outlinepanel,
+      connect_event_with_component_action('app:view:units', self.refs.window.refs.panels.refs.leftpanel,
         'view_list_plot_types');
     };
+
+    const register_events_in_main_app = () => {
+      event_registry('app:request:update:dataset', self.refs.window.refs.panels.refs.date_configuration);
+      let current_dataset_info = null;
+      self.on('app:request:update:dataset', (dataset_info) => {
+        model_data(dataset_info);
+        current_dataset_info = dataset_info;
+      });
+      self.on('app:settings:modeldates', () => {
+        self.refs.window.refs.panels.show_data_configuration(null, 1, current_dataset_info);
+      })
+      self.on('app:settings:changepoint', () => {
+        self.refs.window.refs.panels.show_data_configuration(null, 2, current_dataset_info);
+      })
+    }
 
     const create_interactive_thumbnails = (plot_thumbnails, models, selector_cb) => {
       for (let index = 0; index < models.length; index++) {
@@ -224,9 +229,38 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
       view_data_source(app_state, global_state, data_source);
     };
 
-    const process_data = (app_state, global_state, data_reader) => {
+    const process_data = (data_reader) => {
+      self.refs.window.refs.panels.show_data_configuration(data_reader());
+    };
 
-      _process_data(app_state, global_state, data_reader);
+    const model_data = (modeling_info) => {
+
+      const model_parameters = {
+        theoretical_change_point: modeling_info.change_point.index.theoretical,
+        candidates_before: modeling_info.change_point.index.candidates_before,
+        candidates_after: modeling_info.change_point.index.candidates_after,
+      }
+      const data_source = modeling_info.data_source;
+      const number_units = data_source.units;
+      let infomodels = [];
+      data_source.units.forEach((unit_name, idx) => {
+        let infomodel = RTSModel.fit_model(data_source.datesOfUnit(unit_name),
+          data_source.valuesOfUnit(unit_name),
+          model_parameters.theoretical_change_point,
+          model_parameters.candidates_before,
+          model_parameters.candidates_after);
+        infomodel.unit_name = unit_name;
+        infomodels.push(infomodel)
+        self.trigger("app:processing:models", {current: idx, total: number_units});
+      });
+      self.refs.window.refs.panels.refs.plot_collection.opts.models = infomodels;
+      self.refs.window.refs.panels.refs.plot_collection.update();
+
+      update_unit_names_in_outline(data_source.units);
+      update_models_in_summary_reports(infomodels);
+      create_thumbnails(data_source);
+      self.refs.window.refs.menubar.enable_model_related_buttons();
+      self.trigger('app:view:summary');
     };
 
     const view_data_source = (app_state, global_state, data_source) => {
@@ -301,23 +335,12 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
         change_title_unit_options("Model before change-point: Choose a unit")
 
       });
-      self.on('app:view:modelafterchangepoint', () => {
-        current_plot_type = ["box-plot-residuals", "after-change-point-residuals",
-          "after-change-point-autocorrelation"
-        ];
-        change_title_unit_options("Model after change-point: Choose a unit")
 
-      });
       self.on('app:request:current:unit:allplots', (params) => {
-        const {
-          data_source,
-        } = RTSdata;
         const {
           unitindex,
           unitname
         } = params;
-        console.log("===================, ", unitindex)
-        let unit_names = data_source.units;
         self.refs.window.refs.panels.show_filtered_plots(unitindex, unitname, current_plot_type);
 
       });
@@ -335,7 +358,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
           "hidden"));
         self.root.querySelector(".content-container").classList.remove("hidden");
         self.root.querySelector(".executive-summary").classList.remove("hidden");
-        self.refs.window.refs.panels.refs.outlinepanel.view_blank();
+        self.refs.window.refs.panels.close_left_panel();
         self.refs.window.refs.panels.refs.data_summary.update();
 
       });
@@ -374,8 +397,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
               throw new Error(
                 "CSV file cannot be processed. Please contact the administrator."
               );
-            process_data(app_state, global_state, read_file_data_source(results
-              .data));
+            process_data(read_file_data_source(results.data));
 
           }
         });
@@ -408,7 +430,7 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
         let data_source = global_state().data_source.clone();
         data_source.filter(filter_start_date, filter_end_date);
         try {
-          if (data_source.__data[Object.keys(data_source.__data)[0]].length == 0){
+          if (data_source.__data[Object.keys(data_source.__data)[0]].length == 0) {
             throw new Error("Invalid date!");
           }
           view_data_source(app_state, global_state, data_source);
@@ -477,13 +499,19 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
     const register_events_reports = () => {
       self.on("app:report:view:full", () => {
+        self.refs.window.refs.panels.close_left_panel();
+        self.refs.window.refs.panels.refs.data_summary.update();
         self.refs.window.refs.panels.show_full_report();
       });
       self.on("app:export:report:docx", () => {
+        self.refs.window.refs.panels.close_left_panel();
+        self.refs.window.refs.panels.refs.data_summary.update();
         self.refs.window.refs.panels.show_full_report();
         self.refs.window.refs.panels.save_full_report_as_docx();
       });
       self.on("app:export:report:pdf", () => {
+        self.refs.window.refs.panels.close_left_panel();
+        self.refs.window.refs.panels.refs.data_summary.update();
         self.refs.window.refs.panels.show_full_report();
         self.refs.window.refs.panels.save_full_report_as_pdf();
       });
@@ -501,9 +529,10 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
         require_("electron").remote.getCurrentWindow().toggleDevTools();
       });
 
-      register_events_in_toolbar();
-      register_events_in_outline_panel();
+      register_events_in_toolbar(self.refs.window.refs.menubar);
+      register_events_in_leftpanel_panel();
       register_events_in_date_settings_panel();
+      register_events_in_main_app();
       register_events_reports();
 
       link_visual_interface_behaviour();
@@ -526,5 +555,4 @@ riot.tag2('rts-main-window', '<window-decorator ref="window"> <yield to="title">
 
       self.on('app:load:csv', open_file);
     });
-
 });

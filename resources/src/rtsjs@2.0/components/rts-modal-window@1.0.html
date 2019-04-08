@@ -18,16 +18,16 @@
           <span class="big-icon-container">
             <span class="mif-security mif-5x"></span>
           </span>
-            <div class="modal-buttons">
-                <button class="button" ref="acceptbutton">
-                    <i class="ms-Icon ms-Icon--Accept icon"></i>
-                    <span class="caption">Accept</span>
-                </button>
-                <button class="button"  ref="cancelbutton">
-                    <i class="ms-Icon ms-Icon--Cancel icon"></i>
-                    <span class="caption">Cancel</span>
-                </button>
-            </div>
+          <div class="modal-buttons">
+            <button class="button" ref="acceptbutton">
+              <i class="ms-Icon ms-Icon--Accept icon"></i>
+              <span class="caption">Accept</span>
+            </button>
+            <button class="button" ref="cancelbutton">
+              <i class="ms-Icon ms-Icon--Cancel icon"></i>
+              <span class="caption">Decline</span>
+            </button>
+          </div>
         </div>
         <div class="w-75 h-100">
           <h1 class="modal-title">
@@ -43,13 +43,6 @@
               {opts.content}
             </virtual>
             <virtual if={!opts.content}>
-              <h2>Privacy policy</h2>
-              <p>This software do not collect any data.
-                Once installed this toolbox do not need or use any Internet connection.
-                Therefore,your files, settings, and all other personal data remain on-device
-                unless you explicitly share them with a third-party app or service.
-              </p>
-
               <h2>Data policy</h2>
               <p>This toolbox is made freely, and open-source, available.
                 The authors and their organizations assume no liability
@@ -57,6 +50,26 @@
                 and, in addition, do not guarantee the safety of your data.
                 Your use of the software is at your own risk.
               </p>
+
+              <h2>Privacy policy</h2>
+              <p>This software do not collect any of your personal data.
+                Once installed this toolbox do not need or use any Internet connection.
+                Therefore,your files, settings, and all other personal data remain on-device
+                unless you explicitly share them with a third-party app or service.
+              </p>
+
+              <h2>Licenses</h2>
+              <p>This software is licensed under a double open-source license: MIT/GPL.
+                You can redistribute it and/or modify it under the 
+                terms of the the licence as established in the 
+                file LICENSE-MIT and LICENSE-GPL in the installation path.
+
+                This toolbox is distributed in the hope that it will be useful, 
+                but WITHOUT ANY WARRANTY; without even the implied warranty of 
+                MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+                See the GNU General Public License and MIT License for more details.
+              </p>
+
             </virtual>
           </div>
         </div>
@@ -87,6 +100,7 @@
       position: absolute;
       bottom: 0;
     }
+
     .modal-content {
       background-color: rgba(255, 255, 255, 0.8);
       padding: 20px;
@@ -116,7 +130,8 @@
       padding: 20px;
     }
 
-    button, .button{
+    button,
+    .button {
       cursor: default;
     }
   </style>
@@ -141,22 +156,22 @@
      **************************************************************************/
     const self = this;
     const config = opts;
-    config.quitable = typeof config.quitable == "undefined"? true: config.quitable;
-    config.onaccept = typeof config.onaccept == "undefined"? null: config.onaccept;
-    config.oncancel = typeof config.oncancel == "undefined"? null: config.oncancel;
+    config.quitable = typeof config.quitable == "undefined" ? true : config.quitable;
+    config.onaccept = typeof config.onaccept == "undefined" ? null : config.onaccept;
+    config.oncancel = typeof config.oncancel == "undefined" ? null : config.oncancel;
     const cancel = () => {
       console.log("cancel");
-      if(config.oncancel) config.oncancel();
-      if(config.quitable){
+      if (config.oncancel) config.oncancel();
+      if (config.quitable) {
         require_("electron").remote.app.quit(0);
-      }else{
+      } else {
         window.close();
       }
     }
     const accept = () => {
       console.log("accept");
       window.close();
-      if(config.onaccept) config.onaccept();
+      if (config.onaccept) config.onaccept();
     }
     self.on("mount", () => {
       jQuery(document).bind('keydown', 'ctrl+shift+r', () => {

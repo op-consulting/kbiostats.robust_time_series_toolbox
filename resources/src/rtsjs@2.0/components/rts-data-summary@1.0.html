@@ -7,9 +7,8 @@
   <div class="model-description">
     <!--Plot-->
     <div class="model-mini-plot">
-      <rts-model-plot type="estimation" ref="plain" id={'executive-plot-' + opts.index }
-        model={opts.model} toolbar={false} header={false} legend={false}
-        ></rts-model-plot>
+      <rts-model-plot type="estimation" ref="plain" id={'executive-plot-' + opts.index } model={opts.model}
+        toolbar={false} header={false} legend={false}></rts-model-plot>
     </div>
   </div>
   <div class="model-mini-info">
@@ -153,24 +152,26 @@
       font-weight: 300;
     }
 
-      
-    .model-mini-plot rts-model-plot > div{
-      border: none!important;
-      box-shadow: none!important;
+
+    .model-mini-plot rts-model-plot>div {
+      border: none !important;
+      box-shadow: none !important;
     }
-    .model-mini-plot rts-model-plot{
-      margin-to3p:5px;
+
+    .model-mini-plot rts-model-plot {
+      margin-to3p: 5px;
       margin-bot3tom: 5px;
       max-width: 110%;
       min-width: 110%;
-      width: 110%!important;
+      width: 110% !important;
       min-height: 450px;
       max-height: 450px;
-      height: 450px!important;
+      height: 450px !important;
       margin-left: -10%;
     }
+
     .model-mini-plot rts-model-plot [data-role="appbar"],
-    .model-mini-plot rts-model-plot .image-container h4{
+    .model-mini-plot rts-model-plot .image-container h4 {
       display: none;
     }
   </style>
@@ -250,73 +251,80 @@
 
 <!---->
 <rts-data-table-summary>
-  <h4 class="text-light">Data summary</h4>
-  <ul class="v-menu" style="width:100%;">
-    <li class="menu-title">
-      <div class="row">
-        <div class="cell-3">
-          <div></div>
-        </div>
-        <div class="cell-3">
-          <div>Impact on slope</div>
-        </div>
-        <div class="cell-3">
-          <div>Impact on level</div>
-        </div>
-        <div class="cell-3">
-          <div>Changes on noise</div>
-        </div>
-      </div>
-    </li>
-    <virtual each={model, index in opts.models}>
-      <li class="">
+
+  <div class="par-container">
+    <h4 class="text-light">Data summary</h4>
+  </div>
+  <div class="paper-style">
+
+    <ul class="v-menu" style="width:100%;">
+      <li class="menu-title">
         <div class="row">
-          <!--Name-->
           <div class="cell-3">
-            <div class="centered-cell">
-              <!--
-                                <span class="mif-dashboard mif-2x icon  parameter-indication"></span>
-                            -->
-              <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
-              <span>{model.unit_name}</span>
-            </div>
+            <div></div>
           </div>
-          <!--Slope-->
-          <virtual each={parameter in ['slope', 'intercept' , 'white_noise' ]}>
-            <div class="cell">
-              <div class="centered-cell">
-                <span class="mif-move-up mif-2x parameter-indication" if={ estimate_difference_on[parameter](model)>= 0
-                  }></span>
-                <span class="mif-move-down mif-2x parameter-indication" if={ estimate_difference_on[parameter](model) <
-                  0 }></span>
-                <span class="parameter-estimation">
-                  {estimate_difference_on[parameter](model)}
-                </span>
-              </div>
-            </div>
-            <div class="cell-2">
-              <div>
-                <div class="parameter-changes">
-                  <span class="label">Changes:</span>
-                  <span class="values">
-                    <span class="value-before">{mean_estimate[parameter](model, 0)}</span>
-                    <span class="mif-forward" style="position: relative;top: 2px;"></span>
-                    <span class="value-after">{mean_estimate[parameter](model, 1)}</span>
-                  </span>
-                </div>
-                <div class="parameter-confidence-interval">
-                  <span class="label">95% C.I.:</span>
-                  <span class="values">
-                    {confidence_interval[parameter](model)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </virtual>
+          <div class="cell-3">
+            <div>Impact on slope</div>
+          </div>
+          <div class="cell-3">
+            <div>Impact on level</div>
+          </div>
+          <div class="cell-3">
+            <div>Changes on noise</div>
+          </div>
         </div>
       </li>
-    </virtual>
-  </ul>
+      <virtual each={model, index in opts.models}>
+        <li class="">
+          <div class="row">
+            <!--Name-->
+            <div class="cell-3">
+              <div class="centered-cell">
+                <!--
+                                <span class="mif-dashboard mif-2x icon  parameter-indication"></span>
+                            -->
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span>{model.unit_name}</span>
+              </div>
+            </div>
+            <!--Slope-->
+            <virtual each={parameter in ['slope', 'intercept' , 'white_noise' ]}>
+              <div class="cell">
+                <div class="centered-cell">
+                  <span class="mif-move-up mif-2x parameter-indication" if={ estimate_difference_on[parameter](model)>=
+                    0
+                    }></span>
+                  <span class="mif-move-down mif-2x parameter-indication" if={ estimate_difference_on[parameter](model)
+                    < 0 }></span>
+                  <span class="parameter-estimation">
+                    {estimate_difference_on[parameter](model)}
+                  </span>
+                </div>
+              </div>
+              <div class="cell-2">
+                <div>
+                  <div class="parameter-changes">
+                    <span class="label">Changes:</span>
+                    <span class="values">
+                      <span class="value-before">{mean_estimate[parameter](model, 0)}</span>
+                      <span class="mif-forward" style="position: relative;top: 2px;"></span>
+                      <span class="value-after">{mean_estimate[parameter](model, 1)}</span>
+                    </span>
+                  </div>
+                  <div class="parameter-confidence-interval">
+                    <span class="label">95% C.I.:</span>
+                    <span class="values">
+                      {confidence_interval[parameter](model)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </virtual>
+          </div>
+        </li>
+      </virtual>
+    </ul>
+  </div>
   <style>
     * {
       cursor: default;
@@ -452,15 +460,27 @@
 <rts-data-summary>
   <div class="executive-summary hidden" style="" if={model_exists()}>
     <rts-data-table-summary models={opts.models}></rts-data-table-summary>
-    <br>
-    <h4 class="text-light">Relevant results</h4>
-    <div each={model, index in opts.models}>
-      <rts-data-block-summary model={ model } index={index}></rts-data-block-summary>
+    <div class="par-container">
+      <h4 class="text-light">Relevant results</h4>
+    </div>
+    <div class="paper-style">
+      <div each={model, index in opts.models}>
+        <rts-data-block-summary model={ model } index={index}></rts-data-block-summary>
+      </div>
     </div>
   </div>
   <style>
     .hidden {
       display: none;
+    }
+
+    .par-container {
+      width: 80%;
+      margin: auto;
+    }
+
+    h4 {
+      margin-top: 40px;
     }
   </style>
   <script>

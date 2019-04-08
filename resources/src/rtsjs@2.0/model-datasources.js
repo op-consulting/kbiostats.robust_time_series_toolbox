@@ -27,6 +27,13 @@ class ModelDataSourceJson extends ModelDataSource {
         super();
         this.__data = {}
     }
+    fill_from_data_table(unit_names, datatable){
+        this.__data = {};
+        for(let k=0; k < unit_names.length; k++){
+            this.__data[unit_names[k]] = datatable.map((e) => [e[0], e[k + 1]]);
+        }
+        return this;
+    }
     pairsOfUnit(unit) {
         return this.__data[unit]
     }
@@ -44,6 +51,13 @@ class ModelDataSourceJson extends ModelDataSource {
     }
     get units() {
         return Object.keys(this.__data);
+    }
+    //TODO: ALl dates must appear in all datasets
+    get datatable(){
+        const units = this.units;
+        return [...Array(this.__data[units[0]].length).keys()].map((idx) => [this.__data[units[0]][idx][0],
+            ...units.map((unit_name) => this.__data[unit_name][idx][1])
+        ]);
     }
     closeIndexTo(date){
         const _units = this.units;

@@ -8,12 +8,16 @@ riot.tag2('rts-outline-panel', '<div class="container-fluid p-0 h-100"> <ul clas
         config.plot_title = !!config.plot_title ? config.plot_title : "Type of plots";
 
         const open_this_panel = () => {
-            if(self.parent && self.parent.show_outline_panel)
-                self.parent.show_outline_panel();
+            if(self.parent && self.parent.show_left_panel)
+                self.parent.show_left_panel();
         };
 
         self.view_blank = () => {
             open_this_panel();
+            self.set_blank();
+        };
+
+        self.set_blank = () => {
             self.root.querySelector(".outline-blank-button").click();
         };
 

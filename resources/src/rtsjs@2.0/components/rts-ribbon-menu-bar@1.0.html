@@ -15,7 +15,7 @@
             <div class="section" id="section_data">
                 <div class="group">
                     <ribbon-simple-button label="Load CSV" icon="icon96 file-csv" iconpreffix="sf-icon--" onclick={_trigger_event('Load:CSV');} />
-                    <ribbon-simple-button label="Load Excel" icon="icon96 file-excel" iconpreffix="sf-icon--" onclick={_trigger_event('Load:XLS');} disabled=true />
+                    <ribbon-simple-button label="Load Excel" icon="icon96 file-excel" iconpreffix="sf-icon--" onclick={_trigger_event('Load:XLS');} disabled=true  style="display:none;"/>
                     <span class="title">Dataset</span>
                 </div>
                 <div class="group">
@@ -38,8 +38,7 @@
                     <span class="title">Time series plot</span>
                 </div>
                 <div class="group">
-                    <ribbon-simple-button class="data-related" label="Before change" icon="icon96 changepoint-pre-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelBeforeChangePoint');}  disabled=true/>
-                    <ribbon-simple-button class="data-related" label="After change" icon="icon96 changepoint-post-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelAfterChangePoint');}  disabled=true/>
+                    <ribbon-simple-button class="data-related" label="Residuals" icon="icon96 changepoint-pre-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelBeforeChangePoint');}  disabled=true/>
                     <span class="title">Model dependency</span>
                 </div>
                 <!--
@@ -54,14 +53,14 @@
             <div class="section" id="section_reports">
                 <div class="group">
                     <ribbon-simple-button class="data-related" label="Complete report" icon="icon96 file-pdf" iconpreffix="sf-icon--" onclick={_trigger_event('Report:View:Full');}  disabled=true/>
-                    <ribbon-simple-button label="Regression line" icon="icon96 table-plot" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Regression');}  disabled=true/>
-                    <ribbon-simple-button label="Analysis results" icon="icon96 table-green" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Analysis');}  disabled=true/>
-                    <ribbon-simple-button label="Inference results" icon="icon96 table-blue" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Inference');}  disabled=true/>
+                    <ribbon-simple-button label="Regression line" icon="icon96 table-plot" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Regression');}  disabled=true  style="display:none;"/>
+                    <ribbon-simple-button label="Analysis results" icon="icon96 table-green" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Analysis');}  disabled=true  style="display:none;"/>
+                    <ribbon-simple-button label="Inference results" icon="icon96 table-blue" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Tables:Inference');}  disabled=true  style="display:none;"/>
                     <span class="title">Reports</span>
                 </div>
                 <div class="group">
                     <ribbon-simple-button class="data-related" label="DOCX report" icon="icon96 file-word" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Report:DOCX');}  disabled=true/>
-                    <ribbon-simple-button class="data-related" label="PDF report" icon="icon96 file-pdf" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Report:PDF');}  disabled=true/>
+                    <ribbon-simple-button class="data-related" label="PDF report" icon="icon96 file-pdf" iconpreffix="sf-icon--" onclick={_trigger_event('Export:Report:PDF');}  disabled=true style="display:none;"/>
                     <span class="title">Export</span>
                 </div>
                 <div class="group"></div>

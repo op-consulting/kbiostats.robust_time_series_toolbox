@@ -48,7 +48,13 @@ const fit_model = (dates, values, theoretical_change_point, candidates_before, c
   model.change_point.after = candidates_after
   model.y = values
   model.estimations = robust_interrupted_time_series(model.x, model.y, model.change_point.theoretical,
-    model.change_point.before, model.change_point.after)
+    model.change_point.before, model.change_point.after);
+  if(model.estimations.likelihood.change_points === null){
+    model.estimations.likelihood.change_points = [0];
+  }
+  if(model.estimations.likelihood.loglikelihood === null){
+    model.estimations.likelihood.loglikelihood = [-1e100];
+  }
   return model;
 };
 

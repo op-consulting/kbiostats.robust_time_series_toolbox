@@ -49,8 +49,10 @@ _global.SVG = require("./lib/svg.js@2.5.0/svg.js");
 
 // Charting library (modified)
 _global.Dygraph = require("./lib/dygraph@2.1.0/dygraph.js");
-require("./lib/dygraph@2.1.0/hairlines.js");
-require("./lib/dygraph@2.1.0/super-annotations.js");
+//require("./lib/dygraph@2.1.0/hairlines.js");
+//require("./lib/dygraph@2.1.0/super-annotations.js");
+//require("./lib/dygraph@2.1.0/synchronizer.js");
+//require("./lib/dygraph@2.1.0/synchronizer-master-slave.js");
 //_global.Plotly = require("./lib/plotly.js@1.45.3/plotly.js");
 
 // Charting library (modified)
