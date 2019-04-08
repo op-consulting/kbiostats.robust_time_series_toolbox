@@ -267,7 +267,7 @@ proc student_t_ppf_95p(df: int): float {.inline.} =
   2.120, 2.110, 2.101, 2.093, 2.086, 2.080, 2.074, 2.069,
   2.064, 2.060, 2.056, 2.052, 2.048, 2.045, 2.042, 2.021,
   2.009, 2.000, 1.990, 1.984, 1.980, 1.960]
-  if df > table_ppf.len:
+  if df > table_ppf.high:
     return table_ppf[table_ppf.high]
   elif df <= 1:
     return table_ppf[1]

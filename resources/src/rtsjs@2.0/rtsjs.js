@@ -34,6 +34,7 @@ exports.supremum_wald_test = (models) => {
   var CVC_i = st.inv(CVC.tolist());
   var Wald_score = np.dot(B, np.dot(CVC_i, B.T)).tolist()[0];
   var p_value = 1 - st.chisquare.cdf(Wald_score, 2 * M);
+  console.log("Wald_score", Wald_score, Math.log(p_value), st.chisquare.cdf(Wald_score, 2 * M));
   models.supremum_wald_test = {Wald_score, p_value}
   return p_value;
 }

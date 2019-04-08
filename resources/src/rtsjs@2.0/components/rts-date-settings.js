@@ -65,13 +65,13 @@ riot.tag2('rts-date-settings', '<div class="date-settings-container"> <div class
       closest_date_config(tval, "change_point", "theoretical");
       closest_date_config(tmin, "change_point", "candidates_before");
       closest_date_config(tmax, "change_point", "candidates_after");
+      self.change_point.index.candidates_before = -self.change_point.index.candidates_before + self.change_point.index.theoretical;
+      self.change_point.index.candidates_after = self.change_point.index.candidates_after - self.change_point.index.theoretical;
       self.refs.theoretical_min.textContent = moment(self.change_point.dates.candidates_before).format("MMM D YYYY");
       self.refs.theoretical_max.textContent = moment(self.change_point.dates.candidates_after).format("MMM D YYYY");
       self.refs.theoretical.textContent = moment(self.change_point.dates.theoretical).format("MMM D YYYY");
-      self.refs.candidates_before.textContent = -self.change_point.index.candidates_before + self.change_point.index
-        .theoretical
-      self.refs.candidates_after.textContent = self.change_point.index.candidates_after - self.change_point.index
-        .theoretical;
+      self.refs.candidates_before.textContent = self.change_point.index.candidates_before
+      self.refs.candidates_after.textContent = self.change_point.index.candidates_after
     };
 
     const default_graph_options = () => ({
@@ -257,6 +257,9 @@ riot.tag2('rts-date-settings', '<div class="date-settings-container"> <div class
         }
       }
 
+      const check_bounds = () => {
+        line_annotation_plugin.checkBounds(self.change_point_graph, self.change_point_graph);
+      };
       graph_options_slave.interactionModel = {
         mousedown: function (event, g, context) {
           event.preventDefault();
@@ -266,7 +269,7 @@ riot.tag2('rts-date-settings', '<div class="date-settings-container"> <div class
           line_annotation_plugin.select({
             dygraph: g
           });
-          line_annotation_plugin.checkBounds(self.change_point_graph, self.change_point_graph);
+          check_bounds();
         }
       }
 
@@ -283,14 +286,12 @@ riot.tag2('rts-date-settings', '<div class="date-settings-container"> <div class
       )
 
       self.change_point_graph.updateOptions({
-        drawCallback: () => {
-          line_annotation_plugin.checkBounds(self.change_point_graph, self.change_point_graph);
-        }
+        drawCallback: check_bounds
       });
 
-      synchronizerMasterSlave(self.date_range_graph, self.change_point_graph, () => {
-        line_annotation_plugin.checkBounds(self.date_range_graph, self.change_point_graph);
-      });
+      setTimeout(check_bounds, 100);
+
+      synchronizerMasterSlave(self.date_range_graph, self.change_point_graph, check_bounds);
     });
 
     self.on("mount", () => {

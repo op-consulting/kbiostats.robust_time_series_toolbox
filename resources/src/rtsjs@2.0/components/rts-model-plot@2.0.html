@@ -731,19 +731,17 @@
       let options = default_options();
       let data = dygraphize(
         config.model.estimations.likelihood.change_points.map((i) => config.model.dates[i]),
-        config.model.estimations.likelihood.loglikelihood
+        config.model.estimations.likelihood.loglikelihood.map((i) => Math.max(-1000, i)),
       );
       options.labels = ["Time", "Loglikelihood"];
       return [data, options]
     };
 
     graphic_category["--change-point-residuals"] = (before_or_after, color_index) => {
-      var residual = config.model.estimations[before_or_after].autoregressive_structure.residual;
+      const xestimated = config.model.estimations.likelihood.best_index * (before_or_after.contains("before")? 0 :1);
+      const residual = config.model.estimations[before_or_after].autoregressive_structure.residual;
       let options = default_options();
-      let data = dygraphize(
-        config.model.estimations.likelihood.change_points.map((i) => config.model.dates[i]),
-        residual
-      );
+      const data = residual.map((x, i) => [config.model.dates[i + xestimated], x]);
       options.colors = [options.colors[color_index + 1], ...options.colors];
       options.labels = ["Time", "Residual"];
       return [data, options]
