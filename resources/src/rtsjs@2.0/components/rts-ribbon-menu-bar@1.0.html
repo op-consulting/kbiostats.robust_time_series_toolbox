@@ -37,7 +37,7 @@
                     <ribbon-simple-button class="data-related" label="Estimated model" icon="icon96 changepoint-chart" iconpreffix="sf-icon--" onclick={_trigger_event('View:EstimatedTimeSeries');}  disabled=true/>
                     <span class="title">Time series plot</span>
                 </div>
-                <div class="group">
+                <div class="group" style="width:100px;">
                     <ribbon-simple-button class="data-related" label="Residuals" icon="icon96 changepoint-pre-acf" iconpreffix="sf-icon--" onclick={_trigger_event('View:ModelBeforeChangePoint');}  disabled=true/>
                     <span class="title">Model dependency</span>
                 </div>
@@ -215,6 +215,14 @@
 
         [data-role="ribbonmenu"] .content-holder>div {
             height: 100%;
+        }
+
+        /******/
+        .ribbon-menu .content-holder .section.active{
+            padding-left: 0px;
+        }
+        .ribbon-menu .section .group .title{
+            margin-left: 0px!important;
         }
     </style>
 

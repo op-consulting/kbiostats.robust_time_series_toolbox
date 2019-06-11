@@ -37,8 +37,8 @@ const getIconPath = () => {
 ///////////////////////////////////////////////////////////////////////////////
 let mainWindowSettings = {
   title: 'Robust Time Series Toolbox - KAUST Biostatistics Group',
-  width: 800,
-  height: 600,
+  width: 1024,
+  height: 760,
   minWidth: 400,
   minHeight: 300,
   //backgroundColor: 'rgb(224, 224, 224)',
