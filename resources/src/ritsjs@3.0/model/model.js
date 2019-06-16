@@ -2880,7 +2880,7 @@ function covariance_matrix_for_before_model_238764(model_238766, x_238767) {
 									L14: while (true) {
 									if (!(res_239261 <= colontmp__239258)) break L14;
 										c_239159 = res_239261;
-										if (covariance_approx_239016[r_239114] != null) { covariance_approx_239016[r_239114].push(0.0); } else { covariance_approx_239016[r_239114] = [0.0]; };
+										if (inverted_matrix_239094[r_239114] != null) { inverted_matrix_239094[r_239114].push(0.0); } else { inverted_matrix_239094[r_239114] = [0.0]; };
 										if (((r_239114 == c_239159) && ((r_239114 == 0) || (r_239114 == ((x_238767 != null ? (x_238767.length-1) : -1) - 1))))) {
 										inverted_matrix_239094[r_239114][c_239159] = inverse_approximation_239078[0][0];
 										}
