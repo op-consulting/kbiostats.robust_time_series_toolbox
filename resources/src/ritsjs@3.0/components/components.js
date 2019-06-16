@@ -1,0 +1,15 @@
+require('./rts-configuration-date-panel@1.0.js');
+require('./rts-configuration-panel@1.0.js');
+require('./rts-data-summary@1.0.js');
+require('./rts-date-settings.js');
+require('./rts-main-window@2.0.js');
+require('./rts-modal-window@1.0.js');
+require('./rts-model-plot@2.0.js');
+require('./rts-outline-panel@1.0.js');
+require('./rts-outline-plots-panel@1.0.js');
+require('./rts-outline-units-panel@1.0.js');
+require('./rts-plot-collection@2.0.js');
+require('./rts-plot.js');
+require('./rts-report@1.0.js');
+require('./rts-ribbon-menu-bar@1.0.js');
+require('./rts-three-column-panel@1.0.js');

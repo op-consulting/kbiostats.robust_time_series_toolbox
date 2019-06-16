@@ -1,0 +1,245 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+RITS model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mu_{t}=\begin{cases}
+\beta_{0}+\beta_{1}t & t<\tau\\
+\left(\beta_{0}+\delta\right)+\left(\beta_{1}+\Delta\right)t & t\ge\tau
+\end{cases}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\sigma_{t}^{2}=\begin{cases}
+\sigma_{1}^{2} & t<\tau\\
+\sigma_{2}^{2} & t\ge\tau
+\end{cases}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Y_{t}\sim\mathcal{N}\left(\mu_{t},\sigma_{t}^{2}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+Y_{t} & =\mu_{t}+\varepsilon_{t}\\
+\varepsilon_{t} & =\begin{cases}
+\phi_{1}\varepsilon_{t-1}+e_{t}^{1} & t<\tau\\
+\phi_{2}\varepsilon_{t-1}+e_{2}^{1} & t\ge\tau
+\end{cases}\\
+e_{t}^{1} & \sim\mathcal{N}\left(0,\sigma_{1}^{2}\right)\\
+e_{t}^{2} & \sim\mathcal{N}\left(0,\sigma_{2}^{2}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\hat{\tau}=\arg\max_{q}\mathcal{L}\left(\theta|q\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Wald test
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+H_{0}: & \delta_{j}=\Delta_{j}=0 & \forall j\\
+H_{A}: & \delta_{j}\ne\Delta_{j}\vee\Delta_{j}=0 & \exists j
+\end{align*}
+
+\end_inset
+
+c
+\begin_inset Formula 
+\[
+B^{0}=\left(\begin{array}{c}
+\text{unit 1}\left\{ \begin{array}{c}
+\beta_{0}\\
+\beta_{1}
+\end{array}\right.\\
+\vdots\\
+\text{unit m}\left\{ \begin{array}{c}
+\beta_{0}\\
+\beta_{1}
+\end{array}\right.
+\end{array}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+W=\left(CB^{1}\right)\left(C\mathbb{V}\left[B^{0}\right]C^{T}\right)^{-1}\left(CB^{1}\right)^{T}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+W\sim\chi_{2m}^{2}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\mathbb{V}\left[B^{0}\right]=\left(\begin{array}{ccccc}
+\mathbb{V}\left[B_{1}^{0}\right]\\
+ & \mathbb{V}\left[B_{2}^{0}\right]\\
+ &  & \mathbb{V}\left[B_{3}^{0}\right]\\
+\\
+ &  &  &  & \mathbb{V}\left[B_{m}^{0}\right]
+\end{array}\right)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\mathbb{V}\left[B_{j}^{0}\right] & =\left(X^{T}\left(\hat{\Sigma}_{j}\right)^{-1}X\right)^{-1}\\
+\hat{\Sigma}_{j} & =\frac{\left(\hat{\sigma}_{1,j}\right)^{2}}{1-\left(\hat{\phi}_{1,j}\right)^{2}}\left(\begin{array}{ccccc}
+1 & \left(\hat{\phi}_{1,j}\right) & \left(\hat{\phi}_{1,j}\right)^{2} &  & \left(\hat{\phi}_{1,j}\right)^{T-2}\\
+\left(\hat{\phi}_{1,j}\right) & 1 & \left(\hat{\phi_{j}}\right) &  & \left(\hat{\phi}_{1,j}\right)^{T-3}\\
+\left(\hat{\phi}_{1,j}\right)^{2} & \left(\hat{\phi}_{1,j}\right) & 1 &  & \left(\hat{\phi}_{1,j}\right)^{T-4}\\
+\\
+\left(\hat{\phi}_{1,j}\right)^{T-2} & \left(\hat{\phi}_{1,j}\right)^{T-3} & \left(\hat{\phi}_{1,j}\right)^{T-4} &  & 1
+\end{array}\right)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+Y_{j} & =X_{j}B_{j}^{1}+\epsilon_{j}\\
+Y_{j} & =\left(\begin{array}{c}
+\text{before C.P.}\left\{ \begin{array}{cccc}
+1 & t_{1} & 0 & 0\\
+1 & t_{2} & 0 & 0\\
+\\
+1 & t_{q} & 0 & 0
+\end{array}\right.\\
+\vdots\\
+\text{after C.P.}\left\{ \begin{array}{cccc}
+1 & t_{q+1} & 1 & t_{q+1}\\
+1 & t_{q+2} & 1 & t_{q+2}\\
+\\
+1 & t_{T} & 1 & t_{T}
+\end{array}\right.
+\end{array}\right)\left(\begin{array}{c}
+\beta_{0}\\
+\beta_{1}\\
+\delta_{1}\\
+\Delta_{1}
+\end{array}\right)\\
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

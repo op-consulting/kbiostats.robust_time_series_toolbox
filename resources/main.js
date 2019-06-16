@@ -67,12 +67,17 @@ _global.domtoimage = require("./lib/dom-to-image@2.6.0/dom-to-image.js");
 // Creating report
 _global.htmlDocx = require("./lib/html-docx-js@0.3.1/html-docx.js");
 
+// String formatting
+_global.formatter = require("./lib/agh.sprintf.js@1.0/agh.sprintf.js");
+
 // Components
 require("./src/op-components@2.0/components.js");
-require("./src/rtsjs@2.0/components/components.js");
+//require("./src/rtsjs@2.0/components/components.js");
+require("./src/ritsjs@3.0/components/components.js");
 
 // Main Model
-_global.RTSModel = require("./src/rtsjs@2.0/rtsjs.js");
+//_global.RTSModel = require("./src/rtsjs@2.0/rtsjs.js");
+_global.RTSModel = require("./src/ritsjs@3.0/ritsjs.js");
 
 riot.mount('rts-main-window');
 
