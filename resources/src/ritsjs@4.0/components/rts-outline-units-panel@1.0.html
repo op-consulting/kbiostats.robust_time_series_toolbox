@@ -1,0 +1,79 @@
+<rts-outline-units-panel>
+    <div class="panel-title">
+        {opts.title}
+    </div>
+    <div class="container-sidenav">
+    <ul class="sidenav-counter sidenav-counter-expand-fs h-100 w-100 list-mini-plots">
+        <li each={name, index in opts.unit_names}>
+            <a href="#" onclick={_trigger_event(index + 1, name)}>
+                <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
+                <span class="title">UNIT {(index + 1)}</span>
+                <span class="counter">{name}</span>
+            </a>
+        </li>
+    </ul>
+    </div>
+
+    <style>
+        .unit-miniplot {
+            zoom: 0.35;
+            margin-top: -4px;
+        }
+        * {
+            -webkit-user-drag: none !important;
+            user-select: none;
+            cursor: default;
+        }
+        .container-sidenav{
+            height: 100%;
+            overflow: auto;
+            display: grid;
+        }
+        .container-sidenav > ul{
+            padding-bottom: 30px;
+            background: inherit;
+        }
+        .container-sidenav{
+            background: white;
+            border-right: 1px solid #dadbdc;
+            border-left: 1px solid #dadbdc;
+        }
+        .panel-title{
+            background: #f5f6f7;
+            color: #000000;
+            border: 1px solid #dadbdc;
+            border-top: none;
+        }
+    </style>
+
+    <script>
+        /* globals opts: false */
+        /* globals jQuery: false */
+        /* globals FileReader: false */
+        //! class RTSOutlineUnitsPanel
+        //! <<UIComponent>> RTSOutlineUnitsPanel
+
+        /**************************************************************************
+         * Helpers
+         **************************************************************************/
+
+
+        /**************************************************************************
+         * Main script
+         **************************************************************************/
+        const self = this;
+        const config = opts;
+        config.title = !!config.title ? config.title : "";
+        config.unit_names = !!config.unit_names ? config.unit_names : [""];
+
+        //! RTSOutlineUnitsPanel: ~trigger_event(name)
+        self._trigger_event = (index, name) => {
+            return () => self.trigger('app:request:current:unit:allplots', {unitindex: index, unitname: name});
+        };
+
+        //! RTSOutlineUnitsPanel: +on_mount()
+        self.on("mount", () => {
+
+        });
+    </script>
+</rts-outline-units-panel>

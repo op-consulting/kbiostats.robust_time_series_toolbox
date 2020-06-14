@@ -1,0 +1,97 @@
+<rts-plot-collection>
+  <div>
+    <virtual if={_anyPlotFilter()}>
+      <div class={"graph-collection collection-" + (plot.index + 1)} each={plot, index in opts.plots}>
+          <virtual if={!plot.type.startsWith('combined-')}>
+              <rts-model-plot type={plot.type} class={plot.type} model={opts.models[plot.index]} title={plot.title} subtitle={plot.subtitle}></rts-model-plot>
+          </virtual>
+          <virtual if={plot.type.startsWith('combined-')}>
+              <div class="column-before">
+                  <rts-model-plot type={_adjust_type(plot, 'before-')} class={_adjust_type(plot, 'before-')} model={opts.models[plot.index]} title={plot.title} subtitle={plot.subtitle}></rts-model-plot>
+              </div>
+              <div class="column-after">
+                  <rts-model-plot type={_adjust_type(plot, 'after-')} class={_adjust_type(plot, 'after-')} model={opts.models[plot.index]} title={plot.title} subtitle={plot.subtitle}></rts-model-plot>
+              </div>
+          </virtual>
+      </div>
+    </virtual>
+    <!--
+          <rts-model-plot type="plain" class="plain" model={model}></rts-model-plot>
+          <rts-model-plot type="estimation" class="estimation" model={model}></rts-model-plot>
+          <rts-model-plot type="loglikelihood" class="loglikelihood" model={model}></rts-model-plot>
+          
+          <rts-model-plot type="before-change-point-residuals" class="before-change-point-residuals" model={model}></rts-model-plot>
+          <rts-model-plot type="before-change-point-autocorrelation" class="before-change-point-autocorrelation" model={model}></rts-model-plot>
+          <rts-model-plot type="after-change-point-residuals" class="after-change-point-residuals" model={model}></rts-model-plot>
+          <rts-model-plot type="after-change-point-autocorrelation" class="after-change-point-autocorrelation" model={model}></rts-model-plot>
+          <rts-model-plot type="box-plot-residuals" class="box-plot-residuals" model={model}></rts-model-plot>
+      -->
+  </div>
+  <style>
+  .hidden{
+    display: none!important;
+  }
+  .graph-collection{
+    width: 100%;
+    display: inline-table;
+  }
+  .graph-collection rts-model-plot > div{
+    border: none!important;
+    box-shadow: none!important;
+  }
+  .graph-collection rts-model-plot{
+    margin-top:10px;
+    margin-bottom: 20px;
+  }
+  .column-after,
+  .column-before{
+    width: 45%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+    display: table-cell;
+  }
+  </style>
+  <script>
+    /* globals opts: false */
+    /* globals jQuery: false */
+    /* globals FileReader: false */
+    //! class RTSPlotCollection
+    //! <<UIComponent>> RTSPlotCollection
+    //! RTSPlotCollection <-- RTSModelPlot
+    
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+
+
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
+    const self = this;
+    const config = opts;
+    //config.unit_names = !!config.unit_names ? config.unit_names : ["Unit A", "Unit 2", "Other unit"];
+    config.models = !!config.models ? config.models : [];
+    config.plots = !!config.plots ? config.plots : [];
+
+    //! RTSPlotCollection: ~adjust_type(plot, actual_type)
+    self._adjust_type = (plot, actual_type) => plot.type.replace('combined-', actual_type);
+
+    //! RTSPlotCollection: ~anyPlotFilter()
+    self._anyPlotFilter = () => (!!config.plots && config.plots.length > 0)
+    
+    //! RTSPlotCollection: +on_update()
+    self.on("update", () => {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+        console.log(123456)
+      }, 10);
+      console.log("config.plots ", config.plots );
+    });
+
+    //! RTSPlotCollection: ~on_mount()
+    self.on("mount", () => {
+      // Fix bug in drawing the canvas
+      self.update();
+    });
+  </script>
+</rts-plot-collection>

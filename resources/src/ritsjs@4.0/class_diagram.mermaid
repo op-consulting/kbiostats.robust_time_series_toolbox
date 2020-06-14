@@ -1,0 +1,382 @@
+class RTSModel
+<<module>> RTSModel
+RTSModel o-- RITSModel
+RTSModel: +fit_model(dates, values, theoretical_change_point, candidates_before, candidates_after)
+class RTSModelPlotChangePointMarker
+<<UIComponent>> RTSModelPlotChangePointMarker
+RTSModelPlotChangePointMarker: ~date_style(index, background=false)
+class RTSModelPlotLegend
+<<UIComponent>> RTSModelPlotLegend
+class RTSModelPlot
+<<UIComponent>> RTSModelPlot
+RTSModelPlot <-- RTSModelPlotChangePointMarker
+RTSModelPlot <-- RTSModelPlotLegend
+RTSModelPlot: -model()
+RTSModelPlot: +view_blank()
+RTSModelPlot: +view_list_unit_names()
+RTSModelPlot: +view_list_plot_types()
+RTSModelPlot: ~zoom()
+RTSModelPlot: +zoomreset()
+RTSModelPlot: +zoomout()
+RTSModelPlot: +zoomin()
+RTSModelPlot: +save_image()
+RTSModelPlot <-- fsJS
+RTSModelPlot <-- ElectronJS
+RTSModelPlot <-- FileReaderJS
+RTSModelPlot: -switch_to_static_version()
+RTSModelPlot <-- domtoimageJS
+RTSModelPlot: +draw_vertical_line(ctx, color, x_c, y_0, y_1, linedash = [])
+RTSModelPlot: +estimatedSeriesPlotter(colors)
+RTSModelPlot: -boxPlotter(...data)
+RTSModelPlot: -acfPlotter(e)
+RTSModelPlot: -barChartPlotter(e)
+RTSModelPlot: -lightenColor(colorStr, alpha = 1)
+RTSModelPlot: -darkenColor(colorStr, alpha = 1)
+RTSModelPlot: -defaultLegendFormatter(data)
+RTSModelPlot: +graph
+RTSModelPlot: -dygraphize(x, y)
+RTSModelPlot: -dygraphize_with_index(...x)
+RTSModelPlot: -default_options()
+class RTSModelPlot_Graph
+<<Interface>> RTSModelPlot_Graph
+RTSModelPlot_Graph: +titles
+RTSModelPlot_Graph: +category
+class RTSModelPlot_PlainGraph
+RTSModelPlot_PlainGraph <|-- RTSModelPlot_Graph
+class RTSModelPlot_EstimationGraph
+RTSModelPlot_Graph <|-- RTSModelPlot_EstimationGraph
+class RTSModelPlot_LogLikelihoodGraph
+RTSModelPlot_Graph <|-- RTSModelPlot_LogLikelihoodGraph
+class RTSModelPlot_ChangePointResidualsGraph
+RTSModelPlot_Graph <|-- RTSModelPlot_ChangePointResidualsGraph
+class RTSModelPlot_ChangePointAutocorrelationGraph
+RTSModelPlot_Graph <|-- RTSModelPlot_ChangePointAutocorrelationGraph
+class RTSModelPlot_BoxPlotResidualsGraph
+RTSModelPlot_Graph <|-- RTSModelPlot_BoxPlotResidualsGraph
+class RTSModelPlot_BeforeChangePointAutocorrelationGraph
+RTSModelPlot_ChangePointAutocorrelationGraph <|-- RTSModelPlot_BeforeChangePointAutocorrelationGraph
+class RTSModelPlot_AfterChangePointAutocorrelationGraph
+RTSModelPlot_ChangePointAutocorrelationGraph <|-- RTSModelPlot_AfterChangePointAutocorrelationGraph
+class RTSModelPlot_BeforeChangePointResidualsGraph
+RTSModelPlot_ChangePointResidualsGraph <|-- RTSModelPlot_BeforeChangePointResidualsGraph
+class RTSModelPlot_AfterChangePointResidualsGraph
+RTSModelPlot_ChangePointResidualsGraph <|-- RTSModelPlot_AfterChangePointResidualsGraph
+RTSModelPlot: +on_update()
+RTSModelPlot <-- RTSModelPlot_Graph
+RTSModelPlot: +on_mount()
+class RTSOutlinePlotsPanel
+<<UIComponent>> RTSOutlinePlotsPanel
+RTSOutlinePlotsPanel: ~trigger_event(name)
+RTSOutlinePlotsPanel: +on_mount()
+class RTSPlotCollection
+<<UIComponent>> RTSPlotCollection
+RTSPlotCollection <-- RTSModelPlot
+RTSPlotCollection: ~adjust_type(plot, actual_type)
+RTSPlotCollection: ~anyPlotFilter()
+RTSPlotCollection: +on_update()
+RTSPlotCollection: ~on_mount()
+class RTSModelWaldTestDecision
+<<UIComponent>> RTSModelWaldTestDecision
+RTSModelWaldTestDecision <-- momentJS
+RTSModelWaldTestDecision <-- RTSModel
+RTSModelWaldTestDecision: +theoretical_change_point(model)
+RTSModelWaldTestDecision: +estimated_change_point(model)
+RTSModelWaldTestDecision: +diff_change_point(model)
+RTSModelWaldTestDecision: +supremum_wald_p_value(model)
+RTSModelWaldTestDecision: +supremum_wald_decision(model)
+RTSModelWaldTestDecision: +joint_supremum_wald_p_value
+RTSModelWaldTestDecision: +joint_supremum_wald_decision
+RTSModelWaldTestDecision: +on_update
+class RTSModelPreChangePointTable
+<<UIComponent>> RTSModelPreChangePointTable
+RTSModelPreChangePointTable <-- formatterJS
+RTSModelPreChangePointTable: +confidence_interval(ci)
+RTSModelPreChangePointTable: +estimate_1(model)
+RTSModelPreChangePointTable: +estimate_2(model)
+RTSModelPreChangePointTable: +ci_1(model)
+RTSModelPreChangePointTable: +ci_2(model)
+RTSModelPreChangePointTable: +pval_1(model)
+RTSModelPreChangePointTable: +pval_2(model)
+class RTSModelPostChangePointTable
+<<UIComponent>> RTSModelPostChangePointTable
+RTSModelPostChangePointTable <-- formatterJS
+RTSModelPostChangePointTable: +confidence_interval(ci)
+RTSModelPostChangePointTable: +estimate_1(model)
+RTSModelPostChangePointTable: +estimate_2(model)
+RTSModelPostChangePointTable: +ci_1(model)
+RTSModelPostChangePointTable: +ci_2(model)
+RTSModelPostChangePointTable: +pval_1(model)
+RTSModelPostChangePointTable: +pval_2(model)
+class RTSModelParameterChangesTable
+<<UIComponent>> RTSModelParameterChangesTable
+RTSModelParameterChangesTable <-- formatterJS
+RTSModelParameterChangesTable: +confidence_interval(ci)
+RTSModelParameterChangesTable: +estimate_1(model)
+RTSModelParameterChangesTable: +estimate_2(model)
+RTSModelParameterChangesTable: +ci_1(model)
+RTSModelParameterChangesTable: +ci_2(model)
+RTSModelParameterChangesTable: +pval_1(model)
+RTSModelParameterChangesTable: +pval_2(model)
+class RTSModelStochasticParameterChangesTable
+<<UIComponent>> RTSModelStochasticParameterChangesTable
+RTSModelStochasticParameterChangesTable <-- formatterJS
+RTSModelStochasticParameterChangesTable: +confidence_interval(ci)
+RTSModelStochasticParameterChangesTable: +estimate_1(model)
+RTSModelStochasticParameterChangesTable: +estimate_2(model)
+RTSModelStochasticParameterChangesTable: +std_1(model)
+RTSModelStochasticParameterChangesTable: +std_2(model)
+class RTSModelReport
+<<UIComponent>> RTSModelReport
+RTSModelReport <-- RTSModelPlot
+class RTSReport
+<<UIComponent>> RTSReport
+RTSReport <-- RTSModelReport
+RTSReport <-- RTSModelStochasticParameterChangesTable
+RTSReport <-- RTSModelParameterChangesTable
+RTSReport <-- RTSModelPostChangePointTable
+RTSReport <-- RTSModelPreChangePointTable
+RTSReport <-- RTSModelWaldTestDecision
+RTSReport: ~_number_images_non_converted()
+RTSReport <-- htmlDocxJS
+RTSReport <-- FileReaderJS
+RTSReport: +on_update()
+RTSReport: +on_mount()
+class RTSConfigurationDatePanel
+<<UIComponent>> RTSConfigurationDatePanel
+RTSConfigurationDatePanel: -create_event_on_calendar_inputs()
+RTSConfigurationDatePanel: -trigger_event(name, value)
+RTSConfigurationDatePanel: +on_mount()
+class RTSDateSettings
+<<UIComponent>> RTSDateSettings
+RTSDateSettings: +change_point
+RTSDateSettings: +data_range
+RTSDateSettings: -closest_date
+RTSDateSettings: +selected_datasource
+RTSDateSettings: -closest_date_config(date, type, subtype)
+RTSDateSettings: -update_data_range(tmin, tmax)
+RTSDateSettings: -update_change_point(tmin, tmax, tval)
+RTSDateSettings: -default_graph_options()
+RTSDateSettings: -synchronizerMasterSlave(master, slave, callback)
+class RTSDateSettings_Crosshair
+RTSDateSettings_Crosshair: -crosshair(start_height)
+RTSDateSettings_Crosshair: +activate(g)
+RTSDateSettings_Crosshair: +select(e)
+RTSDateSettings_Crosshair: +draw_mark()
+RTSDateSettings_Crosshair: +deselect(e)
+RTSDateSettings_Crosshair: +reset()
+RTSDateSettings_Crosshair: +checkBounds(master, slave)
+RTSDateSettings_Crosshair: +destroy()
+RTSDateSettings: +on_update()
+RTSDateSettings <-- RTSDateSettings_Crosshair
+RTSDateSettings: +on_mount()
+RTSDateSettings: +scroll_into_data_range_settings()
+RTSDateSettings: +scroll_into_theoretical_settings()
+RTSDateSettings: +update_configuration(change_point, data_range)
+class RTSOutlinePanel
+<<UIComponent>> RTSOutlinePanel
+RTSOutlinePanel <-- RTSOutlineUnitsPanel
+RTSOutlinePanel <-- RTSOutlinePlotsPanel
+RTSOutlinePanel: -open_this_panel()
+RTSOutlinePanel: +view_blank()
+RTSOutlinePanel: +set_blank()
+RTSOutlinePanel: +view_list_unit_names()
+RTSOutlinePanel: +view_list_plot_types()
+RTSOutlinePanel: +on_mount()
+class RTSOutlineUnitsPanel
+<<UIComponent>> RTSOutlineUnitsPanel
+RTSOutlineUnitsPanel: ~trigger_event(name)
+RTSOutlineUnitsPanel: +on_mount()
+class RTSRibbonMenu
+<<UIComponent>> RTSRibbonMenu
+RTSRibbonMenu: -allow_buttons_show_hide(selector)
+RTSRibbonMenu: ~trigger_event(name)
+RTSRibbonMenu: +toogle_menu_bar(e)
+RTSRibbonMenu: +enable_model_related_buttons()
+RTSRibbonMenu: +on_mount()
+class RTSConfigurationPanel
+<<UIComponent>> RTSConfigurationPanel
+RTSConfigurationPanel <-- RTSConfigurationDatePanel
+RTSConfigurationPanel: -open_this_panel()
+RTSConfigurationPanel: +view_date_settings()
+RTSConfigurationPanel: +view_change_point_settings()
+RTSConfigurationPanel: +on_mount()
+class RTSMainWindow
+<<UIComponent>> RTSMainWindow
+RTSMainWindow: -update_unit_names_in_outline(unit_names)
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -update_models_in_summary_reports(models)
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -connect_event_with_component_action(event_name, component_receiver, action_name, condition = null)
+RTSMainWindow: -event_registry(event_name, component_trigger, event_name_in_component)
+RTSMainWindow: -register_events_in_toolbar(menubar)
+RTSMainWindow <-- RTSRibbonMenu
+RTSMainWindow: -register_events_in_leftpanel_panel()
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -link_visual_interface_behaviour()
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -register_events_in_main_app()
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -create_thumbnails(data_source)
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -read_file_data_source(data)
+RTSMainWindow <-- ModelDataSourceJson
+RTSMainWindow: -create_thumbnails(data_source)
+RTSMainWindow <-- ModelDataSourceLargeTest
+RTSMainWindow: -process_data(data_reader)
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -model_data(modeling_info)
+RTSMainWindow <-- RTSModel
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow <-- RTSRibbonMenu
+RTSMainWindow: -visualizing_dataset_events()
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -register_help_reports()
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -visualizing_executive_summary()
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: -open_file()
+RTSMainWindow: -register_events_reports()
+RTSMainWindow <-- RTSThreeColumnPanel
+RTSMainWindow: +onmount()
+RTSMainWindow <-- RTSRibbonMenu
+class RTSThreeColumnPanel
+<<UIComponent>> RTSThreeColumnPanel
+RTSThreeColumnPanel: -create_splitter(ratio_width)
+RTSThreeColumnPanel: -update_panel_widths(index, action)
+RTSThreeColumnPanel: -panel_visibility(selector, action)
+RTSThreeColumnPanel: +close_left_panel(set_blank=false)
+RTSThreeColumnPanel <-- RTSOutlinePanel
+RTSThreeColumnPanel: +show_left_panel()
+RTSThreeColumnPanel: +close_right_panel()
+RTSThreeColumnPanel: +show_right_panel()
+RTSThreeColumnPanel: +toggle_right_panel()
+RTSThreeColumnPanel: +toggle_left_panel()
+RTSThreeColumnPanel: +toggle_left_panel(unit_names)
+RTSThreeColumnPanel <-- RTSOutlinePanel
+RTSThreeColumnPanel: +toggle_left_panel(models)
+RTSThreeColumnPanel: +change_report_models(models)
+RTSThreeColumnPanel <-- RTSReport
+RTSThreeColumnPanel: +change_title_unit_choose(models)
+RTSThreeColumnPanel <-- RTSOutlinePanel
+RTSThreeColumnPanel: +change_title_plot_choose(models)
+RTSThreeColumnPanel <-- RTSOutlinePanel
+RTSThreeColumnPanel: +show_main_panel(selector)
+RTSThreeColumnPanel: +show_filtered_plots(unitindex, unitname, plot_types)
+RTSThreeColumnPanel <-- RTSPlotCollection
+RTSThreeColumnPanel: +show_main_container()
+RTSThreeColumnPanel: +show_full_report()
+RTSThreeColumnPanel <-- RTSReport
+RTSThreeColumnPanel: +save_full_report_as_docx()
+RTSThreeColumnPanel <-- RTSReport
+RTSThreeColumnPanel: +save_full_report_as_pdf()
+RTSThreeColumnPanel <-- RTSReport
+RTSThreeColumnPanel: +on_mount()
+RTSThreeColumnPanel: +show_data_configuration(data_source=null, scroll_into=null, current_dataset_info=null)
+RTSThreeColumnPanel <-- RTSDateSettings
+class RITSCandidateModel
+<<Model>> RITSCandidateModel
+RITSCandidateModel: +after_model: OLSModel
+RITSCandidateModel: +before_model: OLSModel
+RITSCandidateModel: +after_residual_model: OLSModel
+RITSCandidateModel: +before_residual_model: OLSModel
+RITSCandidateModel: +loglikelihood: float
+RITSCandidateModel: +change_point_candidate: int
+RITSCandidateModel: +parameters_mean: vector
+RITSCandidateModel: -before_model_covariance_parameters: matrix
+RITSCandidateModel: -existence_change_point_hypothesis: HypothesisScore[ChiSquare]
+class RITSModel
+<<Model>> RITSModel
+RITSModel <-- RITSCandidateModel
+RITSModel: +candidates: seq[RITSCandidateModel]
+RITSModel: +change_point_candidates: seq[int]
+RITSModel: +loglikelihood_candidates: seq[float]
+RITSModel: +loglikelihood: float
+RITSModel: +change_point_index: int
+RITSModel: +change_point_x: float
+RITSModel: +model*: RITSCandidateModel
+RITSModel: +parameters_mean: vector
+RITSModel: +toString()
+RITSModel: ~covariance_matrix_for_before_model(model: RITSCandidateModel, x: vector): matrix 
+RITSModel: ~model_candidate(x: vector, y: vector, change_point: int): RITSCandidateModel
+RITSModel: ~existence_change_point_wald_test*(models: seq[RITSCandidateModel]): HypothesisScore[ChiSquare]
+RITSModel: ~existence_change_point_wald_test*(models: seq[RITSModel]): HypothesisScore[ChiSquare]
+RITSModel: +rits_model(x: vector, y: vector, candidate_change_point_start: int, candidate_change_point_end: int)
+class RobustInterruptedCandidateModel
+<<Model>> RobustInterruptedCandidateModel
+RobustInterruptedCandidateModel: +after_model: OLSModel
+RobustInterruptedCandidateModel: +before_model: OLSModel
+RobustInterruptedCandidateModel: +after_residual_model: OLSModel
+RobustInterruptedCandidateModel: +before_residual_model: OLSModel
+RobustInterruptedCandidateModel: +loglikelihood: float
+RobustInterruptedCandidateModel: +change_point_candidate: int
+RobustInterruptedCandidateModel: +parameters_mean: vector
+RobustInterruptedCandidateModel: -before_model_covariance_parameters: matrix
+RobustInterruptedCandidateModel: -existence_change_point_hypothesis: HypothesisScore[ChiSquare]
+class FlattenEstimator
+<<Model>> FlattenEstimator
+FlattenEstimator: +mean: float
+FlattenEstimator: +standard_deviation: float
+FlattenEstimator: +confidence_interval: seq[float]
+FlattenEstimator: +p_value: float
+FlattenEstimator: +t_value: float
+FlattenEstimator: +score: float
+FlattenEstimator: flatten()
+class FlattenHypothesisTest
+<<Model>> FlattenHypothesisTest
+FlattenHypothesisTest: -score: float
+FlattenHypothesisTest: -p_value: float
+FlattenHypothesisTest: -null_confidence_interval: seq[float]
+FlattenHypothesisTest: -distribution: string
+class RITSResiduals
+<<Model>> RITSResiduals
+RITSResiduals:-values: seq[float]
+RITSResiduals: -autocorrelation: seq[float]
+RITSResiduals: -autocorrelation_null_confidence_interval: seq[float]
+class RITSPeriod
+<<Model>> RITSPeriod
+RITSPeriod <-- RITSResiduals
+RITSPeriod <-- FlattenEstimator
+RITSPeriod: +slope: FlattenEstimator
+RITSPeriod: +intercept: FlattenEstimator
+RITSPeriod: +autocorrelation: FlattenEstimator
+RITSPeriod: +noise: FlattenEstimator
+RITSPeriod: +residuals: RITSResiduals
+class RobustInterruptedModel
+<<Model>> RobustInterruptedModel
+RobustInterruptedModelSet <-- RITSPeriod
+RobustInterruptedModelSet <-- FlattenHypothesisTest
+RobustInterruptedModel: +change_point_candidates: seq[int]
+RobustInterruptedModel: +loglikelihood_candidates: seq[float]
+RobustInterruptedModel: +change_point_index: int
+RobustInterruptedModel: +change_point_x: float
+RobustInterruptedModel: +initial: RITSPeriod
+RobustInterruptedModel: +increment_change: RITSPeriod
+class RobustInterruptedModelSet
+<<Model>> RobustInterruptedModelSet
+RobustInterruptedModelSet <-- FlattenHypothesisTest
+RobustInterruptedModelSet <-- RobustInterruptedModel
+RITSModel: -flatten(v: vector, d: float=NegInf)
+RITSModel: -flatten()
+RITSModel: +existence_change_point_hypothesis(test_scores: seq[float])
+RITSModel: +existence_change_point_hypothesis(x: vector, y: vector, change_point_candidates_start: int, change_point_candidates_end: int)
+RITSModel: +robust_interrupted_time_series_approximated(sampling: int, x: vector, y: vector, change_point_candidates_start: int, change_point_candidates_end: int)
+class ModelDataSource
+<<interface>> ModelDataSource
+class ModelDataSourceJson
+<<dataset>> ModelDataSourceJson
+ModelDataSource <|-- ModelDataSourceJson
+ModelDataSourceJson: +fill_from_data_table(unit_names, datatable)
+ModelDataSourceJson: +pairsOfUnit(unit)
+ModelDataSourceJson: +valuesOfUnit(unit)
+ModelDataSourceJson: +datesOfUnit(unit)
+ModelDataSourceJson: +values()
+ModelDataSourceJson: +dates()
+ModelDataSourceJson: +units()
+ModelDataSourceJson: +get datatable()
+ModelDataSourceJson: +closeIndexTo(date)
+ModelDataSourceJson: +filter(start_date, end_date)
+ModelDataSourceJson: +clone()
+ModelDataSourceJson: +from(array)
+class ModelDataSourceLargeTest
+<<dataset>> ModelDataSourceLargeTest
+ModelDataSourceJson <|-- ModelDataSourceLargeTest

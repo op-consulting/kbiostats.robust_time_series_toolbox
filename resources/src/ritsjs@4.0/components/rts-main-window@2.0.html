@@ -1,0 +1,413 @@
+<rts-main-window>
+  <window-decorator ref="window">
+    <yield to="title">
+      <span class="btn-custom" role="button"><img src="./images/app/app.png"
+          style="width: 23px;height: 23px;position: relative;top: 7px;display: block;" /></span>
+      <span class="label">Robust Interrupted Time Series Toolbox - KAUST Biostatistics Group</span>
+    </yield>
+    <yield to="left-title">
+      <span class="btn-custom mif-eyedropper load-test-data" style= display:none;></span>
+    </yield>
+    <yield to="right-title">
+      <span class="btn-custom mif-home open-home-page"></span>
+    </yield>
+    <yield to="menu-bar">
+      <rts-ribbon-menu-bar ref="menubar"></rts-ribbon-menu-bar>
+    </yield>
+    <yield to="content">
+      <rts-three-column-panel ref="panels"></rts-three-column-panel>
+    </yield>
+  </window-decorator>
+
+  </div>
+
+  <style>
+    .unit-miniplot {
+      width: 100px !important;
+      height: 100px !important;
+    }
+
+    .window-content {
+      height: 100% !important;
+      overflow: hidden;
+    }
+
+    .plot .apexcharts-title-text {
+      color: #000001 !important;
+      font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Roboto", "Ubuntu", "Helvetica Neue", sans-serif !important;
+      font-family: 'Segoe UI Web (West European)' !important;
+      font-weight: 200 !important;
+      font-size: 16pt !important;
+    }
+  </style>
+
+
+  <script>
+    /* globals opts: false */
+    /* globals jQuery: false */
+    /* globals np: false */
+    /* globals SVG: false */
+    /* globals RTSModel: false */
+    /* globals papaparse: false */
+    //! class RTSMainWindow
+    //! <<UIComponent>> RTSMainWindow
+    const require_ = require;
+
+    /**************************************************************************
+     * UI Helpers
+     **************************************************************************/
+    //! RTSMainWindow: -update_unit_names_in_outline(unit_names)
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const update_unit_names_in_outline = (unit_names) => {
+      self.refs.window.refs.panels.change_unit_names(unit_names);
+    };
+
+    //! RTSMainWindow: -update_models_in_summary_reports(models)
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const update_models_in_summary_reports = (models) => {
+      self.refs.window.refs.panels.change_summary_models(models);
+      self.refs.window.refs.panels.change_report_models(models);
+    };
+
+    /**************************************************************************
+     * Helpers
+     **************************************************************************/
+    //! RTSMainWindow: -connect_event_with_component_action(event_name, component_receiver, action_name, condition = null)
+    const connect_event_with_component_action = (event_name, component_receiver, action_name, condition = null) => {
+      condition = condition ? condition : ((_) => true);
+      self.on(event_name, (data) => {
+        console.log("NEW  calling => ", component_receiver, "=>", action_name, " [", data, "]");
+        if (condition(data)) {
+          component_receiver[action_name]();
+        }
+      });
+    };
+
+    //! RTSMainWindow: -event_registry(event_name, component_trigger, event_name_in_component)
+    const event_registry = (event_name, component_trigger, event_name_in_component) => {
+      event_name_in_component = event_name_in_component ? event_name_in_component : event_name;
+      event_name_in_component = event_name_in_component.toLowerCase();
+      event_name = event_name.toLowerCase();
+      component_trigger.on(event_name_in_component, (data) => {
+        console.log("Default calling => ", event_name_in_component, "=>", event_name, " [", data, "]");
+        self.trigger(event_name, data);
+      });
+    };
+
+    //! RTSMainWindow: -register_events_in_toolbar(menubar)
+    //! RTSMainWindow <-- RTSRibbonMenu
+    const register_events_in_toolbar = (menubar) => {
+      event_registry('app:menubar:file', menubar);
+      event_registry('app:menubar:data', menubar);
+      event_registry('app:menubar:plots', menubar);
+      event_registry('app:menubar:export', menubar);
+      event_registry('app:menubar:help', menubar);
+      event_registry('app:load:csv', menubar);
+      event_registry('app:load:xls', menubar);
+      event_registry('app:settings:modeldates', menubar);
+      event_registry('app:settings:changepoint', menubar);
+      event_registry('app:view:summary', menubar);
+      event_registry('app:view:units', menubar);
+      event_registry('app:view:rawtimeseries', menubar);
+      event_registry('app:view:estimatedtimeseries', menubar);
+      event_registry('app:view:modelbeforechangepoint', menubar);
+      event_registry('app:report:view:full', menubar);
+      event_registry('app:export:report:docx', menubar);
+      event_registry('app:export:report:pdf', menubar);
+      event_registry('app:export:tables:regression', menubar);
+      event_registry('app:export:tables:analysis', menubar);
+      event_registry('app:export:tables:inference', menubar);
+      event_registry('app:help:model', menubar);
+      event_registry('app:help:program', menubar);
+
+      self.root.querySelector(".load-test-data").onclick = () => process_data(read_test_data_source);
+      self.root.querySelector(".open-home-page").onclick = () => require_("electron").remote.shell.openExternal(
+        "https://biostats.kaust.edu.sa");
+
+    };
+    
+    //! RTSMainWindow: -register_events_in_leftpanel_panel()
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const register_events_in_leftpanel_panel = () => {
+      event_registry('app:request:current:plot:allunits', self.refs.window.refs.panels.refs.leftpanel.refs.plots);
+      event_registry('app:request:current:unit:allplots', self.refs.window.refs.panels.refs.leftpanel.refs.units);
+    };
+
+    //! RTSMainWindow: -link_visual_interface_behaviour()
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const link_visual_interface_behaviour = () => {
+      connect_event_with_component_action('app:view:rawtimeseries', self.refs.window.refs.panels.refs.leftpanel,
+        'view_list_unit_names');
+      connect_event_with_component_action('app:view:estimatedtimeseries', self.refs.window.refs.panels.refs.leftpanel,
+        'view_list_unit_names');
+      connect_event_with_component_action('app:view:modelbeforechangepoint', self.refs.window.refs.panels.refs
+        .leftpanel, 'view_list_unit_names');
+      connect_event_with_component_action('app:view:units', self.refs.window.refs.panels.refs.leftpanel,
+        'view_list_plot_types');
+    };
+
+    //! RTSMainWindow: -register_events_in_main_app()
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const register_events_in_main_app = () => {
+      event_registry('app:request:update:dataset', self.refs.window.refs.panels.refs.date_configuration);
+      let current_dataset_info = null;
+      self.on('app:request:update:dataset', (dataset_info) => {
+        model_data(dataset_info);
+        current_dataset_info = dataset_info;
+      });
+      self.on('app:settings:modeldates', () => {
+        self.refs.window.refs.panels.show_data_configuration(null, 1, current_dataset_info);
+      })
+      self.on('app:settings:changepoint', () => {
+        self.refs.window.refs.panels.show_data_configuration(null, 2, current_dataset_info);
+      })
+    }
+
+    /**************************************************************************
+     * Specific events
+     **************************************************************************/
+    //! RTSMainWindow: -create_thumbnails(data_source)
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const create_thumbnails = (data_source) => {
+      data_source.units.forEach((unit_name, k) => {
+        const data_values = data_source.valuesOfUnit(unit_name);
+        const max_data_values = np.max(data_values);
+        const min_data_values = np.min(data_values);
+        const L = 100.0;
+        const N = data_values.length;
+        const m = 50;
+        let x_y = [
+          [0, 100]
+        ];
+        for (let _t = 0; _t < m; _t++) {
+          let d = L - L * (data_values[Number.parseInt(_t * N / m)] - min_data_values) / (
+            max_data_values - min_data_values);
+          x_y.push([_t * L / m, d - 6]);
+        }
+        x_y.push([100, 100]);
+        //////
+        var elements = SVG.select('.unit-miniplot.unit-' + (k + 1)).fill('rgb(58, 139, 199)')
+        elements.members.forEach((element) => {
+          element.clear();
+          let polyline = element.polyline().style({
+            "stroke": "#1979ca",
+            "stroke-width": "5px",
+            "fill": "rgba(25, 121, 202, 0.6)",
+          });
+          polyline.plot(x_y);
+        });
+        //////
+      });
+    };
+
+    //! RTSMainWindow: -read_file_data_source(data)
+    //! RTSMainWindow <-- ModelDataSourceJson
+    const read_file_data_source = (data) => {
+      return () => {
+        let data_source = new RTSModel.ModelDataSourceJson();
+        data_source.from(data);
+        return data_source;
+      }
+    };
+
+    //! RTSMainWindow: -create_thumbnails(data_source)
+    //! RTSMainWindow <-- ModelDataSourceLargeTest
+    const read_test_data_source = () => {
+      // TODO: CHECK FOR MEMORY LEAKS
+      let data_source = new RTSModel.ModelDataSourceLargeTest();
+      return data_source;
+    };
+
+    //! RTSMainWindow: -process_data(data_reader)
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const process_data = (data_reader) => {
+      self.refs.window.refs.panels.show_data_configuration(data_reader());
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+    // Main modeling
+    //! RTSMainWindow: -model_data(modeling_info)
+    //! RTSMainWindow <-- RTSModel
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    //! RTSMainWindow <-- RTSRibbonMenu
+    const model_data = (modeling_info) => {
+      //
+      const model_parameters = {
+        theoretical_change_point: modeling_info.change_point.index.theoretical,
+        candidates_before: modeling_info.change_point.index.candidates_before,
+        candidates_after: modeling_info.change_point.index.candidates_after,
+      }
+      const data_source = modeling_info.data_source;
+      const number_units = data_source.units;
+      let infomodels = [];
+      data_source.units.forEach((unit_name, idx) => {
+        let infomodel = RTSModel.fit_model(data_source.datesOfUnit(unit_name),
+          data_source.valuesOfUnit(unit_name),
+          model_parameters.theoretical_change_point,
+          model_parameters.candidates_before,
+          model_parameters.candidates_after);
+        infomodel.unit_name = unit_name;
+        infomodels.push(infomodel)
+        self.trigger("app:processing:models", {
+          current: idx,
+          total: number_units
+        });
+      });
+      self.refs.window.refs.panels.refs.plot_collection.opts.models = infomodels;
+      self.refs.window.refs.panels.refs.plot_collection.update();
+      // Load everything
+      update_unit_names_in_outline(data_source.units);
+      update_models_in_summary_reports(infomodels);
+      create_thumbnails(data_source);
+      self.refs.window.refs.menubar.enable_model_related_buttons();
+      self.trigger('app:view:summary');
+    };
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //! RTSMainWindow: -visualizing_dataset_events()
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const visualizing_dataset_events = () => {
+      const change_title_unit_options = (title) => {
+        self.refs.window.refs.panels.change_title_unit_choose(title)
+      };
+      let current_plot_type = null;
+      self.on('app:view:rawtimeseries', () => {
+        current_plot_type = ["plain"];
+        change_title_unit_options("Original series: Choose a unit")
+      });
+      self.on('app:view:estimatedtimeseries', () => {
+        current_plot_type = ["estimation", "loglikelihood"];
+        change_title_unit_options("Estimated series: Choose a unit")
+      });
+      self.on('app:view:modelbeforechangepoint', () => {
+        current_plot_type = ["box-plot-residuals", "combined-change-point-residuals",
+          "combined-change-point-autocorrelation"
+        ];
+        change_title_unit_options("Model before change-point: Choose a unit")
+      });
+      self.on('app:request:current:unit:allplots', (params) => {
+        const {
+          unitindex,
+          unitname
+        } = params;
+        self.refs.window.refs.panels.show_filtered_plots(unitindex, unitname, current_plot_type);
+
+      });
+    };
+    //
+    //! RTSMainWindow: -register_help_reports()
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const register_help_reports = () => {
+      self.on('app:help:model', () => {
+        self.refs.window.refs.panels.show_paper_model_1();
+      });
+    };
+    //
+    //! RTSMainWindow: -visualizing_executive_summary()
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const visualizing_executive_summary = () => {
+      self.on('app:view:summary', () => {
+        Array.from(self.root.querySelectorAll(".main-panel-container")).forEach((el) => el.classList.add(
+          "hidden"));
+        self.root.querySelector(".content-container").classList.remove("hidden");
+        self.root.querySelector(".executive-summary").classList.remove("hidden");
+        self.refs.window.refs.panels.close_left_panel();
+        self.refs.window.refs.panels.refs.data_summary.update();
+      });
+    };
+    //
+    //
+    //! RTSMainWindow: -open_file()
+    const open_file = () => {
+      const file_filter = [{
+          name: 'Data source (.CSV)',
+          extensions: ['csv']
+        },
+        {
+          name: 'All Files',
+          extensions: ['*']
+        }
+      ];
+      const {
+        dialog
+      } = require_("electron").remote;
+      const fs = require_('fs');
+      const paths = dialog.showOpenDialog({
+        filters: file_filter,
+        properties: ['openFile'],
+      });
+      if (!paths) {
+        return;
+      }
+      fs.readFile(paths[0], 'utf8', (err, data) => {
+        if (err) {
+          return console.error(err);
+        }
+        papaparse.parse(data, {
+          keepEmptyRows: false,
+          skipEmptyLines: true,
+          complete: function (results) {
+            if (results.errors.length > 0)
+              throw new Error(
+                "CSV file cannot be processed. Please contact the administrator."
+              );
+            process_data(read_file_data_source(results.data));
+          }
+        });
+      });
+    };
+    //
+    //! RTSMainWindow: -register_events_reports()
+    //! RTSMainWindow <-- RTSThreeColumnPanel
+    const register_events_reports = () => {
+      self.on("app:report:view:full", () => {
+        self.refs.window.refs.panels.close_left_panel();
+        self.refs.window.refs.panels.refs.data_summary.update();
+        self.refs.window.refs.panels.show_full_report();
+      });
+      self.on("app:export:report:docx", () => {
+        self.refs.window.refs.panels.close_left_panel();
+        self.refs.window.refs.panels.refs.data_summary.update();
+        self.refs.window.refs.panels.show_full_report();
+        self.refs.window.refs.panels.save_full_report_as_docx();
+      });
+      self.on("app:export:report:pdf", () => {
+        self.refs.window.refs.panels.close_left_panel();
+        self.refs.window.refs.panels.refs.data_summary.update();
+        self.refs.window.refs.panels.show_full_report();
+        self.refs.window.refs.panels.save_full_report_as_pdf();
+      });
+    }
+
+    /**************************************************************************
+     * Main script
+     **************************************************************************/
+    const self = this;
+    const config = opts;
+
+    //! RTSMainWindow: +onmount()
+    //! RTSMainWindow <-- RTSRibbonMenu
+    self.on("mount", () => {
+      //
+      jQuery(document).bind('keydown', 'ctrl+shift+r', () => {
+        window.location.reload(true);
+      });
+      jQuery(document).bind('keydown', 'ctrl+shift+e', () => {
+        require_("electron").remote.getCurrentWindow().toggleDevTools();
+      });
+      //
+      register_events_in_toolbar(self.refs.window.refs.menubar);
+      register_events_in_leftpanel_panel();
+      register_events_in_main_app();
+      register_events_reports();
+      //
+      link_visual_interface_behaviour();
+      //
+      visualizing_dataset_events();
+      visualizing_executive_summary(".executive-summary", ".plot_container > *");
+      register_help_reports();
+      //
+      self.on('app:load:csv', open_file);
+    });
+  </script>
+</rts-main-window>

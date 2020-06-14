@@ -73,11 +73,12 @@ _global.formatter = require("./lib/agh.sprintf.js@1.0/agh.sprintf.js");
 // Components
 require("./src/op-components@2.0/components.js");
 //require("./src/rtsjs@2.0/components/components.js");
-require("./src/ritsjs@3.0/components/components.js");
+require("./src/ritsjs@4.0/components/components.js");
 
 // Main Model
 //_global.RTSModel = require("./src/rtsjs@2.0/rtsjs.js");
-_global.RTSModel = require("./src/ritsjs@3.0/ritsjs.js");
+//_global.RTSModel = require("./src/ritsjs@3.0/ritsjs.js");
+_global.RTSModel = require("./src/ritsjs@4.0/ritsjs.js");
 
 riot.mount('rts-main-window');
 
