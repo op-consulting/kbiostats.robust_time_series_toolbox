@@ -308,15 +308,11 @@
     //! RTSThreeColumnPanel: -panel_visibility(selector, action)
     const panel_visibility = (selector, action) => {
       self.root.querySelector(selector).classList[action]("hidden");
-      //setTimeout(update_panel_widths, 10);
     };
 
     //! RTSThreeColumnPanel: +close_left_panel(set_blank=false)
     //! RTSThreeColumnPanel <-- RTSOutlinePanel
     self.close_left_panel = (set_blank=false) => {
-      /*panel_visibility('[ref="leftpanel"]', "add")
-      panel_visibility('[ref="rightpanel"]', "add")
-      //update_panel_widths(0, "hide");*/
       if(set_blank){
         self.refs.leftpanel.set_blank();
       }
@@ -325,25 +321,16 @@
 
     //! RTSThreeColumnPanel: +show_left_panel()
     self.show_left_panel = () => {
-      /*panel_visibility('[ref="leftpanel"]', "remove")
-      panel_visibility('[ref="rightpanel"]', "add")
-      //update_panel_widths(0, "show");*/
       update_panel_widths(0, "show");
     };
 
     //! RTSThreeColumnPanel: +close_right_panel()
     self.close_right_panel = () => {
-      /*panel_visibility('[ref="leftpanel"]', "add")
-      panel_visibility('[ref="rightpanel"]', "add")
-      //update_panel_widths(0, "hide");*/
       update_panel_widths(2, "hide");
     };
 
     //! RTSThreeColumnPanel: +show_right_panel()
     self.show_right_panel = () => {
-      /*panel_visibility('[ref="rightpanel"]', "remove")
-      panel_visibility('[ref="leftpanel"]', "add")
-      //update_panel_widths(0, "show");*/
       update_panel_widths(2, "show");
     };
 
@@ -400,17 +387,6 @@
     //! RTSThreeColumnPanel: +show_filtered_plots(unitindex, unitname, plot_types)
     //! RTSThreeColumnPanel <-- RTSPlotCollection
     self.show_filtered_plots = (unitindex, unitname, plot_types) => {
-      /*
-      "plain" class="plain" model={model}></rts-model-plot>
-          <rts-model-plot type="loglikelihood" class="loglikelihood" model={model}></rts-model-plot>
-          
-          <rts-model-plot type="before-change-point-residuals" class="before-change-point-residuals" model={model}></rts-model-plot>
-          <rts-model-plot type="before-change-point-autocorrelation" class="before-change-point-autocorrelation" model={model}></rts-model-plot>
-          <rts-model-plot type="after-change-point-residuals" class="after-change-point-residuals" model={model}></rts-model-plot>
-          <rts-model-plot type="after-change-point-autocorrelation" class="after-change-point-autocorrelation" model={model}></rts-model-plot>
-          <rts-model-plot type="box-plot-residuals" 
-      */
-
       self.show_main_panel(".plot-container");
       self.refs.plot_collection.update()
       self.refs.plot_collection.opts.plots = plot_types.map((plot_type) => ({
@@ -438,7 +414,6 @@
           }, null, null, 'page-width'],
           allowNegativeOffset: true
         });
-      //self.root.querySelector(".paper-model-1 iframe").src = "./lib/pdf.js@2.0/adapted/web/viewer.html?file=../../../../../model/1707.01861.pdf#zoom=page-width&";
     };
 
     //! RTSThreeColumnPanel: +show_full_report()
