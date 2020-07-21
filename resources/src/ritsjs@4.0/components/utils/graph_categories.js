@@ -1,3 +1,10 @@
+/*
+ Ths code was implemented in order to simulat
+ polymorphism in JS using the object properties.
+ Since ESNext, e hav better options to perform
+ this. However, we consider that is still useful,
+ given that no poylfill is needed for older versions.
+*/
 const graphic_category = {};
 
 graphic_category["plain"] = () => {
