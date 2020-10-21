@@ -187,8 +187,14 @@ proc flatten(model: RITSModel): RobustInterruptedModel =
 
 ##! RITSModel: +existence_change_point_hypothesis(test_scores: seq[float])
 proc existence_change_point_hypothesis(test_scores: seq[float]): FlattenHypothesisTest {.exportc: "existence_change_point_hypothesis".} =
+  echo "test_scores:", $test_scores
   let total_score = test_scores.len.toFloat * test_scores.min
   chisquare(dof=2.0*test_scores.len.toFloat).htest_score(total_score, test_type=oneTailed).flatten
+
+when false:
+  proc existence_change_point_hypothesis(test_scores: seq[float]): FlattenHypothesisTest {.exportc: "existence_change_point_hypothesis".} =
+    let total_score = test_scores.len.toFloat * test_scores.min
+    chisquare(dof=2.0*test_scores.len.toFloat).htest_score(total_score, test_type=oneTailed).flatten
 
 ##! RITSModel: +existence_change_point_hypothesis(x: vector, y: vector, change_point_candidates_start: int, change_point_candidates_end: int)
 proc robust_interrupted_time_series(x: vector, y: vector, change_point_candidates_start: int, change_point_candidates_end: int): RobustInterruptedModel  {.exportc: "robust_interrupted_time_series".} =

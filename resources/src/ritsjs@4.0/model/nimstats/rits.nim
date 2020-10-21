@@ -232,6 +232,10 @@ proc existence_change_point_wald_test*(models: seq[RITSCandidateModel]): Hypothe
     hypothesis = hypothesis_set.sorted(cmp=(h1, h2)=>h1.p_value < h2.p_value)[0]
     #hypothesis = ChiSquare(dof: 2.0 * M.toFloat).htest_score(total_score, test_type=rightTailed)
   #
+  when false:
+    echo "hypothesis-set:", $hypothesis_set
+    echo "hypothesis:", $hypothesis
+    echo "number_rejected:", $number_rejected
   return hypothesis
 
 ##! RITSModel: ~existence_change_point_wald_test*(models: seq[RITSModel]): HypothesisScore[ChiSquare]
