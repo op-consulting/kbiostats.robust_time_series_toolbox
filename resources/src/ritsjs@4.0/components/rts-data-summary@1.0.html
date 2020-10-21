@@ -13,10 +13,10 @@
   </div>
   <div class="model-mini-info">
     <ul class="v-menu model-information" style="width:100%;">
-      <li class="menu-title">Change point</li>
+      <li class="menu-title">Change-point estimate</li>
       <li class="change-point">{change_point(opts.model)}</li>
       <!---->
-      <li class="menu-title">Slope estimate</li>
+      <li class="menu-title">Change in trend estimate</li>
       <li class="info-before-TET">
         {mean_estimate['slope'](opts.model, 0)}
       </li>
@@ -30,7 +30,8 @@
         {confidence_interval['slope'](opts.model, 1)}
       </li>
       <!---->
-      <li class="menu-title">Intercept estimate</li>
+      <!--
+      <li class="menu-title">Change in intercept estimate***</li>
       <li class="info-before-TET">
         {mean_estimate['intercept'](opts.model, 0)}
       </li>
@@ -43,8 +44,18 @@
       <li class="info-95CI">
         {confidence_interval['intercept'](opts.model, 1)}
       </li>
+      -->
       <!---->
-      <li class="menu-title">White noise estimate</li>
+      <li class="menu-title">Change in level estimate</li>
+      <li class="info-diff">
+        {estimate_difference_on['level'](opts.model)}
+      </li>
+      <li class="info-95CI">
+        {confidence_interval['level'](opts.model, 1)}
+      </li>
+      <!---->
+      <!--
+      <li class="menu-title">Change in white noise estimate***</li>
       <li class="info-before-TET">
         {mean_estimate['white_noise'](opts.model, 0)}
       </li>
@@ -56,6 +67,31 @@
       </li>
       <li class="info-95CI">
         {confidence_interval['white_noise'](opts.model, 1)}
+      </li>
+      -->
+      <!---->
+      <li class="menu-title">Change in adjacent correlation estimate</li>
+      <li class="info-before-TET">
+        {mean_estimate['autocorrelation'](opts.model, 0)}
+      </li>
+      <li class="info-after-TET">
+        {mean_estimate['autocorrelation'](opts.model, 1)}
+      </li>
+      <li class="info-diff">
+        {estimate_difference_on['autocorrelation'](opts.model)}
+      </li>
+      <!--
+      <li class="info-95CI">
+        {confidence_interval['autocorrelation'](opts.model, 1)}
+      </li>
+      -->
+      <!---->
+      <li class="menu-title">Supremum Wald test</li>
+      <li class="info-estimate-TET">
+        {estimate_difference_on['existence_change_point_hypothesis'](opts.model, 0)}
+      </li>
+      <li class="info-pvalue-TET">
+        {pvalues_difference_on['existence_change_point_hypothesis'](opts.model, 0)}
       </li>
     </ul>
   </div>
@@ -83,7 +119,7 @@
       width: 100%;
       background-color: #efefef;
       font-size: 15pt;
-      font-weight: 300
+      font-weight: 300;
     }
 
     .model-information li {
@@ -144,6 +180,14 @@
       content: "95% C.I.:";
     }
 
+    .model-information .info-estimate-TET::before {
+      content: "Estimate:";
+    }
+
+    .model-information .info-pvalue-TET::before {
+      content: "p-value:";
+    }
+
     .model-information-table .model-title {
       width: 100%;
       background-color: #efefef;
@@ -193,25 +237,51 @@
     config.model = !!config.model ? config.model : null;
     self.change_point = (model) => moment(model.dates[model.estimations.change_point_index]).format(
       "MMM DD, YYYY");
+    console.log(config)
+    window.__config=config
 
-    const rnd = (f) => Math.round(f * 1000) / 1000;
+    //const rnd = (f) => Math.round(f * 1000) / 1000;
+    const rnd = (f) => f.fmt("7.4g")
+    const mean_estimate_difference = (model, estimator) => model.estimations.increment_change[estimator].mean
+    const mean_estimate_difference_acf = (model, estimator) => model.estimations.increment_change[estimator].mean - model.estimations.initial[estimator].mean
     self.estimate_difference_on = {
-      slope: (model) => rnd(model.estimations.increment_change.slope.mean),
-      intercept: (model) => rnd(model.estimations.increment_change.intercept.mean),
-      white_noise: (model) => rnd(model.estimations.increment_change.noise.mean),
+      slope: (model) => rnd(mean_estimate_difference(model, "slope")),
+      level: (model) => rnd(mean_estimate_difference(model, "level")),
+      intercept: (model) => rnd(mean_estimate_difference(model, "intercept")),
+      white_noise: (model) => rnd(mean_estimate_difference(model, "noise")),
+      autocorrelation: (model) => rnd(mean_estimate_difference_acf(model, "autocorrelation")),
+      existence_change_point_hypothesis: (model) => rnd(model.estimations.existence_change_point_hypothesis.score),
     };
+    
+    const pval_rnd = (f) => `${(f < 1e-20 ? "< 1e-20": f.fmt(".4g"))}`
+    self.pvalues_difference_on = {
+      slope: (model) => pval_rnd(model.estimations.increment_change.slope.p_value),
+      level: (model) => pval_rnd(model.estimations.increment_change.level.p_value),
+      intercept: (model) => pval_rnd(model.estimations.increment_change.intercept.p_value),
+      white_noise: (model) => pval_rnd(model.estimations.increment_change.noise.p_value),
+      autocorrelation: (model) => pval_rnd(model.estimations.increment_change.autocorrelation.p_value),
+      existence_change_point_hypothesis: (model) => pval_rnd(model.estimations.existence_change_point_hypothesis.p_value),
+    };
+    
+    //const mean_estimates = (model, estimator) => [model.estimations.initial[estimator].mean, model.estimations.initial[estimator].mean + model.estimations.increment_change[estimator].mean]
     const mean_estimates = (model, estimator) => [model.estimations.initial[estimator].mean, model.estimations.initial[estimator].mean + model.estimations.increment_change[estimator].mean]
     self.mean_estimate = {
       slope: (model, idx) => rnd(mean_estimates(model, "slope")[idx]),
+      ///////level: (model, idx) => rnd(mean_estimates(model, "level")[idx]),
       intercept: (model, idx) => rnd(mean_estimates(model, "intercept")[idx]),
       white_noise: (model, idx) => rnd(mean_estimates(model, "noise")[idx]),
+      autocorrelation: (model, idx) => rnd(mean_estimates(model, "autocorrelation")[idx]),
     };
+
     const format_confidence_interval = (ci) => `(${rnd(ci[0])}, ${rnd(ci[1])})`
     const confidence_intervals = (model, estimator) => [model.estimations.initial[estimator].confidence_interval, model.estimations.increment_change[estimator].confidence_interval]
     self.confidence_interval = {
       slope: (model, idx) => format_confidence_interval(confidence_intervals(model, "slope")[idx]),
+      level: (model, idx) => format_confidence_interval(confidence_intervals(model, "level")[idx]),
       intercept: (model, idx) => format_confidence_interval(confidence_intervals(model, "intercept")[idx]),
       white_noise: (model, idx) => format_confidence_interval(confidence_intervals(model, "noise")[idx]),
+      autocorrelation: (model, idx) => format_confidence_interval(confidence_intervals(model, "autocorrelation")[idx]),
+      //existence_change_point_hypothesis: (model, idx) => format_confidence_interval(model.estimations.existence_change_point_hypothesis.null_confidence_interval),
     };
 
     self.on("update", () => {
@@ -238,28 +308,28 @@
             <div></div>
           </div>
           <div class="cell-3">
-            <div>Impact on slope</div>
+            <div>Estimate of slope change</div>
           </div>
           <div class="cell-3">
-            <div>Impact on level</div>
+            <div>Estimate of level change</div>
           </div>
           <div class="cell-3">
-            <div>Changes on noise</div>
+            <div>Estimated change in adjacent correlation</div>
           </div>
         </div>
       </li>
       <virtual each={model, index in opts.models}>
         <li class="">
-          <div class="row">
+          <div class={"row " + (changepoint_is_significant(model) ? "unit-significant" : "" ) }>
             <!--Name-->
             <div class="cell-3">
-              <div class="centered-cell">
+              <div class="centered-cell unit-name-cell">
                 <span class="icon"><svg class={"unit-" + (index + 1) + " unit-miniplot" }></svg></span>
-                <span>{model.unit_name}</span>
+                <span>{model.unit_name} {changepoint_significance_stars(model)}</span>
               </div>
             </div>
             <!--Slope-->
-            <virtual each={parameter in ['slope', 'intercept' , 'white_noise' ]}>
+            <virtual each={parameter in ['slope', 'level', 'autocorrelation' ]}>
               <div class="cell">
                 <div class="centered-cell">
                   <span class="mif-move-up mif-2x parameter-indication" if={ estimate_difference_on[parameter](model)>=
@@ -272,17 +342,19 @@
                   </span>
                 </div>
               </div>
-              <div class="cell-2">
+              <div class="cell-2 parameter-estimates">
                 <div>
-                  <div class="parameter-changes">
-                    <span class="label">Changes:</span>
-                    <span class="values">
-                      <span class="value-before">{mean_estimate[parameter](model, 0)}</span>
-                      <span class="mif-forward" style="position: relative;top: 2px;"></span>
-                      <span class="value-after">{mean_estimate[parameter](model, 1)}</span>
-                    </span>
+                  <div class="parameter-changes" if={ mean_estimate[parameter] }>
+                    <div >
+                      <span class="label">Changes:</span>
+                      <span class="values">
+                        <span class="value-before">{mean_estimate[parameter](model, 0)}</span>
+                        <span class="mif-forward" style="position: relative;top: 2px;"></span>
+                        <span class="value-after">{mean_estimate[parameter](model, 1)}</span>
+                      </span>
+                    </div>
                   </div>
-                  <div class="parameter-confidence-interval">
+                  <div class="parameter-confidence-interval" if={ confidence_interval[parameter] }>
                     <span class="label">95% C.I.:</span>
                     <span class="values">
                       {confidence_interval[parameter](model, 1)}
@@ -330,6 +402,10 @@
       text-align: center;
     }
 
+    .parameter-changes{
+      min-height: 1em;
+    }
+    
     .parameter-changes,
     .parameter-confidence-interval {
       font-size: 80%;
@@ -357,6 +433,35 @@
       margin-right: -5px;
       width: 5px;
     }
+
+    .paper-style .menu-title{
+      height: 2.7em;
+      line-height: 1.2;
+      padding-bottom: 0.1em;
+      padding-top: 0.1em;
+    }
+
+    .unit-significant.row {
+      background-color: rgba(255, 0, 0, 0.05);
+      background-color: rgba(15, 87, 219, 0.1);
+
+    }
+    .unit-significant .unit-name-cell {
+      color: rgb(171, 21, 21);
+      color: rgb(34, 93, 208); 
+    }
+    
+    .cell-2.parameter-estimates > div > div{
+      min-height: 1.5em;
+    }
+
+    .cell-2.parameter-estimates > div{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+    }
+
   </style>
   <script>
     /* globals opts: false */
@@ -375,25 +480,47 @@
     const config = opts;
     config.models = !!config.models ? config.models : [];
 
+    self.changepoint_is_significant = (model) => model.estimations.existence_change_point_hypothesis.p_value < 0.05
+    self.changepoint_significance_stars = (model) => (
+      model.estimations.existence_change_point_hypothesis.p_value >= 0.1 ? "" : (
+        model.estimations.existence_change_point_hypothesis.p_value >= 0.05 ? "+" : ( // 0.05-0.1
+          model.estimations.existence_change_point_hypothesis.p_value >= 0.01 ? "*" : ( // 0.01-0.05
+            model.estimations.existence_change_point_hypothesis.p_value >= 0.001 ? "**" : ( // 0.001-0.01
+              model.estimations.existence_change_point_hypothesis.p_value >= 0.001 ? "***" : // 0.0001-0.001
+              "****" //
+            )
+          )
+        )
+      )
+    )
 
     const rnd = (f) => Math.round(f * 100) / 100;
+    const mean_estimate_difference_acf = (model, estimator) => model.estimations.increment_change[estimator].mean - model.estimations.initial[estimator].mean
+    
     self.estimate_difference_on = {
       slope: (model) => rnd(model.estimations.increment_change.slope.mean),
+      level: (model) => rnd(model.estimations.increment_change.level.mean),
       intercept: (model) => rnd(model.estimations.increment_change.intercept.mean),
       white_noise: (model) => rnd(model.estimations.increment_change.noise.mean),
+      autocorrelation: (model) => rnd(mean_estimate_difference_acf(model, "autocorrelation")),
     };
     const mean_estimates = (model, estimator) => [model.estimations.initial[estimator].mean, model.estimations.initial[estimator].mean + model.estimations.increment_change[estimator].mean]
+    const mean_estimates_acf = (model, estimator) => [model.estimations.initial[estimator].mean, model.estimations.increment_change[estimator].mean]
     self.mean_estimate = {
       slope: (model, idx) => rnd(mean_estimates(model, "slope")[idx]),
+      /////level: (model, idx) => rnd(mean_estimates(model, "level")[idx]),
       intercept: (model, idx) => rnd(mean_estimates(model, "intercept")[idx]),
       white_noise: (model, idx) => rnd(mean_estimates(model, "noise")[idx]),
+      autocorrelation: (model, idx) => rnd(mean_estimates_acf(model, "autocorrelation")[idx]),
     };
     const format_confidence_interval = (ci) => `(${rnd(ci[0])}, ${rnd(ci[1])})`
     const confidence_intervals = (model, estimator) => [model.estimations.initial[estimator].confidence_interval, model.estimations.increment_change[estimator].confidence_interval]
     self.confidence_interval = {
       slope: (model, idx) => format_confidence_interval(confidence_intervals(model, "slope")[idx]),
+      level: (model, idx) => format_confidence_interval(confidence_intervals(model, "level")[idx]),
       intercept: (model, idx) => format_confidence_interval(confidence_intervals(model, "intercept")[idx]),
       white_noise: (model, idx) => format_confidence_interval(confidence_intervals(model, "noise")[idx]),
+      //autocorrelation: (model, idx) => format_confidence_interval(confidence_intervals(model, "autocorrelation")[idx]),
     };
 
     self.on("mount", () => {

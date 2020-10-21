@@ -10,6 +10,7 @@ riot.tag2('rts-plot-collection', '<div> <virtual if="{_anyPlotFilter()}"> <div c
     self._adjust_type = (plot, actual_type) => plot.type.replace('combined-', actual_type);
 
     self._anyPlotFilter = () => (!!config.plots && config.plots.length > 0)
+
     self.on("update", () => {
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
@@ -17,6 +18,7 @@ riot.tag2('rts-plot-collection', '<div> <virtual if="{_anyPlotFilter()}"> <div c
       }, 10);
       console.log("config.plots ", config.plots );
     });
+
     self.on("mount", () => {
 
       self.update();

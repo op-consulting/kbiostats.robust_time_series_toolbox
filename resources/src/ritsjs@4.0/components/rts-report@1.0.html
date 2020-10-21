@@ -2,11 +2,17 @@
     <h4>Supremum Wald test conclusion</h4>
     <table border="1" cellpadding="0" cellspacing="0" width="100%">
         <tr>
-        <td>Unit</td>
-        <td>Formal intervention</td>
-        <td>Estimated change point</td>
-        <td>Intervention lag</td>
-        <td>Supremum Wald-test decision</td>
+            <td>Unit</td>
+            <td>Formal intervention</td>
+            <td>Estimated change point</td>
+            <td>Intervention lag</td>
+            <td>Supremum Wald-test decision</td>
+        </tr>
+        <tr>
+            <td colspan="4">Intervention in all units</td>
+            <td>{joint_supremum_wald_decision}<br/>
+                (SWT score: {joint_supremum_wald_score.fmt("7.4g")}, p-val: {joint_supremum_wald_p_value < 1e-20? "< 1e-020": joint_supremum_wald_p_value.fmt("7.4g")})
+            </td>
         </tr>
         <tr each={model, index in opts.models}>
             <td>{model.unit_name}</td>
@@ -14,13 +20,14 @@
             <td>{estimated_change_point(model)}</td>
             <td>{diff_change_point(model)}</td>
             <td>{supremum_wald_decision(model)} <br/>
-                (p-val: {supremum_wald_p_value(model) < 1e-20? "< 1e-020": supremum_wald_p_value(model).fmt("7.4g")})
+                (cricit: {supremum_wald_score(model).fmt("7.4g")}, p-val: {supremum_wald_p_value(model) < 1e-20? "< 1e-020": supremum_wald_p_value(model).fmt("7.4g")})
             </td>
         </tr>
-        <td colspan="4">Intervention in all units</td>
-        <td>{joint_supremum_wald_decision}<br/>
-            (p-val: {joint_supremum_wald_p_value < 1e-20? "< 1e-020": joint_supremum_wald_p_value.fmt("7.4g")})
-        </td>
+        <tr>
+            <td><span>
+                This p-value is not for interpretation, but instead used alongside the critical value cut-off in the Benjamini-Hochberg procedure.
+            </span></td>
+        </tr>
     </table>
     <style>
     </style>
@@ -51,11 +58,17 @@
         //! RTSModelWaldTestDecision: +supremum_wald_p_value(model)
         self.supremum_wald_p_value = (model) => model.estimations.existence_change_point_hypothesis.p_value;
         
+        //! RTSModelWaldTestDecision: +supremum_wald_p_value(model)
+        self.supremum_wald_score = (model) => model.estimations.existence_change_point_hypothesis.score;
+        
         //! RTSModelWaldTestDecision: +supremum_wald_decision(model)
         self.supremum_wald_decision = (model) => model.estimations.existence_change_point_hypothesis.p_value < 0.05? "Change-point": "No change-point";
         
         //! RTSModelWaldTestDecision: +joint_supremum_wald_p_value
         self.joint_supremum_wald_p_value = -1
+
+        //! RTSModelWaldTestDecision: +joint_supremum_wald_score
+        self.joint_supremum_wald_score = -1
         
         //! RTSModelWaldTestDecision: +joint_supremum_wald_decision
         self.joint_supremum_wald_decision = ""
@@ -65,6 +78,7 @@
             let joint_supremum_wald_test_scores = opts.models.map((model) => model.estimations.existence_change_point_hypothesis.score)
             let supremum_wald_test = RTSModel.existence_change_point_hypothesis(joint_supremum_wald_test_scores)
             self.joint_supremum_wald_p_value = supremum_wald_test.p_value
+            self.joint_supremum_wald_score = supremum_wald_test.score
             self.joint_supremum_wald_decision = self.joint_supremum_wald_p_value < 0.05? "Change-point in all units": "No change-point guaranteed in all units";
         });
     </script>

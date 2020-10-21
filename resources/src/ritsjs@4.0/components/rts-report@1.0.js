@@ -1,22 +1,34 @@
-riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4> <table border="1" cellpadding="0" cellspacing="0" width="100%"> <tr> <td>Unit</td> <td>Formal intervention</td> <td>Estimated change point</td> <td>Intervention lag</td> <td>Supremum Wald-test decision</td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{theoretical_change_point(model)}</td> <td>{estimated_change_point(model)}</td> <td>{diff_change_point(model)}</td> <td>{supremum_wald_decision(model)} <br> (p-val: {supremum_wald_p_value(model) < 1e-20? ⁗< 1e-020⁗: supremum_wald_p_value(model).fmt(⁗7.4g⁗)}) </td> </tr> <td colspan="4">Intervention in all units</td> <td>{joint_supremum_wald_decision}<br> (p-val: {joint_supremum_wald_p_value < 1e-20? ⁗< 1e-020⁗: joint_supremum_wald_p_value.fmt(⁗7.4g⁗)}) </td> </table>', '', '', function(opts) {
+riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4> <table border="1" cellpadding="0" cellspacing="0" width="100%"> <tr> <td>Unit</td> <td>Formal intervention</td> <td>Estimated change point</td> <td>Intervention lag</td> <td>Supremum Wald-test decision</td> </tr> <tr> <td colspan="4">Intervention in all units</td> <td>{joint_supremum_wald_decision}<br> (SWT score: {joint_supremum_wald_score.fmt(⁗7.4g⁗)}, p-val: {joint_supremum_wald_p_value < 1e-20? ⁗< 1e-020⁗: joint_supremum_wald_p_value.fmt(⁗7.4g⁗)}) </td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{theoretical_change_point(model)}</td> <td>{estimated_change_point(model)}</td> <td>{diff_change_point(model)}</td> <td>{supremum_wald_decision(model)} <br> (SWT score: {supremum_wald_score(model).fmt(⁗7.4g⁗)}, p-val: {supremum_wald_p_value(model) < 1e-20? ⁗< 1e-020⁗: supremum_wald_p_value(model).fmt(⁗7.4g⁗)}) </td> </tr> </table>', '', '', function(opts) {
 
 
         const self = this;
+
         self.theoretical_change_point = (model) => moment(model.dates[model.estimations.change_point_index]).format(
             "MMM DD, YYYY");
+
         self.estimated_change_point = (model) => moment(model.dates[model.change_point.theoretical]).format(
             "MMM DD, YYYY");
+
         self.diff_change_point = (model) => moment(model.dates[model.estimations.change_point_index]).from(
             moment(model.dates[model.change_point.theoretical]));
 
         self.supremum_wald_p_value = (model) => model.estimations.existence_change_point_hypothesis.p_value;
+
+        self.supremum_wald_score = (model) => model.estimations.existence_change_point_hypothesis.score;
+
         self.supremum_wald_decision = (model) => model.estimations.existence_change_point_hypothesis.p_value < 0.05? "Change-point": "No change-point";
+
         self.joint_supremum_wald_p_value = -1
+
+        self.joint_supremum_wald_score = -1
+
         self.joint_supremum_wald_decision = ""
+
         self.on("update", () => {
             let joint_supremum_wald_test_scores = opts.models.map((model) => model.estimations.existence_change_point_hypothesis.score)
             let supremum_wald_test = RTSModel.existence_change_point_hypothesis(joint_supremum_wald_test_scores)
             self.joint_supremum_wald_p_value = supremum_wald_test.p_value
+            self.joint_supremum_wald_score = supremum_wald_test.score
             self.joint_supremum_wald_decision = self.joint_supremum_wald_p_value < 0.05? "Change-point in all units": "No change-point guaranteed in all units";
         });
 });
@@ -26,12 +38,19 @@ riot.tag2('rts-model-pre-change-point-table', '<h4>Unit-specific pre-change poin
 
         const self = this;
         const estimation_type = "initial";
+
         const confidence_interval = (ci) => `(${ci[0].fmt("7.4g")}, ${ci[1].fmt("7.4g")})`;
+
         self.estimate_1 = (model) => (model.estimations[estimation_type].intercept.mean);
+
         self.estimate_2 = (model) => (model.estimations[estimation_type].slope.mean);
+
         self.ci_1 = (model) => confidence_interval(model.estimations[estimation_type].intercept.confidence_interval);
+
         self.ci_2 = (model) => confidence_interval(model.estimations[estimation_type].slope.confidence_interval);
+
         self.pval_1 = (model) => (model.estimations[estimation_type].intercept.p_value);
+
         self.pval_2 = (model) => (model.estimations[estimation_type].slope.p_value);
 });
 
@@ -40,12 +59,19 @@ riot.tag2('rts-model-post-change-point-table', '<h4>Unit-specific post-change po
 
         const self = this;
         const estimation_type = "increment_change";
+
         const confidence_interval = (ci) => `(${ci[0].fmt("7.4g")}, ${ci[1].fmt("7.4g")})`;
+
         self.estimate_1 = (model) => (model.estimations[estimation_type].intercept.mean);
+
         self.estimate_2 = (model) => (model.estimations[estimation_type].slope.mean);
+
         self.ci_1 = (model) => confidence_interval(model.estimations[estimation_type].intercept.confidence_interval);
+
         self.ci_2 = (model) => confidence_interval(model.estimations[estimation_type].slope.confidence_interval);
+
         self.pval_1 = (model) => (model.estimations[estimation_type].intercept.p_value);
+
         self.pval_2 = (model) => (model.estimations[estimation_type].slope.p_value);
 
 });
@@ -56,12 +82,19 @@ riot.tag2('rts-model-parameter-changes-table', '<h4>Unit-specific changes in lev
 
         const self = this;
         const estimation_type = "increment_change";
+
         const confidence_interval = (ci) => `(${ci[0].fmt("7.4g")}, ${ci[1].fmt("7.4g")})`;
+
         self.estimate_1 = (model) => (model.estimations[estimation_type].intercept.mean);
+
         self.estimate_2 = (model) => (model.estimations[estimation_type].slope.mean);
+
         self.ci_1 = (model) => confidence_interval(model.estimations[estimation_type].intercept.confidence_interval);
+
         self.ci_2 = (model) => confidence_interval(model.estimations[estimation_type].slope.confidence_interval);
+
         self.pval_1 = (model) => (model.estimations[estimation_type].intercept.p_value);
+
         self.pval_2 = (model) => (model.estimations[estimation_type].slope.p_value);
 
 });
@@ -72,10 +105,15 @@ riot.tag2('rts-model-stochastic-parameter-changes-table', '<h4>Estimates of the 
         const self = this;
         const estimation_type_1 = "intercept";
         const estimation_type_2 = "slope";
+
         const confidence_interval = (ci) => `(${rnd(ci[0])}, ${rnd(ci[1])})`;
+
         self.estimate_1 = (model) => (model.estimations.initial.autocorrelation.mean);
+
         self.estimate_2 = (model) => (model.estimations.increment_change.autocorrelation.mean);
+
         self.std_1 = (model) => (model.estimations.initial.autocorrelation.standard_deviation);
+
         self.std_2 = (model) => (model.estimations.increment_change.autocorrelation.standard_deviation);
 });
     
@@ -141,6 +179,7 @@ riot.tag2('rts-report', '<div class="report-container"> <virtual if="{opts.model
         self.on("update", () => {
 
         });
+
         self.on("mount", () => {
 
         });

@@ -728,13 +728,13 @@
     graphic_category["plain"] = () => {
       let options = default_options();
       let data = dygraphize(config.model.dates, config.model.y);
-      options.labels = ["Time", "Observed value"];
+      options.labels = ["Time", "Observed"];
       return [data, options]
     };
 
     //! class RTSModelPlot_EstimationGraph
     //! RTSModelPlot_Graph <|-- RTSModelPlot_EstimationGraph
-    default_titles["estimation"] = "Estimated time series"
+    default_titles["estimation"] = "Estimated mean functions"
     graphic_category["estimation"] = () => {
       const change_point_index = config.model.estimations.change_point_index;
       //let period_model = config.model.estimations.after_change;
@@ -749,8 +749,8 @@
       //let line_before = (t, y) => y;
       //let line_after = (t, y) => y;
       //const dygraphize3 = (x, y) => x.map((_x, i) => [_x, y[i] < theoretical_change_point? y[i]: null, y[i] >= theoretical_change_point? null: y[i]]);
-      let labels = ["Time", "Observed value", "Estimated value [[before change-point]]",
-        "Estimated value [[after change-point]]"
+      let labels = ["Time", "Observed", "Estimated mean [[before change-point]]",
+        "Estimated mean [[after change-point]]"
       ];
       let options = default_options();
       options.series = {};

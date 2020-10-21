@@ -92,6 +92,8 @@ type RITSPeriod* = ref object
   slope*: FlattenEstimator
   ##! RITSPeriod: +intercept: FlattenEstimator
   intercept*: FlattenEstimator
+  ##! RITSPeriod: +level: FlattenEstimator
+  level*: FlattenEstimator
   ##! RITSPeriod: +autocorrelation: FlattenEstimator
   autocorrelation*: FlattenEstimator
   ##! RITSPeriod: +noise: FlattenEstimator
@@ -103,6 +105,7 @@ proc newRITSPeriod(): RITSPeriod =
   new result
   new result.slope
   new result.intercept
+  new result.level
   new result.autocorrelation
   new result.noise
   new result.residuals
@@ -169,6 +172,16 @@ proc flatten(model: RITSModel): RobustInterruptedModel =
   result.increment_change.residuals.values = model.model.after_residual_model.residuals.clean_nan
   result.increment_change.residuals.autocorrelation = acf2.estimators_mean.clean_nan(0.0)
   result.increment_change.residuals.autocorrelation_null_confidence_interval = acf2.null_distribution.confidence_interval
+  #
+  result.increment_change.level.mean = (
+    result.increment_change.slope.mean * result.change_point_x + result.increment_change.intercept.mean
+  )
+  result.increment_change.level.standard_deviation = (
+    result.increment_change.slope.standard_deviation * result.change_point_x + result.increment_change.intercept.standard_deviation
+  )
+  result.increment_change.level.confidence_interval = (
+    result.increment_change.slope.confidence_interval * result.change_point_x + result.increment_change.intercept.confidence_interval
+  )
   #
   result.existence_change_point_hypothesis = model.model.existence_change_point_hypothesis.flatten
 

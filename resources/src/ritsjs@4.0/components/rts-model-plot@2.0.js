@@ -27,6 +27,7 @@ riot.tag2('rts-model-plot-change-point-marker', '<div class="change-point-marker
         return sy[index];
       };
 });
+
 riot.tag2('rts-model-plot-legend', '<div class="plot-labels w-100"> <virtual if="{opts.legend}"> <div class="data-series" each="{legend, idx in opts.legend}"> <div class="data-series-color" riot-style="{⁗background-color:⁗ + legend.color}"> </div> <div class="data-series-label" riot-style="{⁗color:⁗ + legend.color}"> {legend.label.replace(/\\[\\[/g, ⁗(⁗).replace(/\\]\\]/g, ⁗)⁗)} </div> </div> </virtual>', 'rts-model-plot-legend .data-series,[data-is="rts-model-plot-legend"] .data-series{ display: inline-flex; } rts-model-plot-legend .data-series-color,[data-is="rts-model-plot-legend"] .data-series-color{ display: inline-block; width: 18px; height: 5px; position: relative; top: 7px; margin-left: 15px; } rts-model-plot-legend .data-series-label,[data-is="rts-model-plot-legend"] .data-series-label{ margin-left: 3px; filter: brightness(90%); }', '', function(opts) {
 
 
@@ -84,6 +85,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       });
     }
     const zoom_factor = 0.2
+
     self.zoomout = (e) => self._zoom(zoom_factor / (zoom_factor - 1), e)
 
     self.zoomin = (e) => self._zoom(zoom_factor, e)
@@ -285,8 +287,8 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
       ctx.setLineDash([]);
 
       barChartPlotter(e);
-
     }
+
     const barChartPlotter = (e) => {
       const ctx = e.drawingContext;
       const points = e.points;
@@ -373,6 +375,7 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
     self.graph = null;
 
     const dygraphize = (x, y) => x.map((_x, i) => [_x, y[i]])
+
     const dygraphize_with_index = (...x) => x[0].map((_x, i) => [i, ...(x.map((o) => o[i]))])
 
     const default_options = () => ({
@@ -395,11 +398,11 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
     graphic_category["plain"] = () => {
       let options = default_options();
       let data = dygraphize(config.model.dates, config.model.y);
-      options.labels = ["Time", "Observed value"];
+      options.labels = ["Time", "Observed"];
       return [data, options]
     };
 
-    default_titles["estimation"] = "Estimated time series"
+    default_titles["estimation"] = "Estimated mean functions"
     graphic_category["estimation"] = () => {
       const change_point_index = config.model.estimations.change_point_index;
 
@@ -409,8 +412,8 @@ riot.tag2('rts-model-plot', '<div class="simple-plot w-100 h-100"> <virtual if="
         null;
       let line_after = (t) => (t - change_point_index < 0) ? null : (before_model.intercept.mean + after_model.intercept.mean + (before_model.slope.mean + after_model.slope.mean) * t);
 
-      let labels = ["Time", "Observed value", "Estimated value [[before change-point]]",
-        "Estimated value [[after change-point]]"
+      let labels = ["Time", "Observed", "Estimated mean [[before change-point]]",
+        "Estimated mean [[after change-point]]"
       ];
       let options = default_options();
       options.series = {};

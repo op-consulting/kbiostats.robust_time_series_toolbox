@@ -42,6 +42,7 @@ riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div
         gutterSize: 4.5,
       });
     };
+
     const update_panel_widths = (index, action) => {
       action = !!action ? action : "show-hide";
       if (index == 1) return;
@@ -64,62 +65,69 @@ riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div
       create_splitter(ratio_width);
       window.dispatchEvent(new Event('resize'));
     };
+
     const panel_visibility = (selector, action) => {
       self.root.querySelector(selector).classList[action]("hidden");
-
     };
-    self.close_left_panel = (set_blank=false) => {
 
+    self.close_left_panel = (set_blank=false) => {
       if(set_blank){
         self.refs.leftpanel.set_blank();
       }
       update_panel_widths(0, "hide");
     };
-    self.show_left_panel = () => {
 
+    self.show_left_panel = () => {
       update_panel_widths(0, "show");
     };
-    self.close_right_panel = () => {
 
+    self.close_right_panel = () => {
       update_panel_widths(2, "hide");
     };
-    self.show_right_panel = () => {
 
+    self.show_right_panel = () => {
       update_panel_widths(2, "show");
     };
+
     self.toggle_right_panel = () => {
       update_panel_widths(2);
     };
+
     self.toggle_left_panel = () => {
       update_panel_widths(0);
     };
+
     self.change_unit_names = (unit_names) => {
       self.refs.leftpanel.opts.unit_names = unit_names;
       self.refs.leftpanel.update();
     };
+
     self.change_summary_models = (models) => {
       self.refs.data_summary.opts.models = models;
       self.refs.data_summary.update();
     };
+
     self.change_report_models = (models) => {
       self.refs.full_data_report.opts.models = models;
       self.refs.full_data_report.update();
     };
+
     self.change_title_unit_choose = (title = "Units") => {
       self.refs.leftpanel.opts.unit_title = title;
       self.refs.leftpanel.update();
     };
+
     self.change_title_plot_choose = (title = "Plots") => {
       self.refs.leftpanel.opts.plot_title = title;
       self.refs.leftpanel.update();
     };
+
     self.show_main_panel = (selector) => {
       Array.from(self.root.querySelectorAll(".main-panel-container")).forEach(el => el.classList.add("hidden"));
       self.root.querySelector(selector).classList.remove("hidden");
     };
 
     self.show_filtered_plots = (unitindex, unitname, plot_types) => {
-
       self.show_main_panel(".plot-container");
       self.refs.plot_collection.update()
       self.refs.plot_collection.opts.plots = plot_types.map((plot_type) => ({
@@ -145,7 +153,6 @@ riot.tag2('rts-three-column-panel', '<div class="split-parent h-100 w-100"> <div
           }, null, null, 'page-width'],
           allowNegativeOffset: true
         });
-
     };
 
     self.show_full_report = () => {
