@@ -97,7 +97,7 @@ The data used in the example is located in [example-germany-covid/sample-germany
 If you prefer to look at the code, modify something or run the source code on this repository, you will need to install and configure the following programs on your computer:
 
 * [Git](https://git-scm.com/downloads).
-* [Node.js (>14.0.0)](https://nodejs.org/).
+* [Node.js (>14.0.0)](https://nodejs.org/) with npm (>6).
 * [Nim language compiler (>1.0.0)](https://nim-lang.org/).
 
 Once these main platforms are installed, run/test the source code is straightforward from your Bash-compatible command line:
