@@ -1,10 +1,9 @@
 #!/bin/bash
 
-riot=node_modules/.bin/riot
 function compile_riot(){
   file=$1
   cp $file ${file%.*}.tag
-  $riot ${file%.*}.tag ${file%.*}.js
+  riot ${file%.*}.tag ${file%.*}.js
   rm ${file%.*}.tag
 }
 

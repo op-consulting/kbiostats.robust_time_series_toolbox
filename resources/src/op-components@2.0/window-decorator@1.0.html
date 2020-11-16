@@ -217,11 +217,10 @@ Plain format file input
     function platform() {
       if (self.electronIsInstalled) {
         const remote = require_('electron').remote;
-        let str_platform;
-        try{ str_platform = remote.process.platform; } catch(e) { str_platform = process.platform; }
-        if (str_platform.indexOf("darwin") >= 0 || str_platform.indexOf("mac") >= 0) {
+        const platform = remote.process.platform;
+        if (platform.indexOf("darwin") >= 0 || platform.indexOf("mac") >= 0) {
           return "OSX";
-        } else if (str_platform.indexOf("win") >= 0) {
+        } else if (platform.indexOf("win") >= 0) {
           return "WIN";
         } else {
           return "";

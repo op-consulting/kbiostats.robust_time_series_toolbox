@@ -51,15 +51,6 @@ let mainWindowSettings = {
   //autoHideMenuBar: !true,
   fullscreenWindowTitle: true,
   frame: false,
-  allowRendererProcessReuse: true,
-  webPreferences: {
-/////    webSecurity: true,
-    enableRemoteModule: true,
-    nodeIntegration: true,
-    //nodeIntegrationInWorker: true,
-    //contextIsolation: false,
-  },
-  nodeIntegration: true,
 }
 let modalWindowSettings = {
   title: 'Robust Time Series Toolbox - KAUST Biostatistics Group',
@@ -78,13 +69,6 @@ let modalWindowSettings = {
   fullscreenWindowTitle: true,
   frame: false,
   modal: true,
-  //allowRendererProcessReuse: true,
-  webPreferences: {
-/////    webSecurity: true,
-    //nodeIntegration: true,
-    //nodeIntegrationInWorker: true,
-    //contextIsolation: false,
-  },
 }
 
 

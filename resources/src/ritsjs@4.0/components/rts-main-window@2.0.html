@@ -233,7 +233,7 @@
     const model_data = (modeling_info) => {
       //
       const model_parameters = {
-        theoretical_change_point: modeling_info.change_point.index.theoretical - modeling_info.data_range.index.start,
+        theoretical_change_point: modeling_info.change_point.index.theoretical,
         candidates_before: modeling_info.change_point.index.candidates_before,
         candidates_after: modeling_info.change_point.index.candidates_after,
       }
@@ -319,24 +319,6 @@
     //
     //! RTSMainWindow: -open_file()
     const open_file = () => {
-      const inner_open_file = (path) => {
-      fs.readFile(path, 'utf8', (err, data) => {
-        if (err) {
-          return console.error(err);
-        }
-        papaparse.parse(data, {
-          keepEmptyRows: false,
-          skipEmptyLines: true,
-          complete: function (results) {
-            if (results.errors.length > 0)
-              throw new Error(
-                "CSV file cannot be processed. Please contact the administrator."
-              );
-            process_data(read_file_data_source(results.data));
-          }
-        });
-      });
-      };
       const file_filter = [{
           name: 'Data source (.CSV)',
           extensions: ['csv']
@@ -353,14 +335,25 @@
       const paths = dialog.showOpenDialog({
         filters: file_filter,
         properties: ['openFile'],
-      }).then(result => {
-            console.log(result.canceled)
-            console.log(result.filePaths)
-            let paths = result.filePaths;
-            if (!paths) {
-              return;
-            }
-            inner_open_file(paths[0]);
+      });
+      if (!paths) {
+        return;
+      }
+      fs.readFile(paths[0], 'utf8', (err, data) => {
+        if (err) {
+          return console.error(err);
+        }
+        papaparse.parse(data, {
+          keepEmptyRows: false,
+          skipEmptyLines: true,
+          complete: function (results) {
+            if (results.errors.length > 0)
+              throw new Error(
+                "CSV file cannot be processed. Please contact the administrator."
+              );
+            process_data(read_file_data_source(results.data));
+          }
+        });
       });
     };
     //

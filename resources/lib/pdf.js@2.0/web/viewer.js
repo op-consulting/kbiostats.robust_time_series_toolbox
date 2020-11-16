@@ -781,7 +781,6 @@ var PDFViewerApplication = {
     return this.pdfDocument ? this.pdfDocument.numPages : 0;
   },
   set page(val) {
-    console.log("pagge", val)
     this.pdfViewer.currentPageNumber = val;
   },
   get page() {
@@ -3000,14 +2999,7 @@ function scrollIntoView(element, spot) {
       parent.scrollLeft = offsetX;
     }
   }
-  //parent.scrollTop = offsetY;
-  //DIRTY FIX:
-  let op = parent.scrollTop;
   parent.scrollTop = offsetY;
-  if(op == parent.scrollTop){
-    parent.parentElement.scrollTop = offsetY;
-    window.parent1 = parent;
-  }
 }
 function watchScroll(viewAreaElement, callback) {
   var debounceScroll = function debounceScroll(evt) {
@@ -3045,17 +3037,12 @@ function watchScroll(viewAreaElement, callback) {
 function parseQueryString(query) {
   var parts = query.split('&');
   var params = Object.create(null);
-  //PATCH:
-  params = {};
-  params["page"] = "1";
-  params["pagemode"] = "none";
   for (var i = 0, ii = parts.length; i < ii; ++i) {
     var param = parts[i].split('=');
     var key = param[0].toLowerCase();
     var value = param.length > 1 ? param[1] : null;
     params[decodeURIComponent(key)] = decodeURIComponent(value);
   }
-  params["page"] = "1";
   return params;
 }
 function binarySearchFirstItem(items, condition) {
@@ -3140,7 +3127,7 @@ function getPageSizeInches(_ref5) {
   };
 }
 function backtrackBeforeAllVisibleElements(index, views, top) {
-  if (index < 2 || views.length <= index) {
+  if (index < 2) {
     return index;
   }
   var elt = views[index].div;
@@ -13394,3 +13381,4 @@ exports.PDFPrintService = PDFPrintService;
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=viewer.js.map

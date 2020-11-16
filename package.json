@@ -1,27 +1,18 @@
 {
-  "name": "RITS-Toolbox",
-  "version": "4.0.1",
+  "name": "kaust.biostatistics.rits",
+  "version": "0.9.1",
   "description": "Robust Interrupted Time Series Toolbox - KAUST Biostatistics Group",
   "main": "./index.js",
   "scripts": {
-    "start": "./node_modules/.bin/electron index.js",
-    "optimize-scripts": "cd resources/; ../node_modules/.bin/parcel main.js;",
-    "update-ui": "cd resources/src/op-components@2.0/; sh compile_tags.sh;",
-    "update-stats-model": "cd resources/src/ritsjs@4.0/model/; sh compile_model.sh;",
-    "build-windows": "/node_modules/.bin/electron-builder --win",
-    "build-linux": "/node_modules/.bin/electron-builder --linux",
-    "build-mac": "/node_modules/.bin/electron-builder --mac",
-    "pack": "/node_modules/.bin/electron-builder -wml"
+    "start": "electron index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "author": "KAUST.Biostatistics",
   "license": "MIT/GPL",
   "devDependencies": {
-    "cssnano": "^4.1.10",
-    "electron": "^11.0.3",
-    "electron-builder": "^22.9.1",
-    "parcel-bundler": "^1.12.4",
-    "riot-cli": "^4.1.2",
-    "riot-compiler": "^3.6.0"
+    "cssnano": "^4.1.10"
   },
   "build": {
     "icon": "resources/images/app/app",
