@@ -1,4 +1,4 @@
-riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4> <table border="1" cellpadding="0" cellspacing="0" width="100%"> <tr> <td>Unit</td> <td>Formal intervention</td> <td>Estimated change point</td> <td>Intervention lag</td> <td>Supremum Wald-test decision</td> </tr> <tr> <td colspan="4">Intervention in all units</td> <td>{joint_supremum_wald_decision}<br> (SWT score: {joint_supremum_wald_score.fmt(⁗7.4g⁗)}, p-val: {joint_supremum_wald_p_value < 1e-20? ⁗< 1e-020⁗: joint_supremum_wald_p_value.fmt(⁗7.4g⁗)}) </td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{theoretical_change_point(model)}</td> <td>{estimated_change_point(model)}</td> <td>{diff_change_point(model)}</td> <td>{supremum_wald_decision(model)} <br> (SWT score: {supremum_wald_score(model).fmt(⁗7.4g⁗)}, p-val: {supremum_wald_p_value(model) < 1e-20? ⁗< 1e-020⁗: supremum_wald_p_value(model).fmt(⁗7.4g⁗)}) </td> </tr> </table>', '', '', function(opts) {
+riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4> <table border="1" cellpadding="0" cellspacing="0" width="100%"> <tr> <td>Unit</td> <td>Formal intervention</td> <td>Estimated change point</td> <td>Intervention lag</td> <td>Supremum Wald-test decision</td> </tr> <tr> <td colspan="4">Intervention in all units</td> <td>{joint_supremum_wald_decision}<br> (p-val: {joint_supremum_wald_p_value < 1e-20? ⁗< 1e-020⁗: joint_supremum_wald_p_value.fmt(⁗7.4g⁗)}, crit.val.: {joint_supremum_wald_score.fmt(⁗7.4g⁗)}) </td> </tr> <tr each="{model, index in opts.models}"> <td>{model.unit_name}</td> <td>{theoretical_change_point(model)}</td> <td>{estimated_change_point(model)}</td> <td>{diff_change_point(model)}</td> <td>{supremum_wald_decision(model)} <br> (p-val: {supremum_wald_p_value(model) < 1e-20? ⁗< 1e-020⁗: supremum_wald_p_value(model).fmt(⁗7.4g⁗)}, crit.val.: {supremum_wald_score(model).fmt(⁗7.4g⁗)}) </td> </tr> <tr> <td colspan="5"><span class="benjamini-p-value-notice"> * This p-value is not for interpretation, but instead used alongside the critical value (crit.val.) cut-off in the Benjamini-Hochberg procedure. </span></td> </tr> </table>', 'rts-model-wald-test-decision .benjamini-p-value-notice,[data-is="rts-model-wald-test-decision"] .benjamini-p-value-notice{ font-size: 10pt; color: #0c499a; font-size: 8pt; }', '', function(opts) {
 
 
         const self = this;
@@ -25,7 +25,11 @@ riot.tag2('rts-model-wald-test-decision', '<h4>Supremum Wald test conclusion</h4
         self.joint_supremum_wald_decision = ""
 
         self.on("update", () => {
-            let joint_supremum_wald_test_scores = opts.models.map((model) => model.estimations.existence_change_point_hypothesis.score)
+            let joint_supremum_wald_test_scores = opts.models.map((model) => [
+            model.estimations.existence_change_point_hypothesis.p_value,
+            model.estimations.existence_change_point_hypothesis.score
+            ])
+            console.log("*****")
             let supremum_wald_test = RTSModel.existence_change_point_hypothesis(joint_supremum_wald_test_scores)
             self.joint_supremum_wald_p_value = supremum_wald_test.p_value
             self.joint_supremum_wald_score = supremum_wald_test.score

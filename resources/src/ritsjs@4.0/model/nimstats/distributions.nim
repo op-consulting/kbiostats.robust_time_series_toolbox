@@ -550,17 +550,30 @@ type StatsDistribution* = BaseStatsDistribution|ScaledShiftedDistribution
 
 ###########################################################
 
+proc argsort[T](a: T) : seq[int] =
+  result = toSeq(0..a.len - 1)
+  sort(result, proc (i, j: int): int = cmp(a[i], a[j]))
+
 # Benjamini-Hochberg function
-proc Benjamini_Hochberg_FDR*(v: vector, alpha: float=0.05): float =
+proc Benjamini_Hochberg_FDR*(v: vector, alpha: float=0.05, cutoff: float=0.05): tuple[index: int, p_value: float, sorted_index: int, adjusted_p_value: float, ] =
   let
     m = v.len.toFloat
-    vs = v.sorted(system.cmp[float])
+    #vs = v.sorted(system.cmp[float])
+    vs = v.argsort
   var
+    max_index = -1
+    max_ordered_index = -1
     max_pvalue = -1.0
-  for i_x, x in vs:
+    max_adjusted_p_value = -1.0
+    x = -1.0
+  for ordered_i_x, i_x in vs:
+    x = v[i_x]
     let BH = alpha/m * (i_x + 1).toFloat
     if x < BH:
-      result += 1.0
-      max_pvalue = x.float
-  result = max_pvalue
+      #result += 1.0
+      max_index = i_x
+      max_ordered_index = ordered_i_x
+      max_adjusted_p_value = x * m / (i_x + 1).toFloat
+      max_pvalue = x
+  return (index: max_index, p_value: max_pvalue, sorted_index: max_ordered_index, adjusted_p_value: max_adjusted_p_value)
 

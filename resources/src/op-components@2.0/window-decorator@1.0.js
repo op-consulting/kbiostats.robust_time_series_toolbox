@@ -14,10 +14,11 @@ riot.tag2('window-decorator', '<div class="window main-window"> <div class="wind
     function platform() {
       if (self.electronIsInstalled) {
         const remote = require_('electron').remote;
-        const platform = remote.process.platform;
-        if (platform.indexOf("darwin") >= 0 || platform.indexOf("mac") >= 0) {
+        let str_platform;
+        try{ str_platform = remote.process.platform; } catch(e) { str_platform = process.platform; }
+        if (str_platform.indexOf("darwin") >= 0 || str_platform.indexOf("mac") >= 0) {
           return "OSX";
-        } else if (platform.indexOf("win") >= 0) {
+        } else if (str_platform.indexOf("win") >= 0) {
           return "WIN";
         } else {
           return "";

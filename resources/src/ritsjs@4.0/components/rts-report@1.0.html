@@ -11,7 +11,8 @@
         <tr>
             <td colspan="4">Intervention in all units</td>
             <td>{joint_supremum_wald_decision}<br/>
-                (SWT score: {joint_supremum_wald_score.fmt("7.4g")}, p-val: {joint_supremum_wald_p_value < 1e-20? "< 1e-020": joint_supremum_wald_p_value.fmt("7.4g")})
+                (p-val: {joint_supremum_wald_p_value < 1e-20? "< 1e-020": joint_supremum_wald_p_value.fmt("7.4g")},
+                crit.val.: {joint_supremum_wald_score.fmt("7.4g")})
             </td>
         </tr>
         <tr each={model, index in opts.models}>
@@ -20,16 +21,24 @@
             <td>{estimated_change_point(model)}</td>
             <td>{diff_change_point(model)}</td>
             <td>{supremum_wald_decision(model)} <br/>
-                (cricit: {supremum_wald_score(model).fmt("7.4g")}, p-val: {supremum_wald_p_value(model) < 1e-20? "< 1e-020": supremum_wald_p_value(model).fmt("7.4g")})
+                (p-val: {supremum_wald_p_value(model) < 1e-20? "< 1e-020": supremum_wald_p_value(model).fmt("7.4g")},
+                crit.val.: {supremum_wald_score(model).fmt("7.4g")})
             </td>
         </tr>
         <tr>
-            <td><span>
-                * This p-value is not for interpretation, but instead used alongside the critical value cut-off in the Benjamini-Hochberg procedure.
+            <td colspan="5"><span class="benjamini-p-value-notice">
+                * This p-value is not for interpretation,
+                but instead used alongside the critical value (crit.val.) cut-off
+                in the Benjamini-Hochberg procedure.
             </span></td>
         </tr>
     </table>
     <style>
+        .benjamini-p-value-notice{
+            font-size: 10pt;
+            color: #0c499a;
+            font-size: 8pt;
+        }
     </style>
     <script>
         /* globals opts: false */
@@ -75,7 +84,11 @@
 
         //! RTSModelWaldTestDecision: +on_update
         self.on("update", () => {
-            let joint_supremum_wald_test_scores = opts.models.map((model) => model.estimations.existence_change_point_hypothesis.score)
+            let joint_supremum_wald_test_scores = opts.models.map((model) => [
+            model.estimations.existence_change_point_hypothesis.p_value,
+            model.estimations.existence_change_point_hypothesis.score
+            ])
+            console.log("*****")
             let supremum_wald_test = RTSModel.existence_change_point_hypothesis(joint_supremum_wald_test_scores)
             self.joint_supremum_wald_p_value = supremum_wald_test.p_value
             self.joint_supremum_wald_score = supremum_wald_test.score

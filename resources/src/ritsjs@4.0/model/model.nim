@@ -186,10 +186,22 @@ proc flatten(model: RITSModel): RobustInterruptedModel =
   result.existence_change_point_hypothesis = model.model.existence_change_point_hypothesis.flatten
 
 ##! RITSModel: +existence_change_point_hypothesis(test_scores: seq[float])
-proc existence_change_point_hypothesis(test_scores: seq[float]): FlattenHypothesisTest {.exportc: "existence_change_point_hypothesis".} =
+proc existence_change_point_hypothesis(test_scores: seq[seq[float]]): FlattenHypothesisTest {.exportc: "existence_change_point_hypothesis".} =
   echo "test_scores:", $test_scores
-  let total_score = test_scores.len.toFloat * test_scores.min
-  chisquare(dof=2.0*test_scores.len.toFloat).htest_score(total_score, test_type=oneTailed).flatten
+  let set_p_values = test_scores.mapIt(it[0])
+  let set_scores = test_scores.mapIt(it[1])
+  echo "set_p_values:", $set_p_values
+  echo "set_scores:", $set_scores
+  let indices = set_p_values.Benjamini_Hochberg_FDR(alpha=0.05)
+  echo "indices:", $indices
+  let total_score = test_scores.len.toFloat * set_scores.min
+  new result
+  result.score = set_scores[indices.index]
+  #sorted_index: int, adjusted_p_value: float,
+  #result.p_value = set_p_values[indices.index] # adjusted p-value
+  result.p_value = indices.adjusted_p_value # adjusted p-value
+  result.distribution = "Benjamini-Hochberg (adjusted procedure)"
+  #chisquare(dof=2.0*test_scores.len.toFloat).htest_score(total_score, test_type=oneTailed).flatten
 
 when false:
   proc existence_change_point_hypothesis(test_scores: seq[float]): FlattenHypothesisTest {.exportc: "existence_change_point_hypothesis".} =
