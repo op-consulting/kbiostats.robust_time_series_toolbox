@@ -555,8 +555,12 @@ proc Benjamini_Hochberg_FDR*(v: vector, alpha: float=0.05): float =
   let
     m = v.len.toFloat
     vs = v.sorted(system.cmp[float])
+  var
+    max_pvalue = -1.0
   for i_x, x in vs:
     let BH = alpha/m * (i_x + 1).toFloat
     if x < BH:
       result += 1.0
+      max_pvalue = x.float
+  result = max_pvalue
 
